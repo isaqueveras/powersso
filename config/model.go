@@ -12,18 +12,19 @@ type Config struct {
 
 // ServerConfig models a server's configuration data
 type ServerConfig struct {
-	Version           string
-	Port              string
-	PprofPort         string
-	Mode              string
-	JwtSecretKey      string
-	CookieName        string
-	SSL               bool
-	CSRF              bool
-	Debug             bool
-	ReadTimeout       time.Duration
-	WriteTimeout      time.Duration
-	CtxDefaultTimeout time.Duration
+	Version            string
+	Port               string
+	PprofPort          string
+	Mode               string
+	JwtSecretKey       string
+	CookieName         string
+	AccessLogDirectory string
+	ErrorLogDirectory  string
+	PermissionBase     string
+	SSL                bool
+	CSRF               bool
+	Debug              bool
+	CtxDefaultTimeout  time.Duration
 }
 
 // PGConfig models postgres database configuration data
