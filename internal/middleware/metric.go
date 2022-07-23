@@ -4,9 +4,11 @@ import (
 	"strings"
 	"time"
 
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
-	"github.com/isaqueveras/power-sso/config"
 	"go.uber.org/zap"
+
+	"github.com/isaqueveras/power-sso/config"
 )
 
 // GinZap adiciona um middleware customizado do zap
@@ -29,4 +31,9 @@ func GinZap(logger *zap.Logger, cfg config.Config) gin.HandlerFunc {
 
 		logger.Info("requisition handled", fields...)
 	}
+}
+
+// RecoveryWithZap recovery middleware implementation with zap
+func RecoveryWithZap(logger *zap.Logger, stack bool) gin.HandlerFunc {
+	return ginzap.RecoveryWithZap(logger, stack)
 }

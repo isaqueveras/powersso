@@ -21,3 +21,10 @@ postgres:
   Dbname: power_sso
   Sslmode: false
   Driver: pgx
+
+logger:
+  Development: true
+  DisableCaller: false
+  DisableStacktrace: false
+  Encoding: json
+  Level: info
