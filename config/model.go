@@ -42,13 +42,18 @@ type ServerConfig struct {
 
 // PGConfig models postgres database configuration data
 type PGConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Dbname   string
-	SSLMode  bool
-	PgDriver string
+	Host            string
+	Port            string
+	User            string
+	Password        string
+	Dbname          string
+	SSLMode         bool
+	Driver          string
+	MaxOpenConns    int
+	MaxIdleConns    int
+	ConnMaxLifetime time.Duration
+	ConnMaxIdleTime time.Duration
+	Timeout         int64
 }
 
 // Logger models the data for the logs configuration
