@@ -11,6 +11,7 @@ import (
 
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/middleware"
+	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
@@ -29,6 +30,11 @@ func main() {
 
 	logg := logger.NewLogger(cfg)
 	logg.InitLogger()
+
+	if err = postgres.OpenConnections(cfg); err != nil {
+		logg.Fatal("Unable to open connections to database: ", err)
+	}
+	defer postgres.CloseConnections()
 
 	router := gin.New()
 	router.Use(

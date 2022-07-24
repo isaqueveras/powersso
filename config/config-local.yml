@@ -21,6 +21,11 @@ postgres:
   Dbname: power_sso
   Sslmode: false
   Driver: pgx
+  MaxOpenConns: 60
+  MaxIdleConns: 30
+  ConnMaxLifetime: 120
+  ConnMaxIdleTime: 20
+  Timeout: 2
 
 logger:
   Development: true
