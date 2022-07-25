@@ -20,6 +20,7 @@ const (
 type Config struct {
 	Server   ServerConfig
 	Postgres PGConfig
+	Redis    RedisConfig
 	Logger   Logger
 }
 
@@ -54,6 +55,19 @@ type PGConfig struct {
 	ConnMaxLifetime time.Duration
 	ConnMaxIdleTime time.Duration
 	Timeout         int64
+}
+
+// RedisConfig models redis database configuration data
+type RedisConfig struct {
+	RedisAddr      string
+	RedisPassword  string
+	RedisDB        string
+	RedisDefaultdb string
+	MinIdleConns   int
+	PoolSize       int
+	PoolTimeout    int
+	Password       string
+	DB             int
 }
 
 // Logger models the data for the logs configuration

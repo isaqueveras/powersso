@@ -12,6 +12,7 @@ import (
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/power-sso/pkg/database/redis"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
@@ -35,6 +36,9 @@ func main() {
 		logg.Fatal("Unable to open connections to database: ", err)
 	}
 	defer postgres.CloseConnections()
+
+	var redisClient = redis.NewRedisClient(cfg)
+	defer redisClient.Close()
 
 	router := gin.New()
 	router.Use(
