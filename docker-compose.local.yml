@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  postgesql:
+    image: 'postgres:14.1-alpine'
+    container_name: postgesql
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=power-sso
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - power_sso
+    
+  redis:
+    image: redis:6.0.9-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - power_sso
+
+networks:
+  power_sso:
+    driver: bridge
