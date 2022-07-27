@@ -18,7 +18,7 @@ postgres:
   Port: 5432
   User: postgres
   Password: postgres
-  Dbname: power_sso
+  Dbname: power-sso
   Sslmode: false
   Driver: pgx
   MaxOpenConns: 60
