@@ -41,7 +41,7 @@ func toError(rawError error) error {
 		message, code = fmt.Sprintf("Unable to convert value %v", err.Num), internalCode+2
 
 	case *time.ParseError:
-		message, code = fmt.Sprintf("Impossível converter %v", err.Value), timeParseError+1
+		message, code = fmt.Sprintf("Impossible converter %v", err.Value), timeParseError+1
 
 	case *Error:
 		rawError, message, code, responseStatus = err, err.Message, err.Code, err.StatusCode
