@@ -42,6 +42,7 @@ func main() {
 
 	router := gin.New()
 	router.Use(
+		middleware.RequestIdentifier(),
 		middleware.VersionInfo(),
 		middleware.RecoveryWithZap(logg.ZapLogger(), true),
 		middleware.GinZap(logg.ZapLogger(), *cfg),
