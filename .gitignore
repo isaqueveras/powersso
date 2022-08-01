@@ -14,4 +14,8 @@ cmd/cmd
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+.vscode
+
+pgdata
