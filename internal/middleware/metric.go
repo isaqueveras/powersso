@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/isaqueveras/power-sso/config"
+	"github.com/isaqueveras/power-sso/internal/tools/oops"
 )
 
 // GinZap adiciona um middleware customizado do zap
@@ -29,7 +31,29 @@ func GinZap(logger *zap.Logger, cfg config.Config) gin.HandlerFunc {
 			zap.String("handler", strings.Join(strings.Split(strings.Replace(c.HandlerName(), cfg.Server.PermissionBase, "", 1), "/")[1:], "/")),
 		}
 
-		logger.Info("requisition handled", fields...)
+		isError := false
+		if errValue, set := c.Keys["error"]; set {
+			var (
+				err = errValue.(error)
+				e *oops.Error
+			)
+
+			if errors.As(err, &e) {
+				fields = append(fields, []zap.Field{
+					zap.Int("error_code", e.Code),
+					zap.String("error", e.Error()),
+					zap.String("cause", e.Err.Error()),
+					zap.Strings("trace", e.Trace),
+				}...)
+				isError = true
+			}
+		}
+
+		if isError {
+			logger.Error("request handling failed", fields...)
+		} else {
+			logger.Info("requisition handled", fields...)
+		}
 	}
 }
 
