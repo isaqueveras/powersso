@@ -2,12 +2,12 @@
 // Use of this source code is governed by MIT
 // license that can be found in the LICENSE file.
 
-package types_test
+package conversor_test
 
 import (
 	"testing"
 
-	"github.com/isaqueveras/power-sso/internal/types"
+	"github.com/isaqueveras/power-sso/pkg/conversor"
 )
 
 func TestTypeConverter(t *testing.T) {

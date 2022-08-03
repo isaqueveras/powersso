@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/tools/oops"
+	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
 // GinZap add a custom middleware from zap
