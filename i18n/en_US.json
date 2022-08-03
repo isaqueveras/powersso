@@ -1,0 +1,31 @@
+{
+	"welcome": {
+		"title": "Welcome to PowerSSO"
+	},
+	"errors": {
+		"default": "Unknown error",
+		"handling": {
+			"time_parse": "Unable to convert {0}",
+			"json_unmarshal_type_error": "Value type {0} not supported in field {1}. Expected type {2}",
+			"reflect_value_error": "Cannot access value of type {0}",
+			"strconv_num_error": "Could not convert value {0}",
+			"error": {
+				"sql_no_rows": "Register not found",
+				"io_eof": "No data available for reading",
+				"strconv_err_syntax": "Invalid format for string conversion"
+			},
+			"pgx": {
+				"default": "Unknown data error",
+				"23505": "Duplicate record",
+				"23502": "Required data not specified",
+				"23503": "The data indicated is not a valid reference",
+				"42P01_42703": "Incorrect access of elements in data records: Syntax error",
+				"42601_42803_42883": "Incorrect use of function or operator when accessing data records: Syntax error",
+				"22001": "Data exceeds logging capacity in the database",
+				"42702": "Ambiguous reference: Syntax error",
+				"55P03": "Required data is isolated and cannot be accessed",
+				"22P02": "The specified data does not represent a valid type"
+			}
+		}
+	}
+}

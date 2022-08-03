@@ -7,18 +7,21 @@ import (
 
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
+	"github.com/isaqueveras/lingo"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/database/redis"
+	"github.com/isaqueveras/power-sso/pkg/i18n"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
+	var setupLingo = lingo.New(i18n.EnglishUS, "i18n")
 	cfgFile, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Error loading configuration file: ", err)
@@ -42,14 +45,15 @@ func main() {
 
 	router := gin.New()
 	router.Use(
-		middleware.RequestIdentifier(),
 		middleware.VersionInfo(),
+		middleware.SetupI18n(setupLingo),
+		middleware.RequestIdentifier(),
 		middleware.RecoveryWithZap(logg.ZapLogger(), true),
 		middleware.GinZap(logg.ZapLogger(), *cfg),
 	)
 
 	router.GET("", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": "Welcome to PowerSSO", "date": time.Now()})
+		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
 	})
 
 	group := errgroup.Group{}

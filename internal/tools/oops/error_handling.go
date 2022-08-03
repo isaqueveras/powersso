@@ -1,3 +1,7 @@
+// Copyright (c) 2022 Isaque Veras
+// Use of this source code is governed by MIT
+// license that can be found in the LICENSE file.
+
 package oops
 
 import (
@@ -81,9 +85,9 @@ func Handling(err error, ctx *gin.Context) {
 func Err(err error) error {
 	var e *Error
 	if !errors.As(err, &e) {
-		err = toError(err)
+		err = handling(err)
 	} else if err == e {
-		err = toError(err)
+		err = handling(err)
 	}
 
 	return errors.WithStack(err)
