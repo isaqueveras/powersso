@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/isaqueveras/power-sso/internal/tools/security"
+	"github.com/isaqueveras/power-sso/pkg/security"
 )
 
 func TestRandomString(t *testing.T) {

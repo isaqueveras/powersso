@@ -2,12 +2,12 @@
 // Use of this source code is governed by MIT
 // license that can be found in the LICENSE file.
 
-package types_test
+package conversor_test
 
 import (
 	"testing"
 
-	"github.com/isaqueveras/power-sso/internal/types"
+	"github.com/isaqueveras/power-sso/pkg/conversor"
 )
 
 func TestTypeConverter(t *testing.T) {
@@ -29,7 +29,7 @@ func TestTypeConverter(t *testing.T) {
 	}
 
 	for i, scenario := range scenarios {
-		data, err := types.TypeConverter[domain](&scenario.in)
+		data, err := conversor.TypeConverter[domain](&scenario.in)
 		if err != nil {
 			t.Errorf("(%d) Expected nil, got %v", i, err)
 			continue
