@@ -29,7 +29,7 @@ func TestTypeConverter(t *testing.T) {
 	}
 
 	for i, scenario := range scenarios {
-		data, err := types.TypeConverter[domain](&scenario.in)
+		data, err := conversor.TypeConverter[domain](&scenario.in)
 		if err != nil {
 			t.Errorf("(%d) Expected nil, got %v", i, err)
 			continue
