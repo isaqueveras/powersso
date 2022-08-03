@@ -5,29 +5,24 @@ import (
 	"reflect"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/isaqueveras/power-sso/pkg/params"
 )
 
-// Params models of data from params
-type Params struct {
-	Limit  uint64
-	Offset uint64
-}
-
-// Pagination constructs pagination data for a given database query
-func Pagination[T any](query *squirrel.SelectBuilder, params *Params) (res []T, next *bool, err error) {
+// MakePagination constructs pagination data for a given database query
+func MakePagination[T any](query *squirrel.SelectBuilder, p *params.Params) (res []T, next *bool, err error) {
 	var (
 		model   T
 		rows    *sql.Rows
 		columns []any
 
 		modelType = reflect.Indirect(reflect.ValueOf(&model)).Type()
-		slice     = reflect.MakeSlice(reflect.SliceOf(modelType), 0, int(params.Limit+1))
+		slice     = reflect.MakeSlice(reflect.SliceOf(modelType), 0, int(p.Limit+1))
 		modelElem = reflect.ValueOf(&model).Elem()
 	)
 
 	if rows, err = query.
-		Limit(params.Limit + 1).
-		Offset(params.Offset).
+		Limit(p.Limit + 1).
+		Offset(p.Offset).
 		Query(); err != nil {
 		return res, next, err
 	}
@@ -45,9 +40,9 @@ func Pagination[T any](query *squirrel.SelectBuilder, params *Params) (res []T, 
 		slice = reflect.Append(slice, reflect.Indirect(reflect.ValueOf(&model)))
 	}
 
-	hasNext := slice.Len() > int(params.Limit)
+	hasNext := slice.Len() > int(p.Limit)
 	if hasNext {
-		slice = slice.Slice(0, int(params.Limit))
+		slice = slice.Slice(0, int(p.Limit))
 	}
 
 	next = &hasNext
