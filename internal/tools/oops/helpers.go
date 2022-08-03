@@ -16,6 +16,8 @@ import (
 
 	"github.com/jackc/pgx"
 	"github.com/pkg/errors"
+
+	"github.com/isaqueveras/power-sso/pkg/i18n"
 )
 
 type stackTracer interface {
@@ -26,9 +28,9 @@ type wrappedError interface {
 	Unwrap() error
 }
 
-// toError wraps errors to provide user readable messages
-func toError(rawError error) error {
-	message, code, responseStatus := "Unknown error", 0, http.StatusBadRequest
+// handling wraps errors to provide user readable messages
+func handling(rawError error) error {
+	message, code, responseStatus := i18n.Value("errors.default"), 0, http.StatusBadRequest
 
 	switch err := rawError.(type) {
 	case pgx.PgError:
@@ -36,16 +38,16 @@ func toError(rawError error) error {
 		rawError = errors.Errorf("%s: %s", err.Error(), err.Hint)
 
 	case *json.UnmarshalTypeError:
-		message, code = fmt.Sprintf("Value type %v not supported in field %v. expected type %v", err.Value, err.Field, err.Type.String()), jsonCode+1
+		message, code = i18n.Value("errors.handling.json_unmarshal_type_error", err.Value, err.Field, err.Type.String()), jsonCode+1
 
 	case *reflect.ValueError:
-		message, code = fmt.Sprintf("Cannot access value of type %v", err.Kind.String()), internalCode+1
+		message, code = i18n.Value("errors.handling.reflect_value_error", err.Kind.String()), internalCode+1
 
 	case *strconv.NumError:
-		message, code = fmt.Sprintf("Unable to convert value %v", err.Num), internalCode+2
+		message, code = i18n.Value("errors.handling.strconv_num_error", err.Num), internalCode+2
 
 	case *time.ParseError:
-		message, code = fmt.Sprintf("Impossible converter %v", err.Value), timeParseError+1
+		message, code = i18n.Value("errors.handling.time_parse", err.Value), timeParseError+1
 
 	case *Error:
 		rawError, message, code, responseStatus = err, err.Message, err.Code, err.StatusCode
@@ -53,13 +55,13 @@ func toError(rawError error) error {
 	case error:
 		switch err {
 		case sql.ErrNoRows:
-			message, code, responseStatus = "Register not found", defaultCode+1, http.StatusNotFound
+			message, code, responseStatus = i18n.Value("errors.handling.error.sql_no_rows"), defaultCode+1, http.StatusNotFound
 
 		case io.EOF:
-			message, code = "No data available for reading", defaultCode+2
+			message, code = i18n.Value("errors.handling.error.io_eof"), defaultCode+2
 
 		case strconv.ErrSyntax:
-			message, code = "Invalid format for string conversion", defaultCode+3
+			message, code = i18n.Value("errors.handling.error.strconv_err_syntax"), defaultCode+3
 		}
 	case nil:
 		return nil
@@ -76,34 +78,26 @@ func toError(rawError error) error {
 func handlePgxError(err *pgx.PgError) (string, int) {
 	switch err.Code {
 	case "23505":
-		return "Duplicate record", pgxCode + 1
-
+		return i18n.Value("errors.handling.pgx.23505"), pgxCode + 1
 	case "23502":
-		return "Required data not specified", pgxCode + 2
-
+		return i18n.Value("errors.handling.pgx.23502"), pgxCode + 2
 	case "23503":
-		return "Data indicated is not a valid reference", pgxCode + 3
-
+		return i18n.Value("errors.handling.pgx.23503"), pgxCode + 3
 	case "42P01", "42703":
-		return "Incorrect access of elements in data records: Syntax error", pgxCode + 4
-
+		return i18n.Value("errors.handling.pgx.42P01_42703"), pgxCode + 4
 	case "42601", "42803", "42883":
-		return "Incorrect use of function or operator when accessing data records: Syntax error", pgxCode + 5
-
+		return i18n.Value("errors.handling.pgx.42601_42803_42883"), pgxCode + 5
 	case "22001":
-		return "Data exceeds record capacity in database", pgxCode + 6
-
+		return i18n.Value("errors.handling.pgx.22001"), pgxCode + 6
 	case "42702":
-		return "Ambiguous reference: Syntax error", pgxCode + 7
-
+		return i18n.Value("errors.handling.pgx.42702"), pgxCode + 7
 	case "55P03":
-		return "Required data is isolated and cannot be accessed", pgxCode + 8
-
+		return i18n.Value("errors.handling.pgx.55P03"), pgxCode + 8
 	case "22P02":
-		return "Specified data does not represent a valid type", pgxCode + 9
+		return i18n.Value("errors.handling.pgx.22P02"), pgxCode + 9
 	}
 
-	return "Unknown data error", pgxCode
+	return i18n.Value("errors.handling.pgx.default"), pgxCode
 }
 
 // reconstructStackTrace reconstructs the stack trace

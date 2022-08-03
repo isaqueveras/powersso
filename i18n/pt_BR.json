@@ -1,5 +1,31 @@
 {
 	"welcome": {
-		"title": "Bem vindo ao PowerSSO"
+		"title": "Bem-vindo ao PowerSSO"
+	},
+	"errors": {
+		"default": "Erro desconhecido",
+		"handling": {
+			"time_parse": "Impossivel converter {0}",
+			"json_unmarshal_type_error": "Tipo de valor {0} não suportado no campo {1}. Tipo esperado {2}",
+			"reflect_value_error": "Não é possível acessar o valor do tipo {0}",
+			"strconv_num_error": "Não foi possível converter o valor {0}",
+			"error": {
+				"sql_no_rows": "Registro não encontrado",
+				"io_eof": "Não há dados disponíveis para leitura",
+				"strconv_err_syntax": "Formato inválido para conversão de string"
+			},
+			"pgx": {
+				"default": "Erro de dados desconhecido",
+				"23505": "Registro duplicado",
+				"23502": "Dados obrigatórios não especificados",
+				"23503": "Os dados indicados não são uma referência válida",
+				"42P01_42703": "Acesso incorreto de elementos em registros de dados: Erro de sintaxe",
+				"42601_42803_42883": "Uso incorreto de função ou operador ao acessar registros de dados: Erro de sintaxe",
+				"22001": "Os dados excedem a capacidade de registro no banco de dados",
+				"42702": "Referência ambígua: erro de sintaxe",
+				"55P03": "Os dados necessários são isolados e não podem ser acessados",
+				"22P02": "Os dados especificados não representam um tipo válido"
+			}
+		}
 	}
 }

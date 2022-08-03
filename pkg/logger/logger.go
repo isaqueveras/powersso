@@ -33,6 +33,8 @@ func (l *logger) InitLogger() {
 	} else {
 		cfg = zap.NewDevelopmentConfig()
 		cfg.EncoderConfig = zap.NewDevelopmentEncoderConfig()
+		cfg.OutputPaths = []string{l.cfg.Server.AccessLogDirectory, "stdout"}
+		cfg.ErrorOutputPaths = []string{l.cfg.Server.ErrorLogDirectory, "stderr"}
 	}
 
 	cfg.Encoding = "json"
@@ -47,9 +49,6 @@ func (l *logger) InitLogger() {
 		"application": "power-sso",
 		"version":     middleware.Version,
 	}
-
-	cfg.OutputPaths = []string{l.cfg.Server.AccessLogDirectory, "stdout"}
-	cfg.ErrorOutputPaths = []string{l.cfg.Server.ErrorLogDirectory, "stderr"}
 
 	logs, err := cfg.Build()
 	if err != nil {

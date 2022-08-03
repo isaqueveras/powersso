@@ -85,9 +85,9 @@ func Handling(err error, ctx *gin.Context) {
 func Err(err error) error {
 	var e *Error
 	if !errors.As(err, &e) {
-		err = toError(err)
+		err = handling(err)
 	} else if err == e {
-		err = toError(err)
+		err = handling(err)
 	}
 
 	return errors.WithStack(err)
