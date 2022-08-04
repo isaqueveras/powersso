@@ -12,21 +12,22 @@ import (
 	"github.com/isaqueveras/power-sso/internal/middleware"
 )
 
-type logger struct {
-	cfg  *config.Config
-	logg *zap.SugaredLogger
+var logg *zap.SugaredLogger
+
+type Logger struct {
+	cfg *config.Config
 }
 
 // NewLogger logger constructor
-func NewLogger(cfg *config.Config) *logger {
-	return &logger{cfg: cfg}
+func NewLogger(cfg *config.Config) *Logger {
+	return &Logger{cfg: cfg}
 }
 
 // InitLogger initialize zap logger
-func (l *logger) InitLogger() {
+func (l *Logger) InitLogger() {
 	var cfg zap.Config
 
-	if l.cfg.Server.Mode == config.ModeDevelopment {
+	if l.cfg.Server.Mode != config.ModeDevelopment {
 		cfg = zap.NewProductionConfig()
 		cfg.DisableStacktrace = true
 		cfg.EncoderConfig = zap.NewProductionEncoderConfig()
@@ -52,72 +53,72 @@ func (l *logger) InitLogger() {
 
 	logs, err := cfg.Build()
 	if err != nil {
-		l.logg.Error(err)
+		logg.Error(err)
 	}
 
 	logger := zap.New(logs.Core(), zap.AddCaller(), zap.AddCallerSkip(1))
-	l.logg = logger.Sugar()
-	if err := l.logg.Sync(); err != nil {
-		l.logg.Error(err)
+	logg = logger.Sugar()
+	if err := logg.Sync(); err != nil {
+		logg.Error(err)
 	}
 }
 
-func (l *logger) ZapLogger() *zap.Logger {
-	return l.logg.Desugar()
+func (l *Logger) ZapLogger() *zap.Logger {
+	return logg.Desugar()
 }
 
-func (l *logger) Debug(args ...interface{}) {
-	l.logg.Debug(args...)
+func (l *Logger) Debug(args ...interface{}) {
+	logg.Debug(args...)
 }
 
-func (l *logger) Debugf(template string, args ...interface{}) {
-	l.logg.Debugf(template, args...)
+func (l *Logger) Debugf(template string, args ...interface{}) {
+	logg.Debugf(template, args...)
 }
 
-func (l *logger) Info(args ...interface{}) {
-	l.logg.Info(args...)
+func (l *Logger) Info(args ...interface{}) {
+	logg.Info(args...)
 }
 
-func (l *logger) Infof(template string, args ...interface{}) {
-	l.logg.Infof(template, args...)
+func (l *Logger) Infof(template string, args ...interface{}) {
+	logg.Infof(template, args...)
 }
 
-func (l *logger) Warn(args ...interface{}) {
-	l.logg.Warn(args...)
+func (l *Logger) Warn(args ...interface{}) {
+	logg.Warn(args...)
 }
 
-func (l *logger) Warnf(template string, args ...interface{}) {
-	l.logg.Warnf(template, args...)
+func (l *Logger) Warnf(template string, args ...interface{}) {
+	logg.Warnf(template, args...)
 }
 
-func (l *logger) Error(args ...interface{}) {
-	l.logg.Error(args...)
+func (l *Logger) Error(args ...interface{}) {
+	logg.Error(args...)
 }
 
-func (l *logger) Errorf(template string, args ...interface{}) {
-	l.logg.Errorf(template, args...)
+func (l *Logger) Errorf(template string, args ...interface{}) {
+	logg.Errorf(template, args...)
 }
 
-func (l *logger) DPanic(args ...interface{}) {
-	l.logg.DPanic(args...)
+func (l *Logger) DPanic(args ...interface{}) {
+	logg.DPanic(args...)
 }
 
-func (l *logger) DPanicf(template string, args ...interface{}) {
-	l.logg.DPanicf(template, args...)
+func (l *Logger) DPanicf(template string, args ...interface{}) {
+	logg.DPanicf(template, args...)
 }
 
-func (l *logger) Panic(args ...interface{}) {
-	l.logg.Panic(args...)
+func (l *Logger) Panic(args ...interface{}) {
+	logg.Panic(args...)
 }
 
-func (l *logger) Panicf(template string, args ...interface{}) {
-	l.logg.Panicf(template, args...)
+func (l *Logger) Panicf(template string, args ...interface{}) {
+	logg.Panicf(template, args...)
 }
 
-func (l *logger) Fatal(args ...interface{}) {
-	l.logg.Fatal(args...)
+func (l *Logger) Fatal(args ...interface{}) {
+	logg.Fatal(args...)
 }
 
-func (l *logger) Fatalf(template string, args ...interface{}) {
-	l.logg.Fatalf(template, args...)
+func (l *Logger) Fatalf(template string, args ...interface{}) {
+	logg.Fatalf(template, args...)
 }

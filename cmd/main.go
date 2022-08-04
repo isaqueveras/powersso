@@ -1,3 +1,7 @@
+// Copyright (c) 2022 Isaque Veras
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -7,9 +11,9 @@ import (
 
 	"github.com/fvbock/endless"
 	"github.com/gin-gonic/gin"
-	"github.com/isaqueveras/lingo"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/isaqueveras/lingo"
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"

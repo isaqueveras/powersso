@@ -26,7 +26,7 @@ var ling lingo.T = lingo.T{}
 // Setup add the language to use
 func Setup(ctx *gin.Context, l *lingo.L) {
 	var lang = ctx.GetHeader(languageHeader)
-	if !isValid(lang) {
+	if isValid(lang) {
 		ling = l.TranslationsForLocale(lang)
 	} else {
 		ling = l.TranslationsForRequest(ctx.Request)
@@ -39,8 +39,8 @@ func Value(value string, args ...string) string {
 }
 
 func isValid(value string) bool {
-	return value == "" ||
-		!(value == PortugueseBR ||
+	return value != "" ||
+		(value == PortugueseBR ||
 			value == EnglishUS ||
 			value == SpainES)
 }
