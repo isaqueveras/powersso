@@ -24,7 +24,8 @@
 				"22001": "Os dados excedem a capacidade de registro no banco de dados",
 				"42702": "Referência ambígua: erro de sintaxe",
 				"55P03": "Os dados necessários são isolados e não podem ser acessados",
-				"22P02": "Os dados especificados não representam um tipo válido"
+				"22P02": "Os dados especificados não representam um tipo válido",
+				"25006": "Não é possivel executar um insert ou update utilizando o banco de leitura"
 			}
 		}
 	}

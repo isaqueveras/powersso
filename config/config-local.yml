@@ -5,7 +5,7 @@ server:
   Mode: development
   JwtSecretKey: power-sso-secret
   CookieName: jwt-power-sso
-  SSL: true
+  SSL: false
   CtxDefaultTimeout: 12
   ReadTimeout: 5
   WriteTimeout: 5

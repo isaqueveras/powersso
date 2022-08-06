@@ -60,11 +60,11 @@ func NotFoundError(message string) *Error {
 }
 
 // Handling handles an error by setting a message and a response status code
-func Handling(err error, ctx *gin.Context) {
+func Handling(ctx *gin.Context, err error) {
 	var e *Error
 
 	if !errors.As(err, &e) {
-		Handling(Err(err), ctx)
+		Handling(ctx, Err(err))
 		return
 	}
 
