@@ -6,26 +6,17 @@ package main
 
 import (
 	"log"
-	"net/http"
-	"time"
 
-	"github.com/fvbock/endless"
-	"github.com/gin-gonic/gin"
-	"golang.org/x/sync/errgroup"
-
-	"github.com/isaqueveras/lingo"
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/middleware"
+	"github.com/isaqueveras/power-sso/internal/server"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/database/redis"
-	"github.com/isaqueveras/power-sso/pkg/i18n"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	var setupLingo = lingo.New(i18n.EnglishUS, "i18n")
 	cfgFile, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Error loading configuration file: ", err)
@@ -47,25 +38,7 @@ func main() {
 	var redisClient = redis.NewRedisClient(cfg)
 	defer redisClient.Close()
 
-	router := gin.New()
-	router.Use(
-		middleware.VersionInfo(),
-		middleware.SetupI18n(setupLingo),
-		middleware.RequestIdentifier(),
-		middleware.RecoveryWithZap(logg.ZapLogger(), true),
-		middleware.GinZap(logg.ZapLogger(), *cfg),
-	)
-
-	router.GET("", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
-	})
-
-	group := errgroup.Group{}
-	group.Go(func() error {
-		return endless.ListenAndServe("0.0.0.0"+cfg.Server.Port, router)
-	})
-
-	if err = group.Wait(); err != nil {
-		logg.Fatal("Error while serving the application", err)
+	if server.NewServer(cfg, logg).Run(); err != nil {
+		logg.Fatal("Error while serving the application: ", err)
 	}
 }

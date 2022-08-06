@@ -43,6 +43,8 @@ type ServerConfig struct {
 	CSRF               bool
 	Debug              bool
 	CtxDefaultTimeout  time.Duration
+	ReadTimeout        time.Duration
+	WriteTimeout       time.Duration
 }
 
 // PGConfig models postgres database configuration data

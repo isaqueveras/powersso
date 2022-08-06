@@ -7,6 +7,8 @@ server:
   CookieName: jwt-power-sso
   SSL: true
   CtxDefaultTimeout: 12
+  ReadTimeout: 5
+  WriteTimeout: 5
   CSRF: true
   Debug: false
   AccessLogDirectory: /var/log/power-sso/access.log
