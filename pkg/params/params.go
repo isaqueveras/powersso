@@ -20,27 +20,27 @@ const (
 type Params struct {
 	// Fields returns as request queries
 	Fields []string
-	
+
 	// Filters returns all filters of a request in map format
 	Filters map[string][]string
-	
+
 	// Limit limit is used to set the size of a paginated list
 	Limit uint64
-	
-	// Offset offset is used to determine which page 
+
+	// Offset offset is used to determine which page
 	// should be in the paginated list
 	Offset uint64
-	
-	// Total Total is used to fetch the total 
+
+	// Total Total is used to fetch the total
 	// amount of a paginated list
 	Total bool
 }
 
-// NewParams builds an empty dummy 
+// NewParams builds an empty dummy
 // `Params` object for utility usage
 func NewParams() Params {
 	return Params{
-		Limit: MaxLimit,
+		Limit:   MaxLimit,
 		Filters: make(map[string][]string),
 	}
 }
@@ -48,12 +48,12 @@ func NewParams() Params {
 // ParseParams receives the gin.Context and parse the query params for the request
 func ParseParams(ctx *gin.Context) (params Params, err error) {
 	var limit, offset int
-	
+
 	if limit, err = strconv.Atoi(ctx.DefaultQuery("limit", "15")); err != nil {
 		return params, err
 	}
 
-	if limit <= 0 || limit > int(MaxLimit) {
+	if limit < 0 || limit > int(MaxLimit) {
 		limit = int(MaxLimit)
 	}
 	params.Limit = uint64(limit)

@@ -20,7 +20,13 @@ func MakePagination[T any](query *squirrel.SelectBuilder, p *params.Params) (res
 		modelElem = reflect.ValueOf(&model).Elem()
 	)
 
+	cols, _, err := FormatValuesInUp(&model, false)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	if rows, err = query.
+		Columns(cols...).
 		Limit(p.Limit + 1).
 		Offset(p.Offset).
 		Query(); err != nil {
@@ -28,6 +34,10 @@ func MakePagination[T any](query *squirrel.SelectBuilder, p *params.Params) (res
 	}
 
 	for i := 0; i < modelElem.NumField(); i++ {
+		if modelElem.Type().Field(i).Tag.Get(ignoreTag) != "" {
+			continue
+		}
+
 		pt := reflect.New(reflect.PtrTo(modelElem.Field(i).Type()))
 		pt.Elem().Set(modelElem.Field(i).Addr())
 		columns = append(columns, pt.Elem().Interface())
