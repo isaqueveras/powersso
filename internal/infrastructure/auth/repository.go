@@ -5,8 +5,8 @@
 package auth
 
 import (
-	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
-	db "github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/power-sso/internal/domain/auth"
+	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
 
 type repository struct {
@@ -14,11 +14,11 @@ type repository struct {
 }
 
 // New creates a new repository
-func New(transaction *db.DBTransaction) domain.IAuth {
+func New(transaction *postgres.DBTransaction) auth.IAuth {
 	return &repository{pg: &pgAuth{DB: transaction}}
 }
 
 // Register contains the flow for the user register in database
-func (r *repository) Register(input *domain.Register) error {
+func (r *repository) Register(input *auth.Register) error {
 	return r.pg.register(input)
 }

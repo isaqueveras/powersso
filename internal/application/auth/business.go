@@ -7,9 +7,9 @@ package auth
 import (
 	"context"
 
-	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
-	repo "github.com/isaqueveras/power-sso/internal/infrastructure/auth"
+	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
+	"github.com/isaqueveras/power-sso/internal/infrastructure/user"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
@@ -23,19 +23,29 @@ func Register(ctx context.Context, request *RegisterRequest) error {
 	}
 	defer transaction.Rollback()
 
-	// TODO: find user by email and check if exists or not
-
 	if err = request.Prepare(); err != nil {
 		return oops.Err(err)
 	}
 
-	var data *auth.Register
+	var exists bool
+	if exists, err = user.
+		New(transaction).
+		FindByEmailUserExists(request.Email); err != nil {
+		return oops.Err(err)
+	}
+
+	if exists {
+		return oops.Err(ErrUserExists())
+	}
+
+	var data *domain.Register
 	if data, err = conversor.TypeConverter[domain.Register](&request); err != nil {
 		return oops.Err(err)
 	}
 
-	var repository = repo.New(transaction)
-	if err = repository.Register(data); err != nil {
+	if err = auth.
+		New(transaction).
+		Register(data); err != nil {
 		return oops.Err(err)
 	}
 

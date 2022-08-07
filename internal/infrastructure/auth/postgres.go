@@ -11,10 +11,13 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/query"
 )
 
+// pgAuth is the implementation
+// of transaction for the auth repository
 type pgAuth struct {
 	DB *postgres.DBTransaction
 }
 
+// register register the user in the database
 func (pg *pgAuth) register(input *auth.Register) (err error) {
 	_cols, _vals, err := query.FormatValuesInUp(input)
 	if err != nil {
