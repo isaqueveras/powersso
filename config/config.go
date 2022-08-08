@@ -13,11 +13,15 @@ import (
 var config *Config
 
 // LoadConfig config file from given path
-func LoadConfig() {
+func LoadConfig(path ...string) {
 	v := viper.New()
 
+	if len(path) > 0 && path[0] == "" {
+		path[0] = "."
+	}
+
 	v.SetConfigName("./config/config-local")
-	v.AddConfigPath(".")
+	v.AddConfigPath(path[0])
 	v.AutomaticEnv()
 
 	if err := v.ReadInConfig(); err != nil {
