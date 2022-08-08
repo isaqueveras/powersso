@@ -13,6 +13,11 @@ import (
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
 )
 
+const (
+	// timeoutToExpireActivationToken is the time to expire the activation token
+	timeoutToExpireActivationToken = time.Hour * 8
+)
+
 // RegisterRequest is the request payload for the register endpoint.
 type RegisterRequest struct {
 	FirstName   *string    `json:"first_name" binding:"required,lte=30"`
@@ -45,7 +50,6 @@ func (rr *RegisterRequest) Prepare() (err error) {
 		*rr.PhoneNumber = strings.TrimSpace(*rr.PhoneNumber)
 	}
 
-	rr.Roles.Parse()
 	return
 }
 

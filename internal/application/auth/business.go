@@ -7,6 +7,9 @@ package auth
 import (
 	"context"
 
+	"github.com/golang-jwt/jwt/v4"
+
+	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
@@ -14,6 +17,7 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/power-sso/pkg/security"
 )
 
 // Register is the business logic for the user register
@@ -32,6 +36,8 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		in.Roles = new(roles.Roles)
 		in.Roles.Add(roles.LevelUser, roles.ReadActivationToken)
 	}
+
+	in.Roles.Parse()
 
 	var exists bool
 	if exists, err = user.
@@ -56,7 +62,22 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		return oops.Err(err)
 	}
 
-	// TODO: create a token for the user to confirm the email
+	var (
+		accessToken  string
+		cfg          = config.Get()
+		payloadToken = jwt.MapClaims{
+			"email": in.Email,
+		}
+	)
+
+	if accessToken, err = security.NewToken(
+		payloadToken,
+		cfg.Server.JwtSecretKey,
+		int64(timeoutToExpireActivationToken),
+	); err != nil {
+		return oops.Err(err)
+	}
+
 	// TODO: send email to user with the confirmation link
 
 	in.SanitizePassword()

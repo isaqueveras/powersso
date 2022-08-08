@@ -5,14 +5,15 @@
 package config
 
 import (
-	"errors"
 	"log"
 
 	"github.com/spf13/viper"
 )
 
+var config *Config
+
 // LoadConfig config file from given path
-func LoadConfig() (*viper.Viper, error) {
+func LoadConfig() {
 	v := viper.New()
 
 	v.SetConfigName("./config/config-local")
@@ -21,23 +22,21 @@ func LoadConfig() (*viper.Viper, error) {
 
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, errors.New("config file not found")
+			log.Fatal("Config file not found")
 		}
-		return nil, err
+		log.Fatal(err)
 	}
 
-	return v, nil
+	if err := v.Unmarshal(&config); err != nil {
+		log.Fatalf("unable to decode into struct, %v", err)
+	}
 }
 
-// ParseConfig parse config file the of aplication
-func ParseConfig(v *viper.Viper) (*Config, error) {
-	var c Config
-
-	var err error
-	if err = v.Unmarshal(&c); err != nil {
-		log.Printf("unable to decode into struct, %v", err)
-		return nil, err
+// Get returns a pointer to a
+// Config struct which holds a valid config
+func Get() *Config {
+	if config == nil {
+		log.Fatal("config was not successfully loaded")
 	}
-
-	return &c, nil
+	return config
 }
