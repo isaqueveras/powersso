@@ -8,7 +8,7 @@ CREATE TABLE users (
 	last_name    VARCHAR(32)                 NOT NULL CHECK ( last_name <> '' ),
 	email        VARCHAR(64) UNIQUE          NOT NULL CHECK ( email <> '' ),
 	password     VARCHAR(250)                NOT NULL CHECK ( octet_length(password) <> 0 ),
-	role         VARCHAR(10)                 NOT NULL DEFAULT 'user',
+	roles        VARCHAR[]                 	 NOT NULL,
 	about        VARCHAR(1024)                        DEFAULT '',
 	avatar       VARCHAR(512),
 	phone_number VARCHAR(20),
@@ -22,3 +22,5 @@ CREATE TABLE users (
 	updated_at   TIMESTAMP WITH TIME ZONE             DEFAULT CURRENT_TIMESTAMP,
 	login_date   TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX users_email_idx ON public.users (email);
