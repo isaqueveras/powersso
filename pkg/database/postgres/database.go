@@ -14,7 +14,7 @@ import (
 
 type database interface {
 	// transaction uses a transaction from a connection already opened in the database
-	transaction(ctx context.Context) (interface{}, error)
+	transaction(ctx context.Context, readOnly bool) (interface{}, error)
 	// Open open connection with database
 	open(cfg *config.Config) error
 	// Close close connection with database
@@ -48,10 +48,10 @@ func CloseConnections() {
 }
 
 // NewTransaction uses a transaction from a connection already opened in the database
-func NewTransaction(ctx context.Context) (*DBTransaction, error) {
+func NewTransaction(ctx context.Context, readOnly bool) (*DBTransaction, error) {
 	tx := &DBTransaction{}
 
-	pgsql, err := connection.transaction(ctx)
+	pgsql, err := connection.transaction(ctx, readOnly)
 	if err != nil {
 		return nil, err
 	}

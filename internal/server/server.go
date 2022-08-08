@@ -16,6 +16,7 @@ import (
 	"github.com/isaqueveras/lingo"
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/middleware"
+	"github.com/isaqueveras/power-sso/internal/presentation/auth"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
@@ -55,12 +56,15 @@ func (s *Server) Run() error {
 		middleware.GinZap(s.logg.ZapLogger(), *s.cfg),
 	)
 
+	v1 := router.Group("v1")
+	auth.Router(v1.Group("auth"))
+
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
 	})
 
-	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout
-	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout
+	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout * time.Second
+	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout * time.Second
 	endless.DefaultMaxHeaderBytes = http.DefaultMaxHeaderBytes
 
 	group := errgroup.Group{}

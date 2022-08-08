@@ -24,8 +24,10 @@
 				"22001": "Los datos exceden la capacidad de registro en la base de datos",
 				"42702": "Referencia ambigua: error de sintaxis",
 				"55P03": "Los datos requeridos están aislados y no se puede acceder a ellos",
-				"22P02": "Los datos especificados no representan un tipo válido"
-			}
+				"22P02": "Los datos especificados no representan un tipo válido",
+				"25006": "No se puede realizar una inserción o actualización usando la base de datos de lectura"
+			},
+			"err_user_exists": "Ya hay un usuario con este correo electrónico"
 		}
 	}
 }
