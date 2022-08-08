@@ -24,4 +24,5 @@ type Register struct {
 	Gender      *string    `sql:"gender" json:"gender"`
 	Postcode    *int       `sql:"postcode" json:"postcode"`
 	Birthday    *time.Time `sql:"birthday" json:"birthday"`
+	TokenKey    *string    `sql:"token_key" json:"token_key"`
 }

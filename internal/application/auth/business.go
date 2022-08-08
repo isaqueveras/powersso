@@ -6,8 +6,7 @@ package auth
 
 import (
 	"context"
-
-	"github.com/golang-jwt/jwt/v4"
+	"fmt"
 
 	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
@@ -17,7 +16,7 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/pkg/security"
+	"github.com/isaqueveras/power-sso/tokens"
 )
 
 // Register is the business logic for the user register
@@ -62,21 +61,12 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		return oops.Err(err)
 	}
 
-	var (
-		accessToken  string
-		cfg          = config.Get()
-		payloadToken = jwt.MapClaims{
-			"email": in.Email,
-		}
-	)
-
-	if accessToken, err = security.NewToken(
-		payloadToken,
-		cfg.Server.JwtSecretKey,
-		int64(timeoutToExpireActivationToken),
-	); err != nil {
+	var accessToken string
+	if accessToken, err = tokens.NewUserVerifyToken(config.Get(), in.Email, in.TokenKey); err != nil {
 		return oops.Err(err)
 	}
+
+	fmt.Printf("accessToken: %v\n", accessToken)
 
 	// TODO: send email to user with the confirmation link
 

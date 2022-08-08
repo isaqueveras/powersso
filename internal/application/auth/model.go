@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
+	"github.com/isaqueveras/power-sso/pkg/security"
 )
 
 const (
@@ -33,6 +34,7 @@ type RegisterRequest struct {
 	Gender      *string    `json:"gender,omitempty" binding:"omitempty,lte=10"`
 	Postcode    *int       `json:"postcode,omitempty" binding:"omitempty"`
 	Birthday    *time.Time `json:"birthday,omitempty" binding:"omitempty,lte=10"`
+	TokenKey    *string    `json:"token_key"`
 
 	Roles *roles.Roles `json:"-"`
 }
@@ -61,6 +63,8 @@ func (rr *RegisterRequest) GeneratePassword() error {
 	}
 
 	*rr.Password = string(hashedPassword)
+	rr.RefreshTokenKey()
+
 	return nil
 }
 
@@ -73,6 +77,13 @@ func (rr *RegisterRequest) ComparePasswords(password string) error {
 }
 
 // SanitizePassword sanitize user password
-func (u *RegisterRequest) SanitizePassword() {
-	u.Password = nil
+func (rr *RegisterRequest) SanitizePassword() {
+	rr.Password = nil
+}
+
+// RefreshTokenKey generates and sets new random token key.
+// >> invalidate previously issued tokens
+func (rr *RegisterRequest) RefreshTokenKey() {
+	rr.TokenKey = new(string)
+	*rr.TokenKey = security.RandomString(50)
 }

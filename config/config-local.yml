@@ -46,3 +46,27 @@ logger:
   DisableStacktrace: false
   Encoding: json
   Level: info
+
+AdminAuthToken:
+  Secret: dfgfgfdgkandjkas
+  Duration: 1209600
+
+AdminPasswordResetToken:
+  Secret: akjbhfghasdfgasf
+  Duration: 1800
+
+UserAuthToken:
+  Secret: klmdjkfsnhhashdb
+  Duration: 1209600
+
+UserPasswordResetToken:
+  Secret: sidjnjdvhjbdfhdf
+  Duration: 1800
+
+UserEmailChangeToken:
+  Secret: uinjandjabsdfhjs
+  Duration: 28800
+
+UserVerificationToken:
+  Secret: lçsdfmkdsjnaldmk
+  Duration: 604800
