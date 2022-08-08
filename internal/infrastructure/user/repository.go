@@ -9,6 +9,8 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
 
+var _ user.IUser = (*repository)(nil)
+
 // repository is the implementation of the user repository
 type repository struct {
 	pg *pgUser

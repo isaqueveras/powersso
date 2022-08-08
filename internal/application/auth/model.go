@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
 )
 
 // RegisterRequest is the request payload for the register endpoint.
@@ -17,7 +19,6 @@ type RegisterRequest struct {
 	LastName    *string    `json:"last_name" binding:"required,lte=30"`
 	Email       *string    `json:"email,omitempty" binding:"omitempty,lte=60,email"`
 	Password    *string    `json:"password,omitempty" binding:"omitempty,required,gte=6"`
-	Role        *string    `json:"role,omitempty" binding:"omitempty,lte=10"`
 	About       *string    `json:"about,omitempty" binding:"omitempty,lte=1024"`
 	Avatar      *string    `json:"avatar,omitempty" binding:"omitempty,lte=512,url"`
 	PhoneNumber *string    `json:"phone_number,omitempty" binding:"omitempty,lte=20"`
@@ -27,6 +28,8 @@ type RegisterRequest struct {
 	Gender      *string    `json:"gender,omitempty" binding:"omitempty,lte=10"`
 	Postcode    *int       `json:"postcode,omitempty" binding:"omitempty"`
 	Birthday    *time.Time `json:"birthday,omitempty" binding:"omitempty,lte=10"`
+
+	Roles *roles.Roles `json:"-"`
 }
 
 // Prepare prepare data for registration
@@ -42,11 +45,8 @@ func (rr *RegisterRequest) Prepare() (err error) {
 		*rr.PhoneNumber = strings.TrimSpace(*rr.PhoneNumber)
 	}
 
-	if rr.Role != nil {
-		*rr.Role = strings.ToLower(strings.TrimSpace(*rr.Role))
-	}
-
-	return nil
+	rr.Roles.Parse()
+	return
 }
 
 // GeneratePassword hash user password with bcrypt

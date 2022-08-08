@@ -9,6 +9,9 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
 
+var _ auth.IAuth = (*repository)(nil)
+
+// repository is the implementation of the auth repository
 type repository struct {
 	pg *pgAuth
 }

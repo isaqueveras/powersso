@@ -4,7 +4,9 @@
 
 package auth
 
-import "time"
+import (
+	"time"
+)
 
 // Register model the data to register user in the database
 type Register struct {
@@ -12,7 +14,7 @@ type Register struct {
 	LastName    *string    `sql:"last_name" json:"last_name"`
 	Email       *string    `sql:"email" json:"email"`
 	Password    *string    `sql:"password" json:"password"`
-	Role        *string    `sql:"role" json:"role"`
+	Roles       *string    `sql:"roles" json:"-"`
 	About       *string    `sql:"about" json:"about"`
 	Avatar      *string    `sql:"avatar" json:"avatar"`
 	PhoneNumber *string    `sql:"phone_number" json:"phone_number"`
