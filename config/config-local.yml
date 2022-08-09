@@ -1,3 +1,7 @@
+meta:
+  ProjectName: "PowerSSO"
+  ProjectURL: "http://localhost:3000"
+
 server:
   Version: 1.0.0
   Port: :5000
@@ -46,3 +50,34 @@ logger:
   DisableStacktrace: false
   Encoding: json
   Level: info
+
+mailer:
+  Host: localhost
+  Port: 1025
+  Email: contact@powersso.io
+  Password: password
+  TLS: false
+
+AdminAuthToken:
+  Secret: dfgfgfdgkandjkas
+  Duration: 1209600
+
+AdminPasswordResetToken:
+  Secret: akjbhfghasdfgasf
+  Duration: 1800
+
+UserAuthToken:
+  Secret: klmdjkfsnhhashdb
+  Duration: 1209600
+
+UserPasswordResetToken:
+  Secret: sidjnjdvhjbdfhdf
+  Duration: 1800
+
+UserEmailChangeToken:
+  Secret: uinjandjabsdfhjs
+  Duration: 28800
+
+UserVerificationToken:
+  Secret: lçsdfmkdsjnaldmk
+  Duration: 604800

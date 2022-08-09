@@ -17,6 +17,7 @@ CREATE TABLE users (
 	country      VARCHAR(30),
 	gender       VARCHAR(20)                 					DEFAULT '',
 	postcode     INTEGER,
+	token_key		 VARCHAR(50)               					  DEFAULT '',
 	birthday     DATE                                 DEFAULT NULL,
 	created_at   TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
 	updated_at   TIMESTAMP WITH TIME ZONE             DEFAULT CURRENT_TIMESTAMP,

@@ -14,6 +14,8 @@ import (
 
 	"github.com/domodwyer/mailyak/v3"
 	"github.com/microcosm-cc/bluemonday"
+
+	"github.com/isaqueveras/power-sso/config"
 )
 
 var _ Mailer = (*SmtpClient)(nil)
@@ -73,4 +75,15 @@ func (m *SmtpClient) Send(fromEmail mail.Address, toEmail mail.Address, subject 
 	}
 
 	return email.Send()
+}
+
+// Client returns the `SmtpClient` instance.
+func Client(cfg *config.Config) *SmtpClient {
+	return NewSmtpClient(
+		cfg.Mailer.Host,
+		cfg.Mailer.Port,
+		cfg.Mailer.Username,
+		cfg.Mailer.Password,
+		cfg.Mailer.TLS,
+	)
 }

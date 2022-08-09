@@ -5,23 +5,41 @@
 package auth
 
 import (
+	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/power-sso/pkg/mailer"
 )
 
 var _ auth.IAuth = (*repository)(nil)
 
 // repository is the implementation of the auth repository
 type repository struct {
-	pg *pgAuth
+	pg     *pgAuth
+	mailer *mailerAuth
 }
 
 // New creates a new repository
-func New(transaction *postgres.DBTransaction) auth.IAuth {
-	return &repository{pg: &pgAuth{DB: transaction}}
+func New(transaction *postgres.DBTransaction, smtpClient *mailer.SmtpClient) auth.IAuth {
+	cfg := config.Get()
+
+	return &repository{
+		pg: &pgAuth{
+			DB: transaction,
+		},
+		mailer: &mailerAuth{
+			smtpClient: smtpClient,
+			cfg:        cfg,
+		},
+	}
 }
 
 // Register contains the flow for the user register in database
 func (r *repository) Register(input *auth.Register) error {
 	return r.pg.register(input)
+}
+
+// SendMailActivationAccount contains the flow for the send activation account email
+func (r *repository) SendMailActivationAccount(email *string, token *string) error {
+	return r.mailer.SendMailActivationAccount(email, token)
 }

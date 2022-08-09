@@ -85,7 +85,8 @@ func (p *postgres) transaction(ctx context.Context, readOnly bool) (interface{},
 	}()
 
 	if tx, err = p.db.BeginTx(ctx, &sql.TxOptions{
-		ReadOnly: readOnly,
+		Isolation: sql.LevelDefault,
+		ReadOnly:  readOnly,
 	}); err != nil {
 		return nil, err
 	}

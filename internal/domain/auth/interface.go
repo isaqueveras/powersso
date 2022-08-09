@@ -7,4 +7,5 @@ package auth
 // IAuth define an interface for data layer access methods
 type IAuth interface {
 	Register(input *Register) error
+	SendMailActivationAccount(email *string, token *string) error
 }
