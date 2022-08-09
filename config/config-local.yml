@@ -1,3 +1,7 @@
+meta:
+  ProjectName: "PowerSSO"
+  ProjectURL: "http://localhost:3000"
+
 server:
   Version: 1.0.0
   Port: :5000
@@ -46,6 +50,13 @@ logger:
   DisableStacktrace: false
   Encoding: json
   Level: info
+
+mailer:
+  Host: localhost
+  Port: 1025
+  Email: contact@powersso.io
+  Password: password
+  TLS: false
 
 AdminAuthToken:
   Secret: dfgfgfdgkandjkas

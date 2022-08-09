@@ -17,7 +17,7 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	config.LoadConfig()
+	config.LoadConfig(".")
 	cfg := config.Get()
 
 	logg := logger.NewLogger(cfg)
