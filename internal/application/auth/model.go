@@ -14,11 +14,6 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/security"
 )
 
-const (
-	// timeoutToExpireActivationToken is the time to expire the activation token
-	timeoutToExpireActivationToken = time.Hour * 8
-)
-
 // RegisterRequest is the request payload for the register endpoint.
 type RegisterRequest struct {
 	FirstName   *string    `json:"first_name" binding:"required,lte=30"`

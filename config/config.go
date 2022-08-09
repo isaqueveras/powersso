@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Isaque Veras
-// Use of this source code is governed by MIT
+// Use of this source code is governed by MIT style
 // license that can be found in the LICENSE file.
 
 package config
@@ -16,7 +16,7 @@ var config *Config
 func LoadConfig(path ...string) {
 	v := viper.New()
 
-	if len(path) > 0 && path[0] == "" {
+	if path == nil {
 		path[0] = "."
 	}
 

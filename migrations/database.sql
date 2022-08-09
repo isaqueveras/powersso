@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS activate_account_tokens CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -8,7 +9,7 @@ CREATE TABLE users (
 	last_name    VARCHAR(32)                 NOT NULL CHECK ( last_name <> '' ),
 	email        VARCHAR(64) UNIQUE          NOT NULL CHECK ( email <> '' ),
 	password     VARCHAR(250)                NOT NULL CHECK ( octet_length(password) <> 0 ),
-	roles        VARCHAR[]                 	 NOT NULL,
+	roles        VARCHAR[]                 	 NOT NULL DEFAULT '{}',
 	about        VARCHAR(1024)                        DEFAULT '',
 	avatar       VARCHAR(512),
 	phone_number VARCHAR(20),
@@ -25,3 +26,12 @@ CREATE TABLE users (
 );
 
 CREATE INDEX users_email_idx ON public.users (email);
+
+CREATE TABLE activate_account_tokens (
+	id			     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id			 UUID NOT NULL REFERENCES users (id),
+	used 				 BOOLEAN NOT NULL DEFAULT FALSE,
+	expires_at	 TIMESTAMP WITH TIME ZONE NOT NULL,
+	created_at	 TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at	 TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
