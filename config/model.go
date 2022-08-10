@@ -22,20 +22,12 @@ const (
 
 // App config struct
 type Config struct {
-	Meta MetaConfig
-
+	Meta     MetaConfig
 	Server   ServerConfig
 	Postgres PGConfig
 	Redis    RedisConfig
 	Logger   Logger
 	Mailer   MailerConfig
-
-	AdminAuthToken          TokenConfig
-	AdminPasswordResetToken TokenConfig
-	UserAuthToken           TokenConfig
-	UserPasswordResetToken  TokenConfig
-	UserEmailChangeToken    TokenConfig
-	UserVerificationToken   TokenConfig
 }
 
 // MetaConfig models the meta configuration
@@ -99,12 +91,6 @@ type Logger struct {
 	DisableStacktrace bool
 	Encoding          string
 	Level             string
-}
-
-// TokenConfig models the data for the tokens configuration
-type TokenConfig struct {
-	Secret   string
-	Duration int64
 }
 
 // MailerConfig models the data for the mailer configuration

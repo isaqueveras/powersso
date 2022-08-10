@@ -56,7 +56,7 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 			birthday,
 			created_at,
 			updated_at,
-			login_at`).
+			login_date`).
 		From("users").
 		Where(squirrel.Eq{
 			"id": data.ID,

@@ -36,18 +36,27 @@ func (r *Roles) Parse() {
 }
 
 // Exists check if the role exists in the roles slice
-func (r *Roles) Exists(role string) bool {
-	for _, r := range r.Array {
-		if r == role {
+func Exists(value string, roles Roles) bool {
+	if roles.Array != nil {
+		for _, r := range roles.Array {
+			if r == value {
+				return true
+			}
+		}
+	}
+
+	if roles.String != "" {
+		if strings.Contains(roles.String, value) {
 			return true
 		}
 	}
+
 	return false
 }
 
 // Remove remove the role from the roles slice
 func (r *Roles) Remove(role string) {
-	if !r.Exists(role) {
+	if !Exists(role, Roles{Array: r.Array}) {
 		return
 	}
 

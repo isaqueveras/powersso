@@ -6,6 +6,7 @@ package auth
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
@@ -39,14 +40,17 @@ func (pg *pgAuth) register(input *auth.Register) (userID *string, err error) {
 }
 
 // createAccessToken create the access token for the user
-func (pg *pgAuth) createAccessToken(userID *string) (err error) {
-	if _, err = pg.DB.Execute(`
-		INSERT INTO activate_account_tokens (user_id, expires_at) 
-		VALUES ($1, now() + interval '15 minutes')`, userID); err != nil {
-		return oops.Err(err)
+func (pg *pgAuth) createAccessToken(userID *string) (token string, err error) {
+	if err = pg.DB.Builder.
+		Insert("activate_account_tokens").
+		Columns("user_id", "expires_at").
+		Values(userID, time.Now().Add(15*time.Minute)).
+		Suffix(`RETURNING "id"`).
+		Scan(&token); err != nil {
+		return token, oops.Err(err)
 	}
 
-	return nil
+	return
 }
 
 // getActivateAccountToken get the activate account token from the database
@@ -55,18 +59,17 @@ func (pg *pgAuth) getActivateAccountToken(token *string) (res *auth.ActivateAcco
 
 	err = pg.DB.Builder.
 		Select(`
-			AAT.id,
-			AAT.token,
-			AAT.user_id,
-			AAT.used,
-			AAT.expires_at >= now() AS "valid",
-			AAT.expires_at,
-			AAT.created_at,
-			AAT.updated_at`).
-		From("activate_account_tokens AAT").
-		Where("AAT.token = ?", token).
+			id,
+			user_id,
+			used,
+			expires_at >= now() AS "valid",
+			expires_at,
+			created_at,
+			updated_at`).
+		From("activate_account_tokens").
+		Where("id = ?", token).
 		Limit(1).
-		Scan(&res.ID, &res.Token, &res.UserID, &res.Used, &res.IsValid,
+		Scan(&res.ID, &res.UserID, &res.Used, &res.IsValid,
 			&res.ExpiresAt, &res.CreatedAt, &res.UpdatedAt)
 
 	if err != nil && err != sql.ErrNoRows {

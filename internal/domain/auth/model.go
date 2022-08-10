@@ -30,7 +30,6 @@ type Register struct {
 // ActivateAccountToken model the data to activate user account
 type ActivateAccountToken struct {
 	ID        *string
-	Token     *string
 	UserID    *string
 	Used      *bool
 	IsValid   *bool

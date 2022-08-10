@@ -6,8 +6,6 @@ package user
 
 import (
 	"time"
-
-	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
 )
 
 // User is the model for user
@@ -16,7 +14,7 @@ type User struct {
 	Email       *string
 	FirstName   *string
 	LastName    *string
-	Roles       *roles.Roles
+	Roles       *string
 	About       *string
 	Avatar      *string
 	PhoneNumber *string

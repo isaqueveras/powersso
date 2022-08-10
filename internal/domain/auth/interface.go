@@ -9,5 +9,5 @@ type IAuth interface {
 	Register(input *Register) (userID *string, err error)
 	SendMailActivationAccount(email *string, token *string) error
 	GetActivateAccountToken(token *string) (*ActivateAccountToken, error)
-	CreateAccessToken(userID *string) error
+	CreateAccessToken(userID *string) (string, error)
 }

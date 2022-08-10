@@ -6,18 +6,19 @@ package auth
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
 	domainUser "github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
+	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/user"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/mailer"
 	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/tokens"
 )
 
 // Register is the business logic for the user register
@@ -66,15 +67,11 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 	}
 
 	var accessToken string
-	if accessToken, err = tokens.NewUserVerifyToken(cfg, in.Email, in.TokenKey); err != nil {
+	if accessToken, err = repo.CreateAccessToken(userID); err != nil {
 		return oops.Err(err)
 	}
 
 	if err = repo.SendMailActivationAccount(in.Email, &accessToken); err != nil {
-		return oops.Err(err)
-	}
-
-	if err = repo.CreateAccessToken(userID); err != nil {
 		return oops.Err(err)
 	}
 
@@ -104,6 +101,13 @@ func Activation(ctx context.Context, token *string) (err error) {
 		return oops.Err(err)
 	}
 
+	if *activeToken.Used || !*activeToken.IsValid {
+		return oops.Err(&oops.Error{
+			Message:    "Token is not valid",
+			StatusCode: http.StatusBadRequest,
+		})
+	}
+
 	if !*activeToken.Used && *activeToken.IsValid {
 		var user = domainUser.User{
 			ID: activeToken.UserID,
@@ -113,11 +117,15 @@ func Activation(ctx context.Context, token *string) (err error) {
 			return oops.Err(err)
 		}
 
-		if !user.Roles.Exists(roles.ReadActivationToken) {
+		if !roles.Exists(roles.ReadActivationToken, roles.Roles{String: *user.Roles}) {
 			return oops.Err(ErrNotHavePermissionActiveAccount())
 		}
 
-		// TODO: remove roles the read activation token
+		var repoRoles = infraRoles.New(transaction)
+		if err = repoRoles.RemoveRoles(user.ID, roles.ReadActivationToken); err != nil {
+			return oops.Err(err)
+		}
+
 		// TODO: add roles to create session and read session
 		// TODO: mark the token as used
 	}
