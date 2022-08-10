@@ -9,6 +9,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 
+	"github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
@@ -32,4 +33,39 @@ func (pg *pgUser) findByEmailUserExists(email *string) (exists bool, err error) 
 	}
 
 	return
+}
+
+// getUser get the user from the database
+func (pg *pgUser) getUser(data *user.User) (err error) {
+	if err = pg.DB.Builder.
+		Select(`
+			id,
+			email,
+			first_name,
+			last_name,
+			roles,
+			about,
+			avatar,
+			phone_number,
+			address,
+			city,
+			country,
+			gender,
+			postcode,
+			token_key,
+			birthday,
+			created_at,
+			updated_at,
+			login_at`).
+		From("users").
+		Where(squirrel.Eq{
+			"id": data.ID,
+		}).
+		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.Roles,
+			&data.About, &data.Avatar, &data.PhoneNumber, &data.Address, &data.City,
+			&data.Country, &data.Gender, &data.Postcode, &data.TokenKey, &data.Birthday,
+			&data.CreateAt, &data.UpdateAt, &data.LoginDate); err != nil {
+		return oops.Err(err)
+	}
+	return nil
 }

@@ -8,4 +8,5 @@ import "github.com/gin-gonic/gin"
 
 func Router(r *gin.RouterGroup) {
 	r.POST("/register", register)
+	r.POST("/activation/:token", activation)
 }

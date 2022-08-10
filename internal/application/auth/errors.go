@@ -15,3 +15,8 @@ import (
 func ErrUserExists() *oops.Error {
 	return oops.NewError(i18n.Value("errors.handling.err_user_exists"), http.StatusBadRequest)
 }
+
+// ErrNotHavePermissionActiveAccount creates and returns an error when the user does not have permission to active the account
+func ErrNotHavePermissionActiveAccount() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_not_have_permission_active_account"), http.StatusBadRequest)
+}

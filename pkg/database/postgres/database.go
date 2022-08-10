@@ -73,3 +73,13 @@ func (t *DBTransaction) Commit() (erro error) {
 func (t *DBTransaction) Rollback() {
 	_ = t.postgres.Rollback()
 }
+
+// Query executes a query that returns rows, typically a SELECT.
+func (t *DBTransaction) Query(query string, args ...any) (*sql.Rows, error) {
+	return t.postgres.Query(query, args...)
+}
+
+// Execute executes a query that doesn't return rows, typically an INSERT/UPDATE/DELETE.
+func (t *DBTransaction) Execute(query string, args ...any) (sql.Result, error) {
+	return t.postgres.Exec(query, args...)
+}

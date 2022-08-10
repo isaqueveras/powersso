@@ -26,3 +26,15 @@ type Register struct {
 	Birthday    *time.Time `sql:"birthday" json:"birthday"`
 	TokenKey    *string    `sql:"token_key" json:"token_key"`
 }
+
+// ActivateAccountToken model the data to activate user account
+type ActivateAccountToken struct {
+	ID        *string
+	Token     *string
+	UserID    *string
+	Used      *bool
+	IsValid   *bool
+	ExpiresAt *time.Time
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+}

@@ -19,7 +19,7 @@ type mailerAuth struct {
 }
 
 // SendMailActivationAccount send the activation account email
-func (ma *mailerAuth) SendMailActivationAccount(email *string, token *string) error {
+func (ma *mailerAuth) sendMailActivationAccount(email *string, token *string) error {
 	return ma.smtpClient.Send(
 		mail.Address{Name: ma.cfg.Mailer.Username, Address: ma.cfg.Mailer.Email},
 		mail.Address{Address: *email},

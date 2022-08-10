@@ -6,5 +6,6 @@ package user
 
 // IUser define an interface for data layer access methods
 type IUser interface {
+	GetUser(data *User) error
 	FindByEmailUserExists(email *string) (exists bool, err error)
 }

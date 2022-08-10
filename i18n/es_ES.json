@@ -27,7 +27,8 @@
 				"22P02": "Los datos especificados no representan un tipo válido",
 				"25006": "No se puede realizar una inserción o actualización usando la base de datos de lectura"
 			},
-			"err_user_exists": "Ya hay un usuario con este correo electrónico"
+			"err_user_exists": "Ya hay un usuario con este correo electrónico",
+			"err_not_have_permission_active_account":"No tienes permiso para activar la cuenta"
 		}
 	}
 }

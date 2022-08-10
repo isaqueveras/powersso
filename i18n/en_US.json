@@ -27,7 +27,8 @@
 				"22P02": "The specified data does not represent a valid type",
 				"25006": "Unable to perform an insert or update using the read database"
 			},
-			"err_user_exists": "There is already a user with this email"
+			"err_user_exists": "There is already a user with this email",
+			"err_not_have_permission_active_account": "You do not have permission to activate the account"
 		}
 	}
 }

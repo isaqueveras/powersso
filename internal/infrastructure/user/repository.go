@@ -25,3 +25,8 @@ func New(transaction *postgres.DBTransaction) user.IUser {
 func (r *repository) FindByEmailUserExists(email *string) (bool, error) {
 	return r.pg.findByEmailUserExists(email)
 }
+
+// GetUser contains the flow for the get user
+func (r *repository) GetUser(data *user.User) error {
+	return r.pg.getUser(data)
+}

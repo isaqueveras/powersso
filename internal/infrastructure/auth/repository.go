@@ -35,11 +35,21 @@ func New(transaction *postgres.DBTransaction, smtpClient *mailer.SmtpClient) aut
 }
 
 // Register contains the flow for the user register in database
-func (r *repository) Register(input *auth.Register) error {
+func (r *repository) Register(input *auth.Register) (userID *string, err error) {
 	return r.pg.register(input)
 }
 
 // SendMailActivationAccount contains the flow for the send activation account email
 func (r *repository) SendMailActivationAccount(email *string, token *string) error {
-	return r.mailer.SendMailActivationAccount(email, token)
+	return r.mailer.sendMailActivationAccount(email, token)
+}
+
+// GetActivateAccountToken contains the flow for the get activate account token
+func (r *repository) GetActivateAccountToken(token *string) (*auth.ActivateAccountToken, error) {
+	return r.pg.getActivateAccountToken(token)
+}
+
+// CreateAccessToken contains the flow for the create access token
+func (r *repository) CreateAccessToken(userID *string) error {
+	return r.pg.createAccessToken(userID)
 }

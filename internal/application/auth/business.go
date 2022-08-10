@@ -10,6 +10,7 @@ import (
 	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
+	domainUser "github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/user"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
@@ -41,6 +42,7 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 
 	var (
 		exists   bool
+		userID   *string
 		data     *domain.Register
 		repo     = auth.New(transaction, mailer.Client(cfg))
 		repoUser = user.New(transaction)
@@ -59,7 +61,7 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 	}
 
 	data.Roles = &in.Roles.String
-	if err = repo.Register(data); err != nil {
+	if userID, err = repo.Register(data); err != nil {
 		return oops.Err(err)
 	}
 
@@ -72,7 +74,54 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		return oops.Err(err)
 	}
 
+	if err = repo.CreateAccessToken(userID); err != nil {
+		return oops.Err(err)
+	}
+
 	in.SanitizePassword()
+	if err = transaction.Commit(); err != nil {
+		return oops.Err(err)
+	}
+
+	return nil
+}
+
+// Activation is the business logic for the user activation
+func Activation(ctx context.Context, token *string) (err error) {
+	transaction, err := postgres.NewTransaction(ctx, false)
+	if err != nil {
+		return oops.Err(err)
+	}
+	defer transaction.Rollback()
+
+	var (
+		repo        = auth.New(transaction, nil)
+		repoUser    = user.New(transaction)
+		activeToken *domain.ActivateAccountToken
+	)
+
+	if activeToken, err = repo.GetActivateAccountToken(token); err != nil {
+		return oops.Err(err)
+	}
+
+	if !*activeToken.Used && *activeToken.IsValid {
+		var user = domainUser.User{
+			ID: activeToken.UserID,
+		}
+
+		if err = repoUser.GetUser(&user); err != nil {
+			return oops.Err(err)
+		}
+
+		if !user.Roles.Exists(roles.ReadActivationToken) {
+			return oops.Err(ErrNotHavePermissionActiveAccount())
+		}
+
+		// TODO: remove roles the read activation token
+		// TODO: add roles to create session and read session
+		// TODO: mark the token as used
+	}
+
 	if err = transaction.Commit(); err != nil {
 		return oops.Err(err)
 	}

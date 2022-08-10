@@ -27,5 +27,16 @@ func register(ctx *gin.Context) {
 		return
 	}
 
+	ctx.JSON(201, nil)
+}
+
+func activation(ctx *gin.Context) {
+	token := ctx.Param("token")
+
+	if err := auth.Activation(ctx, &token); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
 	ctx.JSON(201, gin.H{})
 }
