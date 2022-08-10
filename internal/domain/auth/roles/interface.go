@@ -6,5 +6,6 @@ package roles
 
 // IRoles define an interface for data layer access methods
 type IRoles interface {
+	AddRoles(userID *string, roles string) error
 	RemoveRoles(userID *string, roles string) error
 }

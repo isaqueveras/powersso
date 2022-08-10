@@ -126,7 +126,14 @@ func Activation(ctx context.Context, token *string) (err error) {
 			return oops.Err(err)
 		}
 
-		// TODO: add roles to create session and read session
+		rolesSession := roles.MakeEmptyRoles()
+		rolesSession.Add(roles.ReadSession, roles.CreateSession)
+		rolesSession.ParseString()
+
+		if err = repoRoles.AddRoles(user.ID, rolesSession.Strings()); err != nil {
+			return oops.Err(err)
+		}
+
 		// TODO: mark the token as used
 	}
 

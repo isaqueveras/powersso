@@ -25,3 +25,8 @@ func New(transaction *postgres.DBTransaction) roles.IRoles {
 func (r *repository) RemoveRoles(userID *string, roles string) error {
 	return r.pg.removeRoles(userID, roles)
 }
+
+// AddRoles contains the flow for the add roles
+func (r *repository) AddRoles(userID *string, roles string) error {
+	return r.pg.addRoles(userID, roles)
+}

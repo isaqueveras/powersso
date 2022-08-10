@@ -18,6 +18,10 @@ const (
 
 	// ReadActivationToken is the read activation token role
 	ReadActivationToken string = "read:activation_token"
+
+	// CreateSession is the permission to create a session
+	CreateSession string = "create:session"
+	ReadSession   string = "read:session"
 )
 
 // Roles type for user roles
@@ -26,9 +30,19 @@ type Roles struct {
 	String string
 }
 
+// MakeEmptyRoles make an empty roles slice
+func MakeEmptyRoles() *Roles {
+	return &Roles{}
+}
+
+// Strings return the roles slice as a string
+func (r *Roles) Strings() string {
+	return r.String
+}
+
 // Parse parse the roles string to a slice of strings
 func (r *Roles) Parse() {
-	r.parseString()
+	r.ParseString()
 
 	if r.Array == nil {
 		r.Array = strings.Split(r.String, ",")
@@ -73,16 +87,17 @@ func (r *Roles) Remove(role string) {
 
 	r.Array = nil
 	r.Array = _temp
-	r.parseString()
+	r.ParseString()
 }
 
 // Add add the role to the roles slice
 func (r *Roles) Add(role ...string) {
 	r.Array = append(r.Array, role...)
-	r.parseString()
+	r.ParseString()
 }
 
-func (r *Roles) parseString() {
+// ParseString parse the roles slice to a string
+func (r *Roles) ParseString() {
 	var _temp string
 	for i := range r.Array {
 		_temp += r.Array[i] + ","
