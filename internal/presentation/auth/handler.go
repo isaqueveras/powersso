@@ -17,7 +17,7 @@ func register(ctx *gin.Context) {
 		err   error
 	)
 
-	if err = ctx.BindJSON(&input); err != nil {
+	if err = ctx.ShouldBindJSON(&input); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
