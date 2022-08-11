@@ -78,3 +78,16 @@ func (pg *pgAuth) getActivateAccountToken(token *string) (res *auth.ActivateAcco
 
 	return
 }
+
+// markTokenAsUsed mark the token as used in the database
+func (pg *pgAuth) markTokenAsUsed(token *string) (err error) {
+	if _, err = pg.DB.Builder.
+		Update("activate_account_tokens").
+		Set("used", true).
+		Where("id = ?", token).
+		Exec(); err != nil {
+		return oops.Err(err)
+	}
+
+	return
+}

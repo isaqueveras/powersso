@@ -20,3 +20,8 @@ func ErrUserExists() *oops.Error {
 func ErrNotHavePermissionActiveAccount() *oops.Error {
 	return oops.NewError(i18n.Value("errors.handling.err_not_have_permission_active_account"), http.StatusBadRequest)
 }
+
+// ErrTokenIsNotValid creates and returns an error when the token is not valid
+func ErrTokenIsNotValid() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_token_is_not_valid"), http.StatusBadRequest)
+}

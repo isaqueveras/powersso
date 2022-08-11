@@ -53,3 +53,8 @@ func (r *repository) GetActivateAccountToken(token *string) (*auth.ActivateAccou
 func (r *repository) CreateAccessToken(userID *string) (string, error) {
 	return r.pg.createAccessToken(userID)
 }
+
+// MarkTokenAsUsed contains the flow for the mark token as used
+func (r *repository) MarkTokenAsUsed(token *string) error {
+	return r.pg.markTokenAsUsed(token)
+}

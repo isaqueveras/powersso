@@ -6,7 +6,6 @@ package auth
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
@@ -102,10 +101,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 	}
 
 	if *activeToken.Used || !*activeToken.IsValid {
-		return oops.Err(&oops.Error{
-			Message:    "Token is not valid",
-			StatusCode: http.StatusBadRequest,
-		})
+		return oops.Err(ErrTokenIsNotValid())
 	}
 
 	if !*activeToken.Used && *activeToken.IsValid {
@@ -134,7 +130,9 @@ func Activation(ctx context.Context, token *string) (err error) {
 			return oops.Err(err)
 		}
 
-		// TODO: mark the token as used
+		if err = repo.MarkTokenAsUsed(activeToken.ID); err != nil {
+			return oops.Err(err)
+		}
 	}
 
 	if err = transaction.Commit(); err != nil {

@@ -10,4 +10,5 @@ type IAuth interface {
 	SendMailActivationAccount(email *string, token *string) error
 	GetActivateAccountToken(token *string) (*ActivateAccountToken, error)
 	CreateAccessToken(userID *string) (string, error)
+	MarkTokenAsUsed(token *string) error
 }
