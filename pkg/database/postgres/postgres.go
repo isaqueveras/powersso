@@ -70,7 +70,7 @@ func (p *postgres) close() {
 }
 
 // transaction opens a transaction on some already open connection
-func (p *postgres) transaction(ctx context.Context) (interface{}, error) {
+func (p *postgres) transaction(ctx context.Context, readOnly bool) (interface{}, error) {
 	var (
 		tx  *sql.Tx
 		err error
@@ -84,7 +84,10 @@ func (p *postgres) transaction(ctx context.Context) (interface{}, error) {
 		}
 	}()
 
-	if tx, err = p.db.BeginTx(ctx, nil); err != nil {
+	if tx, err = p.db.BeginTx(ctx, &sql.TxOptions{
+		Isolation: sql.LevelDefault,
+		ReadOnly:  readOnly,
+	}); err != nil {
 		return nil, err
 	}
 

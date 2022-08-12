@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Isaque Veras
-// Use of this source code is governed by MIT
+// Use of this source code is governed by MIT style
 // license that can be found in the LICENSE file.
 
 package config
@@ -22,10 +22,18 @@ const (
 
 // App config struct
 type Config struct {
+	Meta     MetaConfig
 	Server   ServerConfig
 	Postgres PGConfig
 	Redis    RedisConfig
 	Logger   Logger
+	Mailer   MailerConfig
+}
+
+// MetaConfig models the meta configuration
+type MetaConfig struct {
+	ProjectName string
+	ProjectURL  string
 }
 
 // ServerConfig models a server's configuration data
@@ -83,4 +91,14 @@ type Logger struct {
 	DisableStacktrace bool
 	Encoding          string
 	Level             string
+}
+
+// MailerConfig models the data for the mailer configuration
+type MailerConfig struct {
+	Host     string
+	Port     int
+	Email    string
+	Username string
+	Password string
+	TLS      bool
 }

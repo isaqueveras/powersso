@@ -14,7 +14,7 @@ import (
 
 type database interface {
 	// transaction uses a transaction from a connection already opened in the database
-	transaction(ctx context.Context) (interface{}, error)
+	transaction(ctx context.Context, readOnly bool) (interface{}, error)
 	// Open open connection with database
 	open(cfg *config.Config) error
 	// Close close connection with database
@@ -48,10 +48,10 @@ func CloseConnections() {
 }
 
 // NewTransaction uses a transaction from a connection already opened in the database
-func NewTransaction(ctx context.Context) (*DBTransaction, error) {
+func NewTransaction(ctx context.Context, readOnly bool) (*DBTransaction, error) {
 	tx := &DBTransaction{}
 
-	pgsql, err := connection.transaction(ctx)
+	pgsql, err := connection.transaction(ctx, readOnly)
 	if err != nil {
 		return nil, err
 	}
@@ -72,4 +72,14 @@ func (t *DBTransaction) Commit() (erro error) {
 // Rollback close all pending transaction for all open databases
 func (t *DBTransaction) Rollback() {
 	_ = t.postgres.Rollback()
+}
+
+// Query executes a query that returns rows, typically a SELECT.
+func (t *DBTransaction) Query(query string, args ...any) (*sql.Rows, error) {
+	return t.postgres.Query(query, args...)
+}
+
+// Execute executes a query that doesn't return rows, typically an INSERT/UPDATE/DELETE.
+func (t *DBTransaction) Execute(query string, args ...any) (sql.Result, error) {
+	return t.postgres.Exec(query, args...)
 }

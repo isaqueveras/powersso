@@ -17,20 +17,13 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	cfgFile, err := config.LoadConfig()
-	if err != nil {
-		log.Fatal("Error loading configuration file: ", err)
-	}
-
-	var cfg *config.Config
-	if cfg, err = config.ParseConfig(cfgFile); err != nil {
-		log.Fatal("Error parsing configuration file: ", err)
-	}
+	config.LoadConfig(".")
+	cfg := config.Get()
 
 	logg := logger.NewLogger(cfg)
 	logg.InitLogger()
 
-	if err = postgres.OpenConnections(cfg); err != nil {
+	if err := postgres.OpenConnections(cfg); err != nil {
 		logg.Fatal("Unable to open connections to database: ", err)
 	}
 	defer postgres.CloseConnections()
@@ -38,7 +31,7 @@ func main() {
 	var redisClient = redis.NewRedisClient(cfg)
 	defer redisClient.Close()
 
-	if server.NewServer(cfg, logg).Run(); err != nil {
+	if err := server.NewServer(cfg, logg).Run(); err != nil {
 		logg.Fatal("Error while serving the application: ", err)
 	}
 }

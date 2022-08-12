@@ -95,6 +95,8 @@ func handlePgxError(err *pgx.PgError) (string, int) {
 		return i18n.Value("errors.handling.pgx.55P03"), pgxCode + 8
 	case "22P02":
 		return i18n.Value("errors.handling.pgx.22P02"), pgxCode + 9
+	case "25006":
+		return i18n.Value("errors.handling.pgx.25006"), pgxCode + 10
 	}
 
 	return i18n.Value("errors.handling.pgx.default"), pgxCode

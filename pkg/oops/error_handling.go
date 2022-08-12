@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Isaque Veras
-// Use of this source code is governed by MIT
+// Use of this source code is governed by MIT style
 // license that can be found in the LICENSE file.
 
 package oops
@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	pgxCode        int = 1000
+	defaultCode    int = 1000
 	jsonCode       int = 2000
 	internalCode   int = 3000
-	defaultCode    int = 4000
+	pgxCode        int = 4000
 	timeParseError int = 5000
 )
 
@@ -34,8 +34,6 @@ func NewError(message string, statusCode int) *Error {
 	return &Error{
 		Code:       defaultCode,
 		Message:    message,
-		Trace:      []string{},
-		Err:        nil,
 		StatusCode: statusCode,
 	}
 }
@@ -60,11 +58,11 @@ func NotFoundError(message string) *Error {
 }
 
 // Handling handles an error by setting a message and a response status code
-func Handling(err error, ctx *gin.Context) {
+func Handling(ctx *gin.Context, err error) {
 	var e *Error
 
 	if !errors.As(err, &e) {
-		Handling(Err(err), ctx)
+		Handling(ctx, Err(err))
 		return
 	}
 

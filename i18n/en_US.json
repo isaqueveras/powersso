@@ -24,8 +24,12 @@
 				"22001": "Data exceeds logging capacity in the database",
 				"42702": "Ambiguous reference: Syntax error",
 				"55P03": "Required data is isolated and cannot be accessed",
-				"22P02": "The specified data does not represent a valid type"
-			}
+				"22P02": "The specified data does not represent a valid type",
+				"25006": "Unable to perform an insert or update using the read database"
+			},
+			"err_user_exists": "There is already a user with this email",
+			"err_not_have_permission_active_account": "You do not have permission to activate the account",
+			"err_token_is_not_valid": "Token is not valid or expired"
 		}
 	}
 }
