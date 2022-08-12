@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS activate_account_tokens CASCADE;
-DROP TABLE IF EXISTS "sessions" CASCADE;
+-- Copyright (c) 2022 Isaque Veras
+-- Use of this source code is governed by MIT style
+-- license that can be found in the LICENSE file.
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -24,24 +24,4 @@ CREATE TABLE users (
 	created_at   TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
 	updated_at   TIMESTAMP WITH TIME ZONE             DEFAULT CURRENT_TIMESTAMP,
 	login_date   TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX users_email_idx ON public.users (email);
-
-CREATE TABLE activate_account_tokens (
-	id			     UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	user_id			 UUID NOT NULL REFERENCES users (id),
-	used 				 BOOLEAN NOT NULL DEFAULT FALSE,
-	expires_at	 TIMESTAMP WITH TIME ZONE NOT NULL,
-	created_at	 TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at	 TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE "sessions" (
-	id						UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	token 				VARCHAR NOT NULL,
-	user_id				UUID NOT NULL REFERENCES users (id),
-	expires_at		TIMESTAMP WITH TIME ZONE NOT NULL,
-	created_at		TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at		TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
