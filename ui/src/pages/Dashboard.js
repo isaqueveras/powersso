@@ -2,9 +2,11 @@ import Sidebar from "../components/Sidebar";
 
 export function Dashboard() {
   return (
-    <div className="flex flex-row">
-      <Sidebar />
-      <span>Hello!</span>
+    <div className="flex flex-row dark:bg-black/95 w-screen">
+      <div className="w-64">
+        <Sidebar />
+      </div>
+      <span className="p-5 text-white">Dashboard</span>
     </div>
   )
 }
