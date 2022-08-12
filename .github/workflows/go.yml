@@ -20,6 +20,3 @@ jobs:
 
     - name: Build
       run: cd cmd && go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
