@@ -6,7 +6,13 @@ export function Dashboard() {
       <div className="w-64">
         <Sidebar />
       </div>
-      <span className="p-5 text-white">Dashboard</span>
+      <div className="w-full">
+        <div className="border-b border-gray-200 dark:border-black/30 h-16">
+          <div className="h-16 px-4 flex flex-row justify-between items-center">
+            <h1 className="text-2xl text-gray-900 font-medium dark:text-white">Home</h1>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
