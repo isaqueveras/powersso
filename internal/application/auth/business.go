@@ -104,35 +104,33 @@ func Activation(ctx context.Context, token *string) (err error) {
 		return oops.Err(ErrTokenIsNotValid())
 	}
 
-	if !*activeToken.Used && *activeToken.IsValid {
-		var user = domainUser.User{
-			ID: activeToken.UserID,
-		}
+	var user = domainUser.User{
+		ID: activeToken.UserID,
+	}
 
-		if err = repoUser.GetUser(&user); err != nil {
-			return oops.Err(err)
-		}
+	if err = repoUser.GetUser(&user); err != nil {
+		return oops.Err(err)
+	}
 
-		if !roles.Exists(roles.ReadActivationToken, roles.Roles{String: *user.Roles}) {
-			return oops.Err(ErrNotHavePermissionActiveAccount())
-		}
+	if !roles.Exists(roles.ReadActivationToken, roles.Roles{String: *user.Roles}) {
+		return oops.Err(ErrNotHavePermissionActiveAccount())
+	}
 
-		var repoRoles = infraRoles.New(transaction)
-		if err = repoRoles.RemoveRoles(user.ID, roles.ReadActivationToken); err != nil {
-			return oops.Err(err)
-		}
+	var repoRoles = infraRoles.New(transaction)
+	if err = repoRoles.RemoveRoles(user.ID, roles.ReadActivationToken); err != nil {
+		return oops.Err(err)
+	}
 
-		rolesSession := roles.MakeEmptyRoles()
-		rolesSession.Add(roles.ReadSession, roles.CreateSession)
-		rolesSession.ParseString()
+	rolesSession := roles.MakeEmptyRoles()
+	rolesSession.Add(roles.ReadSession, roles.CreateSession)
+	rolesSession.ParseString()
 
-		if err = repoRoles.AddRoles(user.ID, rolesSession.Strings()); err != nil {
-			return oops.Err(err)
-		}
+	if err = repoRoles.AddRoles(user.ID, rolesSession.Strings()); err != nil {
+		return oops.Err(err)
+	}
 
-		if err = repo.MarkTokenAsUsed(activeToken.ID); err != nil {
-			return oops.Err(err)
-		}
+	if err = repo.MarkTokenAsUsed(activeToken.ID); err != nil {
+		return oops.Err(err)
 	}
 
 	if err = transaction.Commit(); err != nil {
