@@ -25,7 +25,7 @@ type User struct {
 	Postcode    *int
 	TokenKey    *string
 	Birthday    *time.Time
-	CreateAt    *time.Time
-	UpdateAt    *time.Time
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
 	LoginDate   *time.Time
 }

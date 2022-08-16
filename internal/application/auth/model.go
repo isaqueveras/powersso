@@ -82,3 +82,22 @@ func (rr *RegisterRequest) RefreshTokenKey() {
 	rr.TokenKey = new(string)
 	*rr.TokenKey = security.RandomString(50)
 }
+
+// LoginRequest is the request payload for the login endpoint.
+type LoginRequest struct {
+	Email    *string `json:"email" binding:"required,lte=60,email"`
+	Password *string `json:"password" binding:"required,gte=6"`
+}
+
+// ComparePasswords compare user password and payload
+func (lr *LoginRequest) ComparePasswords(passw *string) (err error) {
+	if err = bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*lr.Password)); err != nil {
+		return ErrEmailOrPasswordIsNotValid()
+	}
+	return
+}
+
+// SanitizePassword sanitize user password
+func (rr *LoginRequest) SanitizePassword() {
+	rr.Password = nil
+}

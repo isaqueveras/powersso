@@ -37,6 +37,13 @@ func (pg *pgUser) findByEmailUserExists(email *string) (exists bool, err error) 
 
 // getUser get the user from the database
 func (pg *pgUser) getUser(data *user.User) (err error) {
+	var where squirrel.Eq
+	if data.ID != nil {
+		where = squirrel.Eq{"id": data.ID}
+	} else if data.Email != nil {
+		where = squirrel.Eq{"email": data.Email}
+	}
+
 	if err = pg.DB.Builder.
 		Select(`
 			id,
@@ -58,13 +65,11 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 			updated_at,
 			login_date`).
 		From("users").
-		Where(squirrel.Eq{
-			"id": data.ID,
-		}).
+		Where(where).
 		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.Roles,
 			&data.About, &data.Avatar, &data.PhoneNumber, &data.Address, &data.City,
 			&data.Country, &data.Gender, &data.Postcode, &data.TokenKey, &data.Birthday,
-			&data.CreateAt, &data.UpdateAt, &data.LoginDate); err != nil {
+			&data.CreatedAt, &data.UpdatedAt, &data.LoginDate); err != nil {
 		return oops.Err(err)
 	}
 	return nil

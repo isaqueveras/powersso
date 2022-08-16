@@ -92,3 +92,17 @@ func (pg *pgAuth) markTokenAsUsed(token *string) (err error) {
 
 	return
 }
+
+// login get the user password from the database
+func (pg *pgAuth) login(email *string) (password *string, err error) {
+	if err = pg.DB.Builder.
+		Select("password").
+		From("users").
+		Where("email = ?", email).
+		Limit(1).
+		Scan(&password); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	return
+}
