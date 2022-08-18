@@ -6,5 +6,5 @@ package session
 
 // ISession define an interface for data layer access methods
 type ISession interface {
-	Create(s *Session) error
+	Create(userID *string) (*string, error)
 }

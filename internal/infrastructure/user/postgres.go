@@ -46,30 +46,34 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 
 	if err = pg.DB.Builder.
 		Select(`
-			id,
-			email,
-			first_name,
-			last_name,
-			roles,
-			about,
-			avatar,
-			phone_number,
-			address,
-			city,
-			country,
-			gender,
-			postcode,
-			token_key,
-			birthday,
-			created_at,
-			updated_at,
-			login_date`).
-		From("users").
+			U.id,
+			U.email,
+			U.first_name,
+			U.last_name,
+			U.roles,
+			U.about,
+			U.avatar,
+			U.phone_number,
+			U.address,
+			U.city,
+			U.country,
+			U.gender,
+			U.postcode,
+			U.token_key,
+			U.birthday,
+			U.created_at,
+			U.updated_at,
+			U.number_failed_attempts,
+			U.login_date,
+			AAT.id AS activation_token`).
+		From("users U").
+		LeftJoin("activate_account_tokens AAT ON AAT.user_id = U.id").
 		Where(where).
 		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.Roles,
 			&data.About, &data.Avatar, &data.PhoneNumber, &data.Address, &data.City,
 			&data.Country, &data.Gender, &data.Postcode, &data.TokenKey, &data.Birthday,
-			&data.CreatedAt, &data.UpdatedAt, &data.LoginDate); err != nil {
+			&data.CreatedAt, &data.UpdatedAt, &data.NumberFailedAttempts, &data.LoginDate,
+			&data.ActivationToken); err != nil {
 		return oops.Err(err)
 	}
 	return nil

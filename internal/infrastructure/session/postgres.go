@@ -5,10 +5,9 @@
 package session
 
 import (
-	"github.com/isaqueveras/power-sso/internal/domain/session"
+	"github.com/Masterminds/squirrel"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/pkg/query"
 )
 
 // pgSession is the implementation
@@ -18,19 +17,14 @@ type pgSession struct {
 }
 
 // create add session of the user in database
-func (pg *pgSession) create(in *session.Session) (err error) {
-	_cols, _vals, err := query.FormatValuesInUp(in)
-	if err != nil {
-		return oops.Err(err)
-	}
-
+func (pg *pgSession) create(userID *string) (sessionID *string, err error) {
 	if err = pg.DB.Builder.
 		Insert("sessions").
-		Columns(_cols...).
-		Values(_vals...).
+		Columns("user_id", "expires_at").
+		Values(userID, squirrel.Expr("NOW() + '15 minutes'")).
 		Suffix(`RETURNING "id"`).
-		Scan(new(string)); err != nil {
-		return oops.Err(err)
+		Scan(&sessionID); err != nil {
+		return nil, oops.Err(err)
 	}
 
 	return

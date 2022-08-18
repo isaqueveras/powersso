@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/isaqueveras/power-sso/internal/application/auth"
-	"github.com/isaqueveras/power-sso/internal/application/session"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
@@ -47,7 +46,7 @@ func activation(ctx *gin.Context) {
 func login(ctx *gin.Context) {
 	var (
 		input  auth.LoginRequest
-		output *session.SessionOut
+		output *auth.SessionOut
 		err    error
 	)
 

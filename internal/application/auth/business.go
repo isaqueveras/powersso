@@ -6,16 +6,11 @@ package auth
 
 import (
 	"context"
-	"time"
+	"net/http"
 
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 	"github.com/isaqueveras/power-sso/config"
-	appSession "github.com/isaqueveras/power-sso/internal/application/session"
-	appUser "github.com/isaqueveras/power-sso/internal/application/user"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
-	domainSession "github.com/isaqueveras/power-sso/internal/domain/session"
 	domainUser "github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
 	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
@@ -25,7 +20,7 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/mailer"
 	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/pkg/security"
+	"github.com/isaqueveras/power-sso/tokens"
 )
 
 // Register is the business logic for the user register
@@ -149,7 +144,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 }
 
 // Login is the business logic for the user login
-func Login(ctx context.Context, in *LoginRequest) (*appSession.SessionOut, error) {
+func Login(ctx context.Context, in *LoginRequest) (*SessionOut, error) {
 	var (
 		transaction *postgres.DBTransaction
 		err         error
@@ -161,52 +156,50 @@ func Login(ctx context.Context, in *LoginRequest) (*appSession.SessionOut, error
 	defer transaction.Rollback()
 
 	var (
+		cfg         = config.Get()
 		repo        = auth.New(transaction, nil)
 		repoUser    = infraUser.New(transaction)
 		repoSession = infraSession.New(transaction)
 		user        = &domainUser.User{Email: in.Email}
-		cfg         = config.Get()
+		activation  *domain.ActivateAccountToken
 
-		isAdmin            bool = false
-		passw              *string
-		timeExpiresSession = time.Now().Add(time.Hour * 24)
-		tokenSession       = uuid.NewString()
-
-		// REFACTOR: create function to generate token
-		// TODO: add time expires to token in config file
-		token, _ = security.NewToken(jwt.MapClaims{
-			"user_id": user.ID,
-			"email":   user.Email,
-			"exp":     timeExpiresSession.Unix(),
-		}, cfg.Server.JwtSecretKey, timeExpiresSession.Unix())
+		isAdmin          bool = false
+		token            string
+		passw, sessionID *string
 	)
 
 	if passw, err = repo.Login(in.Email); err != nil {
-		return nil, oops.Err(ErrEmailOrPasswordIsNotValid())
-	}
-
-	if err = in.ComparePasswords(passw); err != nil {
-		return nil, oops.Err(err)
+		return nil, oops.Err(ErrUserNotExists())
 	}
 
 	if err = repoUser.GetUser(user); err != nil {
 		return nil, oops.Err(err)
 	}
 
-	if !roles.Exists(roles.CreateSession, roles.Roles{String: *user.Roles}) {
-		return nil, oops.Err(ErrNotHavePermissionLogin())
+	if activation, err = repo.GetActivateAccountToken(user.ActivationToken); err != nil {
+		return nil, oops.Err(err)
 	}
 
-	if err = repoSession.Create(&domainSession.Session{
-		UserID:    user.ID,
-		Token:     &tokenSession,
-		ExpiresAt: &timeExpiresSession,
-	}); err != nil {
+	// TODO: validate if the user is active
+	// REFACTOR: validate token if the is active
+	if !*activation.IsValid || !*activation.Used {
+		return nil, oops.NewError("user is not valid", http.StatusBadRequest)
+	}
+
+	if err = in.ComparePasswords(passw, user.TokenKey); err != nil {
 		return nil, oops.Err(err)
 	}
 
 	in.SanitizePassword()
-	if err = transaction.Commit(); err != nil {
+	if !roles.Exists(roles.CreateSession, roles.Roles{String: *user.Roles}) {
+		return nil, oops.Err(ErrNotHavePermissionLogin())
+	}
+
+	if sessionID, err = repoSession.Create(user.ID); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	if token, err = tokens.NewUserAuthToken(cfg, user.ID, user.TokenKey); err != nil {
 		return nil, oops.Err(err)
 	}
 
@@ -218,20 +211,24 @@ func Login(ctx context.Context, in *LoginRequest) (*appSession.SessionOut, error
 	userRoles.String = *user.Roles
 	userRoles.ParseArray()
 
-	return &appSession.SessionOut{
+	if err = transaction.Commit(); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	return &SessionOut{
+		SessionID: sessionID,
 		IsAdmin:   &isAdmin,
-		SessionID: &tokenSession,
-		User: &appUser.User{
-			ID:        user.ID,
-			Email:     user.Email,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Roles:     userRoles.Arrays(),
-			Avatar:    user.Avatar,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
+		User: &userSessionOut{
+			ID:          user.ID,
+			Email:       user.Email,
+			FirstName:   user.FirstName,
+			LastName:    user.LastName,
+			Roles:       userRoles.Arrays(),
+			About:       user.About,
+			Avatar:      user.Avatar,
+			PhoneNumber: user.PhoneNumber,
+			CreatedAt:   user.CreatedAt,
 		},
-		Token:     &token,
-		ExpiresAt: &timeExpiresSession,
+		Token: &token,
 	}, nil
 }

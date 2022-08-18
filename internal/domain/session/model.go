@@ -9,9 +9,8 @@ import "time"
 // Session define a session model
 type Session struct {
 	ID        *string    `sql:"id"`
-	Token     *string    `sql:"token"`
 	UserID    *string    `sql:"user_id"`
 	ExpiresAt *time.Time `sql:"expires_at"`
 	CreatedAt *time.Time `sql:"create_at"`
-	UpdatedAt *time.Time `sql:"updated_at"`
+	DeletedAt *time.Time `sql:"deleted_at"`
 }

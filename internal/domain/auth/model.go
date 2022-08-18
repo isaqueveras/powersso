@@ -8,6 +8,13 @@ import (
 	"time"
 )
 
+const (
+	// CostHashPasswordProduction is the cost of hashing password in production
+	CostHashPasswordProduction int = 14
+	// CostHashPasswordDevelopment is the cost of hashing the password in development mode
+	CostHashPasswordDevelopment int = 1
+)
+
 // Register model the data to register user in the database
 type Register struct {
 	FirstName   *string    `sql:"first_name" json:"first_name"`
