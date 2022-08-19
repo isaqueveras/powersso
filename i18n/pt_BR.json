@@ -32,7 +32,8 @@
 			"err_token_is_not_valid": "O token não é válido ou expirou",
 			"err_not_have_permission_login": "Você não tem permissão para fazer login",
 			"err_user_not_exists": "Usuário não encontrado",
-			"err_email_or_password_is_not_valid": "E-mail ou senha inválidos"
+			"err_email_or_password_is_not_valid": "E-mail ou senha inválidos",
+			"err_user_blocked_temporarily": "Usuário bloqueado temporariamente"
 		}
 	}
 }

@@ -63,17 +63,15 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 			U.birthday,
 			U.created_at,
 			U.updated_at,
-			U.number_failed_attempts,
 			U.login_date,
-			AAT.id AS activation_token`).
+			U.is_active,
+			U.number_failed_attempts >= 3 AND (U.last_failure_date + '1 hour') >= NOW() AS blocked_temporarily`).
 		From("users U").
-		LeftJoin("activate_account_tokens AAT ON AAT.user_id = U.id").
 		Where(where).
 		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.Roles,
 			&data.About, &data.Avatar, &data.PhoneNumber, &data.Address, &data.City,
 			&data.Country, &data.Gender, &data.Postcode, &data.TokenKey, &data.Birthday,
-			&data.CreatedAt, &data.UpdatedAt, &data.NumberFailedAttempts, &data.LoginDate,
-			&data.ActivationToken); err != nil {
+			&data.CreatedAt, &data.UpdatedAt, &data.LoginDate, &data.IsActive, &data.BlockedTemporarily); err != nil {
 		return oops.Err(err)
 	}
 	return nil

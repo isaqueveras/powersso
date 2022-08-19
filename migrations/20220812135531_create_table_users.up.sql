@@ -23,6 +23,7 @@ CREATE TABLE users (
 	registered_by 					UUID,
 	is_active 							BOOLEAN 										NOT NULL  DEFAULT TRUE,
 	number_failed_attempts 	INTEGER 										NOT NULL  DEFAULT 0,
+	last_failure_date 			TIMESTAMP,
 	birthday     						DATE                                 	DEFAULT NULL,
 	created_at   						TIMESTAMP WITH TIME ZONE    NOT NULL 	DEFAULT NOW(),
 	updated_at   						TIMESTAMP WITH TIME ZONE             	DEFAULT CURRENT_TIMESTAMP,

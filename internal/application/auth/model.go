@@ -36,25 +36,22 @@ type (
 		Roles       *roles.Roles `json:"-"`
 	}
 
-	// SessionOut define a session model output for presentation layer
-	SessionOut struct {
-		SessionID *string         `json:"session_id,omitempty"`
-		IsAdmin   *bool           `json:"administrator,omitempty"`
-		User      *userSessionOut `json:"user,omitempty"`
-		Token     *string         `json:"jwt_token,omitempty"`
-		ExpiresAt *time.Time      `json:"expires_at,omitempty"`
-	}
-
-	userSessionOut struct {
-		ID          *string    `json:"id,omitempty"`
-		Email       *string    `json:"email,omitempty"`
-		FirstName   *string    `json:"first_name,omitempty"`
-		LastName    *string    `json:"last_name,omitempty"`
-		About       *string    `json:"about,omitempty"`
-		Avatar      *string    `json:"avatar,omitempty"`
-		PhoneNumber *string    `json:"phone_number,omitempty"`
-		CreatedAt   *time.Time `json:"created_at,omitempty"`
-		Roles       []string   `json:"roles,omitempty"`
+	// SessionResponse define a session model output for presentation layer
+	SessionResponse struct {
+		SessionID     *string        `json:"session_id,omitempty"`
+		Administrator *bool          `json:"administrator,omitempty"`
+		UserID        *string        `json:"user_id,omitempty"`
+		Email         *string        `json:"email,omitempty"`
+		FirstName     *string        `json:"first_name,omitempty"`
+		LastName      *string        `json:"last_name,omitempty"`
+		About         *string        `json:"about,omitempty"`
+		AvatarURL     *string        `json:"avatar_url,omitempty"`
+		PhoneNumber   *string        `json:"phone_number,omitempty"`
+		Roles         []string       `json:"roles,omitempty"`
+		Token         *string        `json:"jwt_token,omitempty"`
+		RawData       map[string]any `json:"raw_data,omitempty"`
+		CreatedAt     *time.Time     `json:"created_at,omitempty"`
+		ExpiresAt     *time.Time     `json:"expires_at,omitempty"`
 	}
 )
 
@@ -111,11 +108,12 @@ type LoginRequest struct {
 }
 
 // ComparePasswords compare user password and payload
-func (lr *LoginRequest) ComparePasswords(passw, tokenKey *string) (err error) {
-	if err = bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*tokenKey+*lr.Password)); err != nil {
+func (lr *LoginRequest) ComparePasswords(passw, tokenKey *string) error {
+	if err := bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*tokenKey+*lr.Password)); err != nil {
 		return ErrEmailOrPasswordIsNotValid()
 	}
-	return
+	lr.SanitizePassword()
+	return nil
 }
 
 // SanitizePassword sanitize user password

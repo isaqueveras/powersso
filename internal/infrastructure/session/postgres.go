@@ -5,6 +5,8 @@
 package session
 
 import (
+	"database/sql"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
@@ -24,6 +26,15 @@ func (pg *pgSession) create(userID *string) (sessionID *string, err error) {
 		Values(userID, squirrel.Expr("NOW() + '15 minutes'")).
 		Suffix(`RETURNING "id"`).
 		Scan(&sessionID); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	if _, err = pg.DB.Builder.
+		Update("users").
+		Set("number_failed_attempts", 0).
+		Set("last_failure_date", nil).
+		Where("id = ?", userID).
+		Exec(); err != nil && err != sql.ErrNoRows {
 		return nil, oops.Err(err)
 	}
 

@@ -46,7 +46,7 @@ func activation(ctx *gin.Context) {
 func login(ctx *gin.Context) {
 	var (
 		input  auth.LoginRequest
-		output *auth.SessionOut
+		output *auth.SessionResponse
 		err    error
 	)
 

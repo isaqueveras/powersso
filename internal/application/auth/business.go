@@ -6,7 +6,6 @@ package auth
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
@@ -144,7 +143,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 }
 
 // Login is the business logic for the user login
-func Login(ctx context.Context, in *LoginRequest) (*SessionOut, error) {
+func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 	var (
 		transaction *postgres.DBTransaction
 		err         error
@@ -161,36 +160,39 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionOut, error) {
 		repoUser    = infraUser.New(transaction)
 		repoSession = infraSession.New(transaction)
 		user        = &domainUser.User{Email: in.Email}
-		activation  *domain.ActivateAccountToken
 
 		isAdmin          bool = false
 		token            string
 		passw, sessionID *string
 	)
 
-	if passw, err = repo.Login(in.Email); err != nil {
-		return nil, oops.Err(ErrUserNotExists())
-	}
-
 	if err = repoUser.GetUser(user); err != nil {
 		return nil, oops.Err(err)
 	}
 
-	if activation, err = repo.GetActivateAccountToken(user.ActivationToken); err != nil {
-		return nil, oops.Err(err)
+	if !*user.IsActive {
+		return nil, oops.Err(ErrUserNotExists())
 	}
 
-	// TODO: validate if the user is active
-	// REFACTOR: validate token if the is active
-	if !*activation.IsValid || !*activation.Used {
-		return nil, oops.NewError("user is not valid", http.StatusBadRequest)
+	if *user.BlockedTemporarily {
+		return nil, oops.Err(ErrUserBlockedTemporarily())
+	}
+
+	if passw, err = repo.Login(in.Email); err != nil {
+		return nil, oops.Err(ErrUserNotExists())
 	}
 
 	if err = in.ComparePasswords(passw, user.TokenKey); err != nil {
+		var errAttempts error
+		if errAttempts = repo.AddNumberFailedAttempts(user.ID); errAttempts != nil {
+			return nil, oops.Err(errAttempts)
+		}
+		if errAttempts = transaction.Commit(); errAttempts != nil {
+			return nil, oops.Err(errAttempts)
+		}
 		return nil, oops.Err(err)
 	}
 
-	in.SanitizePassword()
 	if !roles.Exists(roles.CreateSession, roles.Roles{String: *user.Roles}) {
 		return nil, oops.Err(ErrNotHavePermissionLogin())
 	}
@@ -215,20 +217,19 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionOut, error) {
 		return nil, oops.Err(err)
 	}
 
-	return &SessionOut{
-		SessionID: sessionID,
-		IsAdmin:   &isAdmin,
-		User: &userSessionOut{
-			ID:          user.ID,
-			Email:       user.Email,
-			FirstName:   user.FirstName,
-			LastName:    user.LastName,
-			Roles:       userRoles.Arrays(),
-			About:       user.About,
-			Avatar:      user.Avatar,
-			PhoneNumber: user.PhoneNumber,
-			CreatedAt:   user.CreatedAt,
-		},
-		Token: &token,
+	return &SessionResponse{
+		SessionID:     sessionID,
+		Administrator: &isAdmin,
+		UserID:        user.ID,
+		Email:         user.Email,
+		FirstName:     user.FirstName,
+		LastName:      user.LastName,
+		Roles:         userRoles.Arrays(),
+		About:         user.About,
+		AvatarURL:     user.Avatar,
+		PhoneNumber:   user.PhoneNumber,
+		CreatedAt:     user.CreatedAt,
+		Token:         &token,
+		RawData:       make(map[string]any),
 	}, nil
 }
