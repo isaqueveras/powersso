@@ -58,3 +58,13 @@ func (r *repository) CreateAccessToken(userID *string) (string, error) {
 func (r *repository) MarkTokenAsUsed(token *string) error {
 	return r.pg.markTokenAsUsed(token)
 }
+
+// Login contains the flow for the user login
+func (r *repository) Login(email *string) (*string, error) {
+	return r.pg.login(email)
+}
+
+// AddNumberFailedAttempts contains the flow for the add number failed attempts
+func (r *repository) AddNumberFailedAttempts(userID *string) error {
+	return r.pg.addNumberFailedAttempts(userID)
+}

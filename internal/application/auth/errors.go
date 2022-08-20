@@ -25,3 +25,23 @@ func ErrNotHavePermissionActiveAccount() *oops.Error {
 func ErrTokenIsNotValid() *oops.Error {
 	return oops.NewError(i18n.Value("errors.handling.err_token_is_not_valid"), http.StatusBadRequest)
 }
+
+// ErrNotHavePermissionLogin creates and returns an error when the user does not have permission to login
+func ErrNotHavePermissionLogin() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_not_have_permission_login"), http.StatusBadRequest)
+}
+
+// ErrUserNotExists creates and returns an error when the user does not exists
+func ErrUserNotExists() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_user_not_exists"), http.StatusNotFound)
+}
+
+// ErrEmailOrPasswordIsNotValid creates and returns an error when the email or password is not valid
+func ErrEmailOrPasswordIsNotValid() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_email_or_password_is_not_valid"), http.StatusBadRequest)
+}
+
+// ErrUserBlockedTemporarily creates and returns an error when the user is blocked temporarily
+func ErrUserBlockedTemporarily() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_user_blocked_temporarily"), http.StatusForbidden)
+}
