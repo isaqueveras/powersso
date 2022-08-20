@@ -38,7 +38,7 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 
 	if in.Roles == nil {
 		in.Roles = new(roles.Roles)
-		in.Roles.Add(roles.LevelUser, roles.ReadActivationToken)
+		in.Roles.Add(roles.ReadActivationToken)
 	}
 	in.Roles.Parse()
 
@@ -161,7 +161,6 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		repoSession = infraSession.New(transaction)
 		user        = &domainUser.User{Email: in.Email}
 
-		isAdmin          bool = false
 		token            string
 		passw, sessionID *string
 	)
@@ -205,10 +204,6 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		return nil, oops.Err(err)
 	}
 
-	if roles.Exists(roles.LevelAdmin, roles.Roles{String: *user.Roles}) {
-		isAdmin = true
-	}
-
 	userRoles := roles.MakeEmptyRoles()
 	userRoles.String = *user.Roles
 	userRoles.ParseArray()
@@ -218,18 +213,18 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 	}
 
 	return &SessionResponse{
-		SessionID:     sessionID,
-		Administrator: &isAdmin,
-		UserID:        user.ID,
-		Email:         user.Email,
-		FirstName:     user.FirstName,
-		LastName:      user.LastName,
-		Roles:         userRoles.Arrays(),
-		About:         user.About,
-		AvatarURL:     user.Avatar,
-		PhoneNumber:   user.PhoneNumber,
-		CreatedAt:     user.CreatedAt,
-		Token:         &token,
-		RawData:       make(map[string]any),
+		SessionID:   sessionID,
+		Level:       user.UserType,
+		UserID:      user.ID,
+		Email:       user.Email,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Roles:       userRoles.Arrays(),
+		About:       user.About,
+		AvatarURL:   user.Avatar,
+		PhoneNumber: user.PhoneNumber,
+		CreatedAt:   user.CreatedAt,
+		Token:       &token,
+		RawData:     make(map[string]any),
 	}, nil
 }

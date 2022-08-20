@@ -3,6 +3,7 @@
 -- license that can be found in the LICENSE file.
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TYPE user_types AS ENUM ('user', 'admin', 'integration');
 
 CREATE TABLE users (
 	id			     						UUID PRIMARY KEY                     DEFAULT uuid_generate_v4(),
@@ -13,6 +14,7 @@ CREATE TABLE users (
 	roles        						VARCHAR[]                 	NOT NULL DEFAULT '{}',
 	about        						VARCHAR(500)                         DEFAULT '',
 	avatar       						VARCHAR(512),
+	user_type    						user_types 									NOT NULL DEFAULT 'user',
 	phone_number 						VARCHAR(20),
 	address      						VARCHAR(250),
 	city         						VARCHAR(30),

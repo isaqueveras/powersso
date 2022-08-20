@@ -65,13 +65,15 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 			U.updated_at,
 			U.login_date,
 			U.is_active,
+			U.user_type,
 			U.number_failed_attempts >= 3 AND (U.last_failure_date + '1 hour') >= NOW() AS blocked_temporarily`).
 		From("users U").
 		Where(where).
 		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.Roles,
 			&data.About, &data.Avatar, &data.PhoneNumber, &data.Address, &data.City,
 			&data.Country, &data.Gender, &data.Postcode, &data.TokenKey, &data.Birthday,
-			&data.CreatedAt, &data.UpdatedAt, &data.LoginDate, &data.IsActive, &data.BlockedTemporarily); err != nil {
+			&data.CreatedAt, &data.UpdatedAt, &data.LoginDate, &data.IsActive,
+			&data.UserType, &data.BlockedTemporarily); err != nil {
 		return oops.Err(err)
 	}
 	return nil

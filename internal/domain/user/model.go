@@ -8,6 +8,16 @@ import (
 	"time"
 )
 
+// Level is the user level
+type Level string
+
+const (
+	// UserLevel is the user level
+	UserLevel Level = "user"
+	// AdminLevel is the admin level
+	AdminLevel Level = "admin"
+)
+
 // User is the model for user
 type User struct {
 	ID                 *string
@@ -16,6 +26,7 @@ type User struct {
 	LastName           *string
 	Roles              *string
 	About              *string
+	UserType           *Level
 	Avatar             *string
 	PhoneNumber        *string
 	Address            *string

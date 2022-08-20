@@ -13,6 +13,7 @@ import (
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
+	"github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/pkg/security"
 )
 
@@ -38,20 +39,20 @@ type (
 
 	// SessionResponse define a session model output for presentation layer
 	SessionResponse struct {
-		SessionID     *string        `json:"session_id,omitempty"`
-		Administrator *bool          `json:"administrator,omitempty"`
-		UserID        *string        `json:"user_id,omitempty"`
-		Email         *string        `json:"email,omitempty"`
-		FirstName     *string        `json:"first_name,omitempty"`
-		LastName      *string        `json:"last_name,omitempty"`
-		About         *string        `json:"about,omitempty"`
-		AvatarURL     *string        `json:"avatar_url,omitempty"`
-		PhoneNumber   *string        `json:"phone_number,omitempty"`
-		Roles         []string       `json:"roles,omitempty"`
-		Token         *string        `json:"jwt_token,omitempty"`
-		RawData       map[string]any `json:"raw_data,omitempty"`
-		CreatedAt     *time.Time     `json:"created_at,omitempty"`
-		ExpiresAt     *time.Time     `json:"expires_at,omitempty"`
+		SessionID   *string        `json:"session_id,omitempty"`
+		Level       *user.Level    `json:"level,omitempty"`
+		UserID      *string        `json:"user_id,omitempty"`
+		Email       *string        `json:"email,omitempty"`
+		FirstName   *string        `json:"first_name,omitempty"`
+		LastName    *string        `json:"last_name,omitempty"`
+		About       *string        `json:"about,omitempty"`
+		AvatarURL   *string        `json:"avatar_url,omitempty"`
+		PhoneNumber *string        `json:"phone_number,omitempty"`
+		Roles       []string       `json:"roles,omitempty"`
+		Token       *string        `json:"jwt_token,omitempty"`
+		RawData     map[string]any `json:"raw_data,omitempty"`
+		CreatedAt   *time.Time     `json:"created_at,omitempty"`
+		ExpiresAt   *time.Time     `json:"expires_at,omitempty"`
 	}
 )
 
