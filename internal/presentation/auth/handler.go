@@ -29,7 +29,7 @@ func register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, nil)
+	ctx.JSON(http.StatusCreated, gin.H{})
 }
 
 func activation(ctx *gin.Context) {
@@ -54,6 +54,10 @@ func login(ctx *gin.Context) {
 		oops.Handling(ctx, err)
 		return
 	}
+
+	input.ClientIP = ctx.ClientIP()
+	input.UserAgent = ctx.Request.UserAgent()
+	input.Validate()
 
 	if output, err = auth.Login(ctx, &input); err != nil {
 		oops.Handling(ctx, err)

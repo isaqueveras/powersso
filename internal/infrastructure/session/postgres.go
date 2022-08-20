@@ -19,11 +19,11 @@ type pgSession struct {
 }
 
 // create add session of the user in database
-func (pg *pgSession) create(userID *string) (sessionID *string, err error) {
+func (pg *pgSession) create(userID, clientIP, userAgent *string) (sessionID *string, err error) {
 	if err = pg.DB.Builder.
 		Insert("sessions").
-		Columns("user_id", "expires_at").
-		Values(userID, squirrel.Expr("NOW() + '15 minutes'")).
+		Columns("user_id", "expires_at", "ip", "user_agent").
+		Values(userID, squirrel.Expr("NOW() + '15 minutes'"), clientIP, userAgent).
 		Suffix(`RETURNING "id"`).
 		Scan(&sessionID); err != nil {
 		return nil, oops.Err(err)

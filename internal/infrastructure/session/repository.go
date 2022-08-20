@@ -21,6 +21,6 @@ func New(transaction *postgres.DBTransaction) session.ISession {
 }
 
 // Create contains the flow for create session in database
-func (r *repository) Create(userID *string) (*string, error) {
-	return r.pg.create(userID)
+func (r *repository) Create(userID, clientIP, userAgent *string) (*string, error) {
+	return r.pg.create(userID, clientIP, userAgent)
 }

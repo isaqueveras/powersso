@@ -196,7 +196,7 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		return nil, oops.Err(ErrNotHavePermissionLogin())
 	}
 
-	if sessionID, err = repoSession.Create(user.ID); err != nil {
+	if sessionID, err = repoSession.Create(user.ID, &in.ClientIP, &in.UserAgent); err != nil {
 		return nil, oops.Err(err)
 	}
 

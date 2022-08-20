@@ -106,6 +106,20 @@ func (rr *RegisterRequest) RefreshTokenKey() {
 type LoginRequest struct {
 	Email    *string `json:"email" binding:"required,lte=60,email"`
 	Password *string `json:"password" binding:"required,gte=6"`
+
+	ClientIP  string `json:"-"`
+	UserAgent string `json:"-"`
+}
+
+// Validate prepare data for login
+func (lr *LoginRequest) Validate() {
+	if lr.ClientIP == "" {
+		lr.ClientIP = "0.0.0.0"
+	}
+
+	if lr.UserAgent == "" {
+		lr.UserAgent = "Unknown"
+	}
 }
 
 // ComparePasswords compare user password and payload
