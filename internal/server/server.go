@@ -15,8 +15,8 @@ import (
 	"github.com/isaqueveras/endless"
 	"github.com/isaqueveras/lingo"
 	"github.com/isaqueveras/power-sso/config"
+	"github.com/isaqueveras/power-sso/internal/interface/auth"
 	"github.com/isaqueveras/power-sso/internal/middleware"
-	"github.com/isaqueveras/power-sso/internal/presentation/auth"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )

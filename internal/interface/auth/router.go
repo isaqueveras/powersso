@@ -6,6 +6,7 @@ package auth
 
 import "github.com/gin-gonic/gin"
 
+// Router is the router for the auth module.
 func Router(r *gin.RouterGroup) {
 	r.POST("/register", register)
 	r.POST("/activation/:token", activation)

@@ -40,7 +40,7 @@ func activation(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{})
+	ctx.JSON(http.StatusOK, gin.H{})
 }
 
 func login(ctx *gin.Context) {

@@ -60,4 +60,4 @@ mailer:
 
 UserAuthToken:
   SecretKey: kjnfdjksdbfsdhfbdskjfnamkndkn 
-  Duration: 24
+  Duration: 2592000

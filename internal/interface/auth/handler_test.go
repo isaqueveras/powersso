@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/presentation/auth"
+	"github.com/isaqueveras/power-sso/internal/interface/auth"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
 

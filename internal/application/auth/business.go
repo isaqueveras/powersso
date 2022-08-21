@@ -200,7 +200,7 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		return nil, oops.Err(err)
 	}
 
-	if token, err = tokens.NewUserAuthToken(cfg, user.ID, user.TokenKey); err != nil {
+	if token, err = tokens.NewUserAuthToken(cfg, user, sessionID); err != nil {
 		return nil, oops.Err(err)
 	}
 
