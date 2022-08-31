@@ -19,9 +19,9 @@ const (
 	// ReadActivationToken is the read activation token role
 	ReadActivationToken string = "read:activation_token"
 
-	// CreateSession is the permission to create a session
 	CreateSession string = "create:session"
 	ReadSession   string = "read:session"
+	DeleteSession string = "delete:session"
 )
 
 // Roles type for user roles

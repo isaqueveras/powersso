@@ -24,3 +24,8 @@ func New(transaction *postgres.DBTransaction) session.ISession {
 func (r *repository) Create(userID, clientIP, userAgent *string) (*string, error) {
 	return r.pg.create(userID, clientIP, userAgent)
 }
+
+// Delete contains the flow for Delete user
+func (r *repository) Delete(sessionID *string) error {
+	return r.pg.delete(sessionID)
+}

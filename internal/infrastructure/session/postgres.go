@@ -8,6 +8,7 @@ import (
 	"database/sql"
 
 	"github.com/Masterminds/squirrel"
+
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
@@ -36,6 +37,18 @@ func (pg *pgSession) create(userID, clientIP, userAgent *string) (sessionID *str
 		Where("id = ?", userID).
 		Exec(); err != nil && err != sql.ErrNoRows {
 		return nil, oops.Err(err)
+	}
+
+	return
+}
+
+func (pg *pgSession) delete(sessionID *string) (err error) {
+	if _, err = pg.DB.Builder.
+		Update("sessions").
+		Set("deleted_at", squirrel.Expr("NOW()")).
+		Where("id = ? AND deleted_at IS NULL", sessionID).
+		Exec(); err != nil {
+		return oops.Err(err)
 	}
 
 	return

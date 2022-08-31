@@ -11,7 +11,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/google/uuid v1.3.0
 	github.com/isaqueveras/endless v0.0.0-20170109170031-447134032cb6
-	github.com/isaqueveras/go-powersso v0.0.0-20220821160235-9f9c7bbfdc15
+	github.com/isaqueveras/go-powersso v0.0.0-20220821162303-e962cc527e1f
 	github.com/isaqueveras/lingo v0.0.0-20181220065520-bfdb55fa4143
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/microcosm-cc/bluemonday v1.0.19

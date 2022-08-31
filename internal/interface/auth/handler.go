@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	gopowersso "github.com/isaqueveras/go-powersso"
 
 	"github.com/isaqueveras/power-sso/internal/application/auth"
 	"github.com/isaqueveras/power-sso/pkg/oops"
@@ -65,4 +66,14 @@ func login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, output)
+}
+
+func logout(ctx *gin.Context) {
+	s := gopowersso.GetSession(ctx)
+	if err := auth.Logout(ctx, &s.SessionID); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, gin.H{})
 }

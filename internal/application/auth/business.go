@@ -13,6 +13,7 @@ import (
 	domainUser "github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
 	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
+	"github.com/isaqueveras/power-sso/internal/infrastructure/session"
 	infraSession "github.com/isaqueveras/power-sso/internal/infrastructure/session"
 	infraUser "github.com/isaqueveras/power-sso/internal/infrastructure/user"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
@@ -124,7 +125,11 @@ func Activation(ctx context.Context, token *string) (err error) {
 	}
 
 	rolesSession := roles.MakeEmptyRoles()
-	rolesSession.Add(roles.ReadSession, roles.CreateSession)
+	rolesSession.Add(
+		roles.ReadSession,
+		roles.CreateSession,
+		roles.DeleteSession,
+	)
 	rolesSession.ParseString()
 
 	if err = repoRoles.AddRoles(user.ID, rolesSession.Strings()); err != nil {
@@ -227,4 +232,27 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		Token:       &token,
 		RawData:     make(map[string]any),
 	}, nil
+}
+
+func Logout(ctx context.Context, sessionID *string) (err error) {
+	var (
+		transaction *postgres.DBTransaction
+	)
+
+	if transaction, err = postgres.NewTransaction(ctx, false); err != nil {
+		return oops.Err(err)
+	}
+	defer transaction.Rollback()
+
+	if err = session.
+		New(transaction).
+		Delete(sessionID); err != nil {
+		return oops.Err(err)
+	}
+
+	if err = transaction.Commit(); err != nil {
+		return oops.Err(err)
+	}
+
+	return
 }
