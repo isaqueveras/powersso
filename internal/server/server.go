@@ -10,10 +10,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/isaqueveras/endless"
+	gopowersso "github.com/isaqueveras/go-powersso"
+	"github.com/isaqueveras/lingo"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/isaqueveras/endless"
-	"github.com/isaqueveras/lingo"
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/interface/auth"
 	"github.com/isaqueveras/power-sso/internal/middleware"
@@ -58,6 +59,9 @@ func (s *Server) Run() error {
 
 	v1 := router.Group("v1")
 	auth.Router(v1.Group("auth"))
+	auth.RouterAuthorization(v1.Group("auth",
+		gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey),
+	))
 
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
