@@ -5,6 +5,8 @@
 package logger
 
 import (
+	"log"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -53,14 +55,12 @@ func (l *Logger) InitLogger() {
 
 	logs, err := cfg.Build()
 	if err != nil {
-		logg.Error(err)
+		log.Fatal(err)
 	}
 
 	logger := zap.New(logs.Core(), zap.AddCaller(), zap.AddCallerSkip(1))
 	logg = logger.Sugar()
-	if err := logg.Sync(); err != nil {
-		logg.Error(err)
-	}
+	defer func() { _ = logg.Sync() }()
 }
 
 func (l *Logger) ZapLogger() *zap.Logger {
