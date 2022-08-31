@@ -19,9 +19,9 @@ const (
 	// ReadActivationToken is the read activation token role
 	ReadActivationToken string = "read:activation_token"
 
-	// CreateSession is the permission to create a session
 	CreateSession string = "create:session"
 	ReadSession   string = "read:session"
+	DeleteSession string = "delete:session"
 )
 
 // Roles type for user roles
@@ -40,13 +40,15 @@ func (r *Roles) Strings() string {
 	return r.String
 }
 
+// Arrays return the roles slice as list of strings
+func (r *Roles) Arrays() []string {
+	return r.Array
+}
+
 // Parse parse the roles string to a slice of strings
 func (r *Roles) Parse() {
 	r.ParseString()
-
-	if r.Array == nil {
-		r.Array = strings.Split(r.String, ",")
-	}
+	r.ParseArray()
 }
 
 // Exists check if the role exists in the roles slice
@@ -98,9 +100,18 @@ func (r *Roles) Add(role ...string) {
 
 // ParseString parse the roles slice to a string
 func (r *Roles) ParseString() {
-	var _temp string
-	for i := range r.Array {
-		_temp += r.Array[i] + ","
+	if r.Array != nil {
+		var _temp string
+		for i := range r.Array {
+			_temp += r.Array[i] + ","
+		}
+		r.String = fmt.Sprintf("{%s}", strings.Trim(_temp, ","))
 	}
-	r.String = fmt.Sprintf("{%s}", strings.Trim(_temp, ","))
+}
+
+// ParseArray parse the roles string to a slice of strings
+func (r *Roles) ParseArray() {
+	if r.String != "" {
+		r.Array = strings.Split(strings.TrimSuffix(strings.TrimPrefix(r.String, "{"), "}"), ",")
+	}
 }

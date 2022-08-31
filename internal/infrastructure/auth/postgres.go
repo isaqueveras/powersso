@@ -8,6 +8,8 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/Masterminds/squirrel"
+
 	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
@@ -84,8 +86,36 @@ func (pg *pgAuth) markTokenAsUsed(token *string) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("activate_account_tokens").
 		Set("used", true).
+		Set("updated_at", time.Now()).
 		Where("id = ?", token).
 		Exec(); err != nil {
+		return oops.Err(err)
+	}
+
+	return
+}
+
+// login get the user password from the database
+func (pg *pgAuth) login(email *string) (password *string, err error) {
+	if err = pg.DB.Builder.
+		Select("password").
+		From("users").
+		Where("email = ?", email).
+		Limit(1).
+		Scan(&password); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	return
+}
+
+func (pg *pgAuth) addNumberFailedAttempts(userID *string) (err error) {
+	if _, err = pg.DB.Builder.
+		Update("users").
+		Set("number_failed_attempts", squirrel.Expr("number_failed_attempts + 1")).
+		Set("last_failure_date", squirrel.Expr("NOW()")).
+		Where("id = ?", userID).
+		Exec(); err != nil && err != sql.ErrNoRows {
 		return oops.Err(err)
 	}
 

@@ -57,3 +57,7 @@ mailer:
   Email: contact@powersso.io
   Password: password
   TLS: false
+
+UserAuthToken:
+  SecretKey: kjnfdjksdbfsdhfbdskjfnamkndkn 
+  Duration: 2592000
