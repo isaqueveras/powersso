@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
 import { setCurrentAccountAdapter, getCurrentAccountAdapter } from '../../main/adapters'
@@ -11,18 +11,17 @@ const Router: React.FC = () => {
     setCurrentAccount: setCurrentAccountAdapter,
     getCurrentAccount: getCurrentAccountAdapter
   }
-  
   return (
     <RecoilRoot initializeState={({ set }) => set(currentAccountState, state)}>
-      <div className="h-screen">
+      <div className='h-screen'>
         <BrowserRouter>
-          <Routes>
+          <Switch>
+            <Route path="auth/login" exact component={makeLogin} />
             {/* <Route path="/" element={<Dashboard />} />
             <Route path="projects" element={<Projects />} />
             <Route path="users" element={<Users />} />
             <Route path="users/new" element={<NewUser />} /> */}
-            <Route path="auth/login" children={makeLogin({}, '')} />
-          </Routes>
+          </Switch>
         </BrowserRouter>
       </div>
     </RecoilRoot>

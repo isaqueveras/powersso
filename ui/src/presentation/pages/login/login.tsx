@@ -1,6 +1,6 @@
-import React, { useEffect } from "react"
+import React, { useEffect } from 'react'
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
-import { useNavigate } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 import { Validation } from '../../protocols'
 import { Authentication } from '../../../domain/usecases'
@@ -21,11 +21,10 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   useEffect(() => validate('email'), [state.email])
   useEffect(() => validate('password'), [state.password])
 
-  let navigate = useNavigate()
+  const navigate = useHistory()
   const validate = (field: string): void => {
     const { email, password } = state
     const formData = { email, password }
-    
     setState(old => ({ ...old, [`${field}Error`]: validation.validate(field, formData) }))
     setState(old => ({ ...old, isFormInvalid: !!old.emailError || !!old.passwordError }))
   }
@@ -46,7 +45,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
       if (account !== undefined) {
         setCurrentAccount(account)
       }
-      navigate('/')
+      navigate.replace('/')
     } catch (error: any) {
       setState(old => ({
         ...old,
@@ -57,8 +56,8 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   }
 
   return (
-    <section className={"h-screen"}>
-      <div className={"px-6 h-full text-gray-800"}>
+    <section className="h-screen">
+      <div className="px-6 h-full text-gray-800">
         <div className="flex xl:justify-center lg:justify-between justify-center items-center flex-wrap h-full g-6">
           <div className="xl:ml-20 xl:w-5/12 lg:w-5/12 md:w-8/12 mb-12 md:mb-0">
             <form data-testid="form" onSubmit={handleSubmit}>
@@ -74,7 +73,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
               <div className="text-center lg:text-left">
                 <button type="submit" className="w-full inline-block px-7 py-3 bg-black text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-black hover:shadow-lg focus:black focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out">Login</button>
                 <p className="text-sm font-semibold mt-2 pt-1 mb-0">
-                  Don't have an account?
+                  {"Don't have an account?"}
                   <a href="#!" className="text-red-600 hover:text-red-700 focus:text-red-700 transition duration-200 ease-in-out ml-1">Register</a>
                 </p>
               </div>

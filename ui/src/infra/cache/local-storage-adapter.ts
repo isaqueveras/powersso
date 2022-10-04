@@ -10,10 +10,9 @@ export class LocalStorageAdapter implements SetStorage, GetStorage {
   }
 
   get (key: string): any {
-    let item = localStorage.getItem(key)
+    const item = localStorage.getItem(key)
     if (item !== null) {
       return JSON.parse(item)
     }
-    return
   }
 }
