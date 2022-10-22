@@ -50,6 +50,7 @@ func (s *Server) Run() error {
 
 	router := gin.New()
 	router.Use(
+		middleware.CORS(),
 		middleware.VersionInfo(),
 		middleware.SetupI18n(setupLingo),
 		middleware.RequestIdentifier(),
