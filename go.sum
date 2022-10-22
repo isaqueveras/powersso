@@ -172,8 +172,6 @@ github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/isaqueveras/endless v0.0.0-20170109170031-447134032cb6 h1:rbjHNN2W5KI+ktmu2rlU643qjKqgI/Bs4Z8Kct8ex+M=
 github.com/isaqueveras/endless v0.0.0-20170109170031-447134032cb6/go.mod h1:AD4iwpmo49YpuXxMKc/MGYporOhytbRzX3YJclZ50gM=
-github.com/isaqueveras/go-powersso v0.0.0-20220821160235-9f9c7bbfdc15 h1:Irx9odjKRAfesQ7pHsdFcJkZoIJf2RZGAKuTn+NHm8g=
-github.com/isaqueveras/go-powersso v0.0.0-20220821160235-9f9c7bbfdc15/go.mod h1:FnfqWwNIy8L2Q7tnkGswgEg9jUaRKCN7inKlcPHXQ0I=
 github.com/isaqueveras/go-powersso v0.0.0-20220821162303-e962cc527e1f h1:KZ3LpyY2RgfkS2OTirIV8p8X8dyljeu9orv8OwQOT84=
 github.com/isaqueveras/go-powersso v0.0.0-20220821162303-e962cc527e1f/go.mod h1:FnfqWwNIy8L2Q7tnkGswgEg9jUaRKCN7inKlcPHXQ0I=
 github.com/isaqueveras/lingo v0.0.0-20181220065520-bfdb55fa4143 h1:NAZUrnBsH12EekeL3lCZ43Ktg+kuHyTLIFBNfemJvHY=
