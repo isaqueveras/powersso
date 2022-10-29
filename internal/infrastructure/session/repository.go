@@ -14,6 +14,7 @@ type repository struct {
 	pg *pgSession
 }
 
+// New creates a new repository
 func New(transaction *postgres.DBTransaction) session.ISession {
 	return &repository{
 		pg: &pgSession{DB: transaction},
