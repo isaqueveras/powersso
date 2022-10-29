@@ -17,6 +17,7 @@ import (
 
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/interface/auth"
+	"github.com/isaqueveras/power-sso/internal/interface/project"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
 	"github.com/isaqueveras/power-sso/pkg/logger"
@@ -60,9 +61,8 @@ func (s *Server) Run() error {
 
 	v1 := router.Group("v1")
 	auth.Router(v1.Group("auth"))
-	auth.RouterAuthorization(v1.Group("auth",
-		gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey),
-	))
+	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
+	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
 
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
