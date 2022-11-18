@@ -81,19 +81,26 @@ func (s *Server) Run() error {
 		}
 	})
 
-	prefixRouter := router.Group("debug/pprof")
-	prefixRouter.GET("/", func(c *gin.Context) {
-		// TODO: only admin can access this
-		pprof.Index(c.Writer, c.Request)
-	})
-
-	group.Go(func() error {
-		return endless.ListenAndServe("0.0.0.0"+s.cfg.Server.PprofPort, router)
-	})
+	go s.routerDebugPProf(router, group)
 
 	if err := group.Wait(); err != nil {
 		s.logg.Fatal("Error while serving the application: ", err)
 	}
 
 	return nil
+}
+
+func (s *Server) routerDebugPProf(router *gin.Engine, group errgroup.Group) {
+	prefixRouter := router.Group("debug/pprof")
+	prefixRouter.GET("/",
+		gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey),
+		gopowersso.OnlyAdmin(),
+		func(c *gin.Context) {
+			pprof.Index(c.Writer, c.Request)
+		},
+	)
+
+	group.Go(func() error {
+		return endless.ListenAndServe("0.0.0.0"+s.cfg.Server.PprofPort, router)
+	})
 }
