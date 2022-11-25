@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/stdlib"
 
@@ -67,6 +68,28 @@ func (p *postgres) close() {
 	if p.db != nil {
 		_ = p.db.Close()
 	}
+}
+
+func (p *postgres) openConnectionForTesting() (mock sqlmock.Sqlmock, err error) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		return nil, fmt.Errorf("an error '%v' was not expected when opening a stub database connection", err.Error())
+	}
+
+	mock.ExpectBegin()
+
+	db.SetMaxOpenConns(2)
+	db.SetConnMaxLifetime(30 * time.Second)
+	db.SetMaxIdleConns(2)
+	db.SetConnMaxIdleTime(30 * time.Second)
+
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+
+	p.db = db
+
+	return
 }
 
 // transaction opens a transaction on some already open connection

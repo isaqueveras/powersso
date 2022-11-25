@@ -35,6 +35,8 @@ type (
 		Birthday    *time.Time   `json:"birthday,omitempty" binding:"omitempty,lte=10"`
 		TokenKey    *string      `json:"token_key"`
 		Roles       *roles.Roles `json:"-"`
+
+		config *config.Config
 	}
 
 	// SessionResponse define a session model output for presentation layer
@@ -58,15 +60,20 @@ type (
 
 // Prepare prepare data for registration
 func (rr *RegisterRequest) Prepare() (err error) {
-	*rr.Email = strings.ToLower(strings.TrimSpace(*rr.Email))
-	*rr.Password = strings.TrimSpace(*rr.Password)
+	if rr.config.Server.Mode == config.ModeTesting {
+		tokenKeyTesting := "token_key_testing_any_password"
+		rr.TokenKey = &tokenKeyTesting
+	} else {
+		*rr.Email = strings.ToLower(strings.TrimSpace(*rr.Email))
+		*rr.Password = strings.TrimSpace(*rr.Password)
 
-	if err = rr.GeneratePassword(); err != nil {
-		return err
-	}
+		if err = rr.GeneratePassword(); err != nil {
+			return err
+		}
 
-	if rr.PhoneNumber != nil {
-		*rr.PhoneNumber = strings.TrimSpace(*rr.PhoneNumber)
+		if rr.PhoneNumber != nil {
+			*rr.PhoneNumber = strings.TrimSpace(*rr.PhoneNumber)
+		}
 	}
 
 	return
