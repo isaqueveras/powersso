@@ -20,5 +20,5 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - name: Testing Infra.
-      run: go test -timeout 300s -run ^TestShouldCreateUser$ github.com/isaqueveras/power-sso/internal/infrastructure/auth
+    - name: Test.
+      run: go test ./...

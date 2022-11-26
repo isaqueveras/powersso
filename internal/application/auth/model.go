@@ -83,7 +83,7 @@ func (rr *RegisterRequest) Prepare() (err error) {
 func (rr *RegisterRequest) GeneratePassword() error {
 	rr.RefreshTokenKey()
 
-	var cost int = auth.CostHashPasswordDevelopment
+	cost := auth.CostHashPasswordDevelopment
 	if config.Get().Server.Mode == config.ModeProduction {
 		cost = auth.CostHashPasswordProduction
 	}

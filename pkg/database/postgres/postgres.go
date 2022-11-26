@@ -76,8 +76,6 @@ func (p *postgres) openConnectionForTesting() (mock sqlmock.Sqlmock, err error) 
 		return nil, fmt.Errorf("an error '%v' was not expected when opening a stub database connection", err.Error())
 	}
 
-	mock.ExpectBegin()
-
 	db.SetMaxOpenConns(2)
 	db.SetConnMaxLifetime(30 * time.Second)
 	db.SetMaxIdleConns(2)
