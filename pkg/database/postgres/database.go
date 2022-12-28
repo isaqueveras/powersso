@@ -21,8 +21,8 @@ type database interface {
 	open(cfg *config.Config) error
 	// close connection with database
 	close()
-	// open connection for testing
-	openConnectionForTesting() (sqlmock.Sqlmock, error)
+	// openConnectionsForTests opens connections to the mocked database
+	openConnectionsForTests() (sqlmock.Sqlmock, error)
 }
 
 var connection database
@@ -46,13 +46,11 @@ func OpenConnections(c *config.Config) (err error) {
 	return nil
 }
 
-func OpenConnectionForTesting() (mock sqlmock.Sqlmock, err error) {
-	if connection != nil {
-		return nil, nil
-	}
 
+// OpenConnectionsForTests opens connections to the mocked database
+func OpenConnectionsForTests() (mock sqlmock.Sqlmock, err error) {
 	connection = &postgres{}
-	if mock, err = connection.openConnectionForTesting(); err != nil {
+	if mock, err = connection.openConnectionsForTests(); err != nil {
 		return nil, err
 	}
 

@@ -7,39 +7,57 @@ package auth_test
 import (
 	"database/sql"
 	"testing"
+	"log"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/stretchr/testify/suite"
+
+	"github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/power-sso/internal/domain/auth"
 )
+ 
+func TestAuth(t *testing.T) {
+	suite.Run(t, new(authSuite))
+}
 
-func TestShouldCreateUser(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+type authSuite struct {
+	pg *pgAuth
+	mock sqlmock.sqlmock
+
+	suite.Suite
+}
+
+func (f *authSuite) SetupTest() {
+	f.pg = new(pgAuth)
+
+	var err error
+	if f.mock, err = postgres.OpenConnectionsForTests(); err != nil {
+		f.Assert().FailNow(err.Error())
 	}
-	defer db.Close()
+}
 
-	mock.ExpectBegin()
-	mock.ExpectExec("INSERT INTO users").
+func (f *authSuite) SetupSuite() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+}
+
+func (f *authSuite) TearDownTest() {
+	postgres.CloseConnections()
+}
+
+func (a *authSuite) TestShouldCreateUser() {
+	a.mock.ExpectBegin()
+	a.mock.ExpectQuery("INSERT INTO users").
 		WithArgs("Ayrton, Senna, ayrton.senna@powersso.io, f8c6f60e48bc3458bc65df99325415bd").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
 
-	var tx *sql.Tx
-	if tx, err = db.Begin(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
-	defer tx.Rollback()
+	tx, err := postgres.NewTransaction(ctx, false)
+	a.Require().Nil(err, oops.Err(err))
+	a.Require().NotNil(tx)
 
-	if _, err = tx.Exec("INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)",
-		"Ayrton, Senna, ayrton.senna@powersso.io, f8c6f60e48bc3458bc65df99325415bd"); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
+	a.pg.DB = tx
 
-	if err = tx.Commit(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
-
-	if err = mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
+	// FIXME: finalize the test implementation
+	_, err = a.pg.register(&auth.Register{})
+	a.Require().Nil(err, oops.Err(err))
 }

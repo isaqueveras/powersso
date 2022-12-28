@@ -70,22 +70,24 @@ func (p *postgres) close() {
 	}
 }
 
-func (p *postgres) openConnectionForTesting() (mock sqlmock.Sqlmock, err error) {
+// openConnectionsForTests opens connections to the mocked database
+func (p *postgres) openConnectionsForTests() (mock sqlmock.Sqlmock, err error) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		return nil, fmt.Errorf("an error '%v' was not expected when opening a stub database connection", err.Error())
 	}
 
-	db.SetMaxOpenConns(2)
-	db.SetConnMaxLifetime(30 * time.Second)
-	db.SetMaxIdleConns(2)
-	db.SetConnMaxIdleTime(30 * time.Second)
+	db.SetMaxOpenConns(5)
+	db.SetConnMaxLifetime(5 * time.Second)
+	db.SetMaxIdleConns(1)
+	db.SetConnMaxIdleTime(5 * time.Second)
 
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}
 
 	p.db = db
+	p.timeout = 5
 
 	return
 }
