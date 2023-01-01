@@ -2,28 +2,28 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package auth_test
+package auth
 
 import (
-	"database/sql"
-	"testing"
+	"context"
 	"log"
+	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/internal/domain/auth"
 )
- 
+
 func TestAuth(t *testing.T) {
 	suite.Run(t, new(authSuite))
 }
 
 type authSuite struct {
-	pg *pgAuth
-	mock sqlmock.sqlmock
+	pg   *pgAuth
+	mock sqlmock.Sqlmock
 
 	suite.Suite
 }
@@ -49,9 +49,9 @@ func (a *authSuite) TestShouldCreateUser() {
 	a.mock.ExpectBegin()
 	a.mock.ExpectQuery("INSERT INTO users").
 		WithArgs("Ayrton, Senna, ayrton.senna@powersso.io, f8c6f60e48bc3458bc65df99325415bd").
-		WillReturnResult(sqlmock.NewResult(1, 1))
+		WillReturnRows()
 
-	tx, err := postgres.NewTransaction(ctx, false)
+	tx, err := postgres.NewTransaction(context.Background(), false)
 	a.Require().Nil(err, oops.Err(err))
 	a.Require().NotNil(tx)
 
