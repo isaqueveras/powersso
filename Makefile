@@ -8,7 +8,7 @@ FILES := $(shell docker ps -aq)
 DB_LOCAL := "postgres://postgres:postgres@localhost:5432/power-sso?sslmode=disable"
 
 run:
-	go run cmd/main.go
+	go run main.go
 
 local:
 	docker-compose -f docker-compose.local.yml up -d --build
