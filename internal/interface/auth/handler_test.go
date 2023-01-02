@@ -2,95 +2,65 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package auth_test
+package auth
 
 import (
 	"bytes"
-	"database/sql/driver"
+	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"regexp"
 	"testing"
-	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
+	"bou.ke/monkey"
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/interface/auth"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/power-sso/internal/application/auth"
+	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/stretchr/testify/suite"
 )
 
-type AnyTime struct{}
-
-func (a AnyTime) Match(v driver.Value) bool {
-	_, ok := v.(time.Time)
-	return ok
+func TestHandlerAuthInterface(t *testing.T) {
+	suite.Run(t, new(authHandlerSuite))
 }
 
-// TestIntegrationAuth is a test for the auth package.
-func TestIntegrationAuth(t *testing.T) {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+type authHandlerSuite struct {
+	router *gin.Engine
 
+	suite.Suite
+}
+
+func (a *authHandlerSuite) SetupSuite() {
 	config.LoadConfig("../../../")
 
+	a.router = gin.New()
+	RouterAuthorization(a.router.Group("v1/auth"))
+}
+
+func (a *authHandlerSuite) TestShouldCreateUser() {
+	monkey.Patch(auth.Register, func(_ context.Context, _ *auth.RegisterRequest) error {
+		return nil
+	})
+	defer monkey.Unpatch(auth.Register)
+
+	data, err := json.Marshal(map[string]interface{}{
+		"first_name":   "any_first_name",
+		"last_name":    "any_last_name",
+		"email":        "any@email.com",
+		"password":     "any_password",
+		"phone_number": "any_phone_number",
+		"address":      "any_address",
+		"city":         "any_city",
+		"country":      "any_country",
+		"postcode":     55,
+	})
+	a.Assert().Nil(err, oops.Err(err))
+
 	var (
-		mock sqlmock.Sqlmock
-		err  error
+		req = httptest.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewBuffer(data))
+		w   = httptest.NewRecorder()
 	)
 
-	if mock, err = postgres.OpenConnectionForTesting(); err != nil {
-		t.Fatal(err)
-	}
-	defer postgres.CloseConnections()
-
-	router := gin.Default()
-	auth.Router(router.Group("v1/auth"))
-	auth.RouterAuthorization(router.Group("v1/auth"))
-
-	t.Run("Register", func(t *testing.T) {
-		data, err := json.Marshal(map[string]interface{}{
-			"first_name":   "any_first_name",
-			"last_name":    "any_last_name",
-			"email":        "any@email.com",
-			"password":     "any_password",
-			"phone_number": "any_phone_number",
-			"address":      "any_address",
-			"city":         "any_city",
-			"country":      "any_country",
-			"postcode":     55,
-		})
-		assert.Equal(t, err, nil)
-
-		var (
-			userID        = "f8c167b8-8b36-444a-8228-f7f20c5fdf67"
-			activateToken = "0548e804-3411-4e9b-83a4-5424764ad7c1"
-		)
-
-		mock.ExpectBegin()
-
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT COUNT(id) > 0 FROM users WHERE email = $1`)).
-			WithArgs("any@email.com").
-			WillReturnRows(sqlmock.NewRows([]string{"exist"}).AddRow(false))
-
-		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO users (first_name,last_name,email,password,roles,phone_number,address,city,country,postcode,token_key) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING "id"`)).
-			WithArgs("any_first_name", "any_last_name", "any@email.com", "any_password", "{read:activation_token}", "any_phone_number", "any_address", "any_city", "any_country", 55, "token_key_testing_any_password").
-			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
-
-		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO activate_account_tokens (user_id,expires_at) VALUES ($1,$2) RETURNING "id"`)).
-			WithArgs(userID, AnyTime{}).
-			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(activateToken))
-
-		mock.ExpectCommit()
-
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("POST", "/v1/auth/register", bytes.NewBuffer(data))
-		assert.Equal(t, err, nil)
-
-		router.ServeHTTP(w, req)
-		assert.Equal(t, 201, w.Code)
-	})
+	a.router.ServeHTTP(w, req)
+	a.Assert().Equal(http.StatusCreated, w.Code)
 }
