@@ -2,60 +2,65 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package auth_test
+package auth
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"bou.ke/monkey"
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/interface/auth"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/power-sso/internal/application/auth"
+	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/stretchr/testify/suite"
 )
 
-// TestIntegrationAuth is a test for the auth package.
-func TestIntegrationAuth(t *testing.T) {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+func TestHandlerAuthInterface(t *testing.T) {
+	suite.Run(t, new(authHandlerSuite))
+}
 
+type authHandlerSuite struct {
+	router *gin.Engine
+
+	suite.Suite
+}
+
+func (a *authHandlerSuite) SetupSuite() {
 	config.LoadConfig("../../../")
-	cfg := config.Get()
 
-	if err := postgres.OpenConnections(cfg); err != nil {
-		t.Fatal("Unable to open connections to database: ", err)
-	}
-	defer postgres.CloseConnections()
+	a.router = gin.New()
+	RouterAuthorization(a.router.Group("v1/auth"))
+}
 
-	router := gin.Default()
-	auth.Router(router.Group("v1/auth"))
-
-	t.Run("Register", func(t *testing.T) {
-		data, err := json.Marshal(map[string]interface{}{
-			"first_name":   "any_first_name",
-			"last_name":    "any_last_name",
-			"email":        "any@email.com",
-			"password":     "any_password",
-			"about":        "any_about",
-			"phone_number": "any_phone_number",
-			"address":      "any_address",
-			"city":         "any_city",
-			"country":      "any_country",
-			"gender":       "any_gender",
-			"postcode":     55,
-			"birthday":     "2022-08-04T19:44:00-03:00",
-		})
-		assert.Equal(t, err, nil)
-		w := httptest.NewRecorder()
-		req, err := http.NewRequest("POST", "/v1/auth/register", bytes.NewBuffer(data))
-		assert.Equal(t, err, nil)
-
-		router.ServeHTTP(w, req)
-		assert.Equal(t, 201, w.Code)
+func (a *authHandlerSuite) TestShouldCreateUser() {
+	monkey.Patch(auth.Register, func(_ context.Context, _ *auth.RegisterRequest) error {
+		return nil
 	})
+	defer monkey.Unpatch(auth.Register)
+
+	data, err := json.Marshal(map[string]interface{}{
+		"first_name":   "any_first_name",
+		"last_name":    "any_last_name",
+		"email":        "any@email.com",
+		"password":     "any_password",
+		"phone_number": "any_phone_number",
+		"address":      "any_address",
+		"city":         "any_city",
+		"country":      "any_country",
+		"postcode":     55,
+	})
+	a.Assert().Nil(err, oops.Err(err))
+
+	var (
+		req = httptest.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewBuffer(data))
+		w   = httptest.NewRecorder()
+	)
+
+	a.router.ServeHTTP(w, req)
+	a.Assert().Equal(http.StatusCreated, w.Code)
 }

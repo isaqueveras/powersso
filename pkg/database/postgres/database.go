@@ -8,7 +8,9 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/Masterminds/squirrel"
+
 	"github.com/isaqueveras/power-sso/config"
 )
 
@@ -17,8 +19,10 @@ type database interface {
 	transaction(ctx context.Context, readOnly bool) (interface{}, error)
 	// Open open connection with database
 	open(cfg *config.Config) error
-	// Close close connection with database
+	// close connection with database
 	close()
+	// openConnectionsForTests opens connections to the mocked database
+	openConnectionsForTests() (sqlmock.Sqlmock, error)
 }
 
 var connection database
@@ -40,6 +44,17 @@ func OpenConnections(c *config.Config) (err error) {
 		return err
 	}
 	return nil
+}
+
+
+// OpenConnectionsForTests opens connections to the mocked database
+func OpenConnectionsForTests() (mock sqlmock.Sqlmock, err error) {
+	connection = &postgres{}
+	if mock, err = connection.openConnectionsForTests(); err != nil {
+		return nil, err
+	}
+
+	return
 }
 
 // CloseConnections close all connections with database

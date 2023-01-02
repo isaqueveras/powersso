@@ -25,7 +25,7 @@ import (
 
 // Register is the business logic for the user register
 func Register(ctx context.Context, in *RegisterRequest) error {
-	cfg := config.Get()
+	in.config = config.Get()
 
 	transaction, err := postgres.NewTransaction(ctx, false)
 	if err != nil {
@@ -47,7 +47,7 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		exists   bool
 		userID   *string
 		data     *domain.Register
-		repo     = auth.New(transaction, mailer.Client(cfg))
+		repo     = auth.New(transaction, mailer.Client(in.config))
 		repoUser = infraUser.New(transaction)
 	)
 
