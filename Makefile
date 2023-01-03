@@ -11,7 +11,7 @@ run:
 	go run main.go
 
 local:
-	docker-compose -f docker-compose.local.yml up -d --build
+	docker compose -f docker-compose.local.yml up -d --build
 
 down-local:
 	docker stop $(FILES)
