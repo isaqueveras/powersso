@@ -6,7 +6,7 @@ server:
   Version: 1.0.0
   Port: :5000
   PprofPort: :5555
-  Mode: testing
+  Mode: development
   JwtSecretKey: power-sso-secret
   CookieName: jwt-power-sso
   SSL: false

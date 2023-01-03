@@ -41,9 +41,6 @@ func (r *repository) Register(input *auth.Register) (userID *string, err error) 
 
 // SendMailActivationAccount contains the flow for the send activation account email
 func (r *repository) SendMailActivationAccount(email *string, token *string) error {
-	if config.Get().Server.Mode == config.ModeTesting {
-		return nil
-	}
 	return r.mailer.sendMailActivationAccount(email, token)
 }
 

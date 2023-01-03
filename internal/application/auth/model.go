@@ -14,6 +14,7 @@ import (
 	"github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
 	"github.com/isaqueveras/power-sso/internal/domain/user"
+	"github.com/isaqueveras/power-sso/internal/utils"
 	"github.com/isaqueveras/power-sso/pkg/security"
 )
 
@@ -35,8 +36,6 @@ type (
 		Birthday    *time.Time   `json:"birthday,omitempty" binding:"omitempty,lte=10"`
 		TokenKey    *string      `json:"token_key"`
 		Roles       *roles.Roles `json:"-"`
-
-		config *config.Config
 	}
 
 	// SessionResponse define a session model output for presentation layer
@@ -60,20 +59,15 @@ type (
 
 // Prepare prepare data for registration
 func (rr *RegisterRequest) Prepare() (err error) {
-	if rr.config.Server.Mode == config.ModeTesting {
-		tokenKeyTesting := "token_key_testing_any_password"
-		rr.TokenKey = &tokenKeyTesting
-	} else {
-		*rr.Email = strings.ToLower(strings.TrimSpace(*rr.Email))
-		*rr.Password = strings.TrimSpace(*rr.Password)
+	rr.Email = utils.GetStringPointer(strings.ToLower(strings.TrimSpace(*rr.Email)))
+	rr.Password = utils.GetStringPointer(strings.TrimSpace(*rr.Password))
 
-		if err = rr.GeneratePassword(); err != nil {
-			return err
-		}
+	if err = rr.GeneratePassword(); err != nil {
+		return err
+	}
 
-		if rr.PhoneNumber != nil {
-			*rr.PhoneNumber = strings.TrimSpace(*rr.PhoneNumber)
-		}
+	if rr.PhoneNumber != nil {
+		rr.PhoneNumber = utils.GetStringPointer(strings.TrimSpace(*rr.PhoneNumber))
 	}
 
 	return
@@ -93,7 +87,7 @@ func (rr *RegisterRequest) GeneratePassword() error {
 		return err
 	}
 
-	*rr.Password = string(hashedPassword)
+	rr.Password = utils.GetStringPointer(string(hashedPassword))
 	return nil
 }
 
@@ -106,7 +100,7 @@ func (rr *RegisterRequest) SanitizePassword() {
 // >> invalidate previously issued tokens
 func (rr *RegisterRequest) RefreshTokenKey() {
 	rr.TokenKey = new(string)
-	*rr.TokenKey = security.RandomString(50)
+	rr.TokenKey = utils.GetStringPointer(security.RandomString(50))
 }
 
 // LoginRequest is the request payload for the login endpoint.
@@ -130,8 +124,8 @@ func (lr *LoginRequest) Validate() {
 }
 
 // ComparePasswords compare user password and payload
-func (lr *LoginRequest) ComparePasswords(passw, tokenKey *string) error {
-	if err := bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*tokenKey+*lr.Password)); err != nil {
+func (lr *LoginRequest) ComparePasswords(passw, tokenKey *string) (err error) {
+	if err = bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*tokenKey+*lr.Password)); err != nil {
 		return ErrEmailOrPasswordIsNotValid()
 	}
 	lr.SanitizePassword()

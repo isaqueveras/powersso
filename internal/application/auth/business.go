@@ -13,7 +13,6 @@ import (
 	domainUser "github.com/isaqueveras/power-sso/internal/domain/user"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
 	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
-	"github.com/isaqueveras/power-sso/internal/infrastructure/session"
 	infraSession "github.com/isaqueveras/power-sso/internal/infrastructure/session"
 	infraUser "github.com/isaqueveras/power-sso/internal/infrastructure/user"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
@@ -25,8 +24,6 @@ import (
 
 // Register is the business logic for the user register
 func Register(ctx context.Context, in *RegisterRequest) error {
-	in.config = config.Get()
-
 	transaction, err := postgres.NewTransaction(ctx, false)
 	if err != nil {
 		return oops.Err(err)
@@ -47,7 +44,7 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		exists   bool
 		userID   *string
 		data     *domain.Register
-		repo     = auth.New(transaction, mailer.Client(in.config))
+		repo     = auth.New(transaction, mailer.Client(config.Get()))
 		repoUser = infraUser.New(transaction)
 	)
 
@@ -107,7 +104,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 		return oops.Err(ErrTokenIsNotValid())
 	}
 
-	var user = domainUser.User{
+	user := domainUser.User{
 		ID: activeToken.UserID,
 	}
 
@@ -119,7 +116,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 		return oops.Err(ErrNotHavePermissionActiveAccount())
 	}
 
-	var repoRoles = infraRoles.New(transaction)
+	repoRoles := infraRoles.New(transaction)
 	if err = repoRoles.RemoveRoles(user.ID, roles.ReadActivationToken); err != nil {
 		return oops.Err(err)
 	}
@@ -160,12 +157,11 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 	defer transaction.Rollback()
 
 	var (
-		cfg         = config.Get()
-		repo        = auth.New(transaction, nil)
-		repoUser    = infraUser.New(transaction)
-		repoSession = infraSession.New(transaction)
-		user        = &domainUser.User{Email: in.Email}
-
+		cfg              = config.Get()
+		repo             = auth.New(transaction, nil)
+		repoUser         = infraUser.New(transaction)
+		repoSession      = infraSession.New(transaction)
+		user             = &domainUser.User{Email: in.Email}
 		token            string
 		passw, sessionID *string
 	)
@@ -174,11 +170,11 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		return nil, oops.Err(err)
 	}
 
-	if !*user.IsActive {
+	if user.IsActive != nil && !*user.IsActive {
 		return nil, oops.Err(ErrUserNotExists())
 	}
 
-	if *user.BlockedTemporarily {
+	if user.BlockedTemporarily != nil && *user.BlockedTemporarily {
 		return nil, oops.Err(ErrUserBlockedTemporarily())
 	}
 
@@ -235,16 +231,13 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 }
 
 func Logout(ctx context.Context, sessionID *string) (err error) {
-	var (
-		transaction *postgres.DBTransaction
-	)
-
+	var transaction *postgres.DBTransaction
 	if transaction, err = postgres.NewTransaction(ctx, false); err != nil {
 		return oops.Err(err)
 	}
 	defer transaction.Rollback()
 
-	if err = session.
+	if err = infraSession.
 		New(transaction).
 		Delete(sessionID); err != nil {
 		return oops.Err(err)

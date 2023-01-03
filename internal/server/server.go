@@ -43,7 +43,7 @@ func NewServer(cfg *config.Config, logg *logger.Logger) *Server {
 }
 
 func (s *Server) Run() error {
-	var setupLingo = lingo.New(i18n.EnglishUS, "i18n")
+	setupLingo := lingo.New(i18n.EnglishUS, "i18n")
 
 	if s.cfg.Server.Mode == config.ModeProduction {
 		gin.SetMode(gin.ReleaseMode)

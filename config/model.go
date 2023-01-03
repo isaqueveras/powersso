@@ -13,8 +13,6 @@ const (
 	ModeDevelopment string = "development"
 	// ModeDevelopment represents the production environment mode
 	ModeProduction string = "production"
-	// ModeDevelopment represents the testing environment mode
-	ModeTesting string = "testing"
 )
 
 const (
