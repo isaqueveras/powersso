@@ -17,20 +17,21 @@ type pg struct {
 
 // Create contains the flow for create project in database
 func (pg *pg) create(input *project.CreateProject) (err error) {
+	var projectID *string
 	if err = pg.DB.Builder.
 		Insert("projects").
 		Columns("created_by", "name", "description", "color", "slug").
 		Values(input.CreatedByID, input.Name, input.Description, input.Color, input.Slug).
 		Suffix(`RETURNING "id"`).
-		Scan(new(string)); err != nil {
+		Scan(&projectID); err != nil {
 		return oops.Err(err)
 	}
 
 	for _, value := range input.Participants {
 		if err = pg.DB.Builder.
 			Insert("project_participants").
-			Columns("user_id", "start_date", "departure_date").
-			Values(value.UserID, value.StartDate, value.DepartureDate).
+			Columns("user_id", "start_date", "departure_date", "project_id").
+			Values(value.UserID, value.StartDate, value.DepartureDate, projectID).
 			Suffix(`RETURNING "user_id"`).
 			Scan(new(string)); err != nil {
 			return oops.Err(err)
