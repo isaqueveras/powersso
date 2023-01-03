@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+
+	"github.com/isaqueveras/power-sso/internal/utils"
 )
 
 // CreateProjectReq models the data to create a project
@@ -30,22 +32,17 @@ type Participant struct {
 
 // Validate validation of data for registration
 func (cpr *CreateProjectReq) Validate() (err error) {
-	slug := slug.Make(*cpr.Name)
-	cpr.Slug = &slug
-
 	if cpr.Name == nil || *cpr.Name == "" {
-		err = errors.New("cannot create a project without a name")
-		return
+		return errors.New("cannot create a project without a name")
 	}
 
+	cpr.Slug = utils.GetStringPointer(slug.Make(*cpr.Name))
 	if len(cpr.Participants) == 0 {
-		err = errors.New("cannot create a project without participants")
-		return
+		return errors.New("cannot create a project without participants")
 	}
 
 	if cpr.Color == nil || *cpr.Color == "" {
-		defaultColor := "#949494"
-		cpr.Color = &defaultColor
+		cpr.Color = utils.GetStringPointer("#949494")
 	}
 
 	return
