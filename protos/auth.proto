@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "auth";
+
+service Authentication {
+  rpc RegisterUser (User) returns (Empty);
+}
+
+message Empty {}
+
+message User {
+  string FirstName = 1;
+  string LastName = 2;
+  string Email = 3;      
+  string Password = 4;   
+  string About = 5;      
+  string Avatar = 6;     
+  string PhoneNumber = 7;
+  string Address = 8;    
+  string City = 9;       
+  string Country = 10;    
+  string Gender = 11;     
+  string PostCode = 12;   
+  string Birthday = 13;   
+}
