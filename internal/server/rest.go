@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/endless"
 	gopowersso "github.com/isaqueveras/go-powersso"
-	"github.com/isaqueveras/lingo"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/isaqueveras/power-sso/config"
@@ -20,11 +19,10 @@ import (
 	"github.com/isaqueveras/power-sso/internal/interface/project"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
+	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
 func (s *Server) RunRest() (err error) {
-	setupLingo := lingo.New(i18n.EnglishUS, "i18n")
-
 	if s.cfg.Server.Mode == config.ModeProduction {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -33,7 +31,7 @@ func (s *Server) RunRest() (err error) {
 	router.Use(
 		middleware.CORS(),
 		middleware.VersionInfo(),
-		middleware.SetupI18n(setupLingo),
+		middleware.SetupI18n(),
 		middleware.RequestIdentifier(),
 		middleware.RecoveryWithZap(s.logg.ZapLogger(), true),
 		middleware.GinZap(s.logg.ZapLogger(), *s.cfg),
@@ -64,7 +62,7 @@ func (s *Server) RunRest() (err error) {
 	go s.routerDebugPProf(router, group)
 
 	if err = group.Wait(); err != nil {
-		s.logg.Fatal("Error while serving the application: ", err)
+		return oops.Err(err)
 	}
 
 	return nil
