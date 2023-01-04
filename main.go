@@ -16,22 +16,30 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
 	config.LoadConfig(".")
-	cfg := config.Get()
 
-	logg := logger.NewLogger(cfg)
+	var (
+		cfg  = config.Get()
+		logg = logger.NewLogger(cfg)
+		err  error
+	)
+
 	logg.InitLogger()
-
-	if err := postgres.OpenConnections(cfg); err != nil {
+	if err = postgres.OpenConnections(cfg); err != nil {
 		logg.Fatal("Unable to open connections to database: ", err)
 	}
 	defer postgres.CloseConnections()
 
-	var redisClient = redis.NewRedisClient(cfg)
-	defer redisClient.Close()
+	redis := redis.NewRedisClient(cfg)
+	defer redis.Close()
 
-	if err := server.NewServer(cfg, logg).Run(); err != nil {
+	server := server.NewServer(cfg, logg)
+
+	if err = server.RunRest(); err != nil {
 		logg.Fatal("Error while serving the application: ", err)
+	}
+
+	if err = server.RunGRPC(); err != nil {
+		logg.Fatal("Error while serving the server gRPC: ", err)
 	}
 }

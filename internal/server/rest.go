@@ -20,29 +20,9 @@ import (
 	"github.com/isaqueveras/power-sso/internal/interface/project"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
-	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
-const (
-	certFile = "ssl/server.crt"
-	keyFile  = "ssl/server.pem"
-)
-
-// Server struct
-type Server struct {
-	cfg  *config.Config
-	logg *logger.Logger
-}
-
-// NewServer new server constructor
-func NewServer(cfg *config.Config, logg *logger.Logger) *Server {
-	return &Server{
-		cfg:  cfg,
-		logg: logg,
-	}
-}
-
-func (s *Server) Run() error {
+func (s *Server) RunRest() (err error) {
 	setupLingo := lingo.New(i18n.EnglishUS, "i18n")
 
 	if s.cfg.Server.Mode == config.ModeProduction {
@@ -83,7 +63,7 @@ func (s *Server) Run() error {
 
 	go s.routerDebugPProf(router, group)
 
-	if err := group.Wait(); err != nil {
+	if err = group.Wait(); err != nil {
 		s.logg.Fatal("Error while serving the application: ", err)
 	}
 
