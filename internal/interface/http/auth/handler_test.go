@@ -14,10 +14,11 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/application/auth"
 	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/stretchr/testify/suite"
 )
 
 func TestHandlerAuthInterface(t *testing.T) {
@@ -31,7 +32,7 @@ type authHandlerSuite struct {
 }
 
 func (a *authHandlerSuite) SetupSuite() {
-	config.LoadConfig("../../../")
+	config.LoadConfig("../../../../")
 
 	a.router = gin.New()
 	RouterAuthorization(a.router.Group("v1/auth"))
