@@ -7,6 +7,8 @@ package main
 import (
 	"log"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/server"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
@@ -16,22 +18,39 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
 	config.LoadConfig(".")
-	cfg := config.Get()
 
-	logg := logger.NewLogger(cfg)
+	var (
+		cfg  = config.Get()
+		logg = logger.NewLogger(cfg)
+		err  error
+	)
+
 	logg.InitLogger()
-
-	if err := postgres.OpenConnections(cfg); err != nil {
+	if err = postgres.OpenConnections(cfg); err != nil {
 		logg.Fatal("Unable to open connections to database: ", err)
 	}
 	defer postgres.CloseConnections()
 
-	var redisClient = redis.NewRedisClient(cfg)
-	defer redisClient.Close()
+	redis := redis.NewRedisClient(cfg)
+	defer redis.Close()
 
-	if err := server.NewServer(cfg, logg).Run(); err != nil {
-		logg.Fatal("Error while serving the application: ", err)
+	var (
+		group  = &errgroup.Group{}
+		server = server.NewServer(cfg, logg, group)
+	)
+
+	// TODO: add in the configuration if it is to run http server
+	if err = server.ServerHTTP(); err != nil {
+		logg.Fatal("Error while serving the server HTTP: ", err)
+	}
+
+	// TODO: add in the configuration if it is to run grpc server
+	if err = server.ServerGRPC(); err != nil {
+		logg.Fatal("Error while serving the server GRPC: ", err)
+	}
+
+	if err = group.Wait(); err != nil {
+		logg.Fatal("Error while serving the servers: ", err)
 	}
 }

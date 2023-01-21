@@ -34,3 +34,6 @@ migrate-up:
 
 migrate-down:
 	migrate -source file://migrations -database $(DB_LOCAL) down
+
+lint:
+	golangci-lint run ./...
