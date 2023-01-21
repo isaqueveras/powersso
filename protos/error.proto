@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package grpckit;
+
+option go_package = "github.com/isaqueveras/power-sso/internal/utils/grpckit";
+
+message ErrorGRPC {
+  optional string Location = 1;
+  optional string RawError = 2;
+  optional string Error = 3;
+  optional uint64 Code = 4;
+}

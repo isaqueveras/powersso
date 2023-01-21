@@ -12,17 +12,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/endless"
 	gopowersso "github.com/isaqueveras/go-powersso"
-	"golang.org/x/sync/errgroup"
 
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/interface/auth"
+	"github.com/isaqueveras/power-sso/internal/interface/http/auth"
 	"github.com/isaqueveras/power-sso/internal/interface/project"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
-	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
-func (s *Server) RunRest() (err error) {
+func (s *Server) ServerHTTP() (err error) {
+	defer s.logg.Info("Server HTTP is running")
+
 	if s.cfg.Server.Mode == config.ModeProduction {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -50,8 +50,7 @@ func (s *Server) RunRest() (err error) {
 	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout * time.Second
 	endless.DefaultMaxHeaderBytes = http.DefaultMaxHeaderBytes
 
-	group := errgroup.Group{}
-	group.Go(func() error {
+	s.group.Go(func() error {
 		if s.cfg.Server.SSL {
 			return endless.ListenAndServeTLS("0.0.0.0"+s.cfg.Server.Port, certFile, keyFile, router)
 		} else {
@@ -59,16 +58,12 @@ func (s *Server) RunRest() (err error) {
 		}
 	})
 
-	go s.routerDebugPProf(router, group)
-
-	if err = group.Wait(); err != nil {
-		return oops.Err(err)
-	}
+	s.routerDebugPProf(router)
 
 	return nil
 }
 
-func (s *Server) routerDebugPProf(router *gin.Engine, group errgroup.Group) {
+func (s *Server) routerDebugPProf(router *gin.Engine) {
 	prefixRouter := router.Group("debug/pprof")
 	prefixRouter.GET("/",
 		gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey),
@@ -78,7 +73,7 @@ func (s *Server) routerDebugPProf(router *gin.Engine, group errgroup.Group) {
 		},
 	)
 
-	group.Go(func() error {
+	s.group.Go(func() error {
 		return endless.ListenAndServe("0.0.0.0"+s.cfg.Server.PprofPort, router)
 	})
 }

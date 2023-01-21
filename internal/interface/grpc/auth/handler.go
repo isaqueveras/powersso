@@ -4,18 +4,14 @@
 
 package auth
 
-import (
-	"context"
-
-	"github.com/isaqueveras/power-sso/internal/application/auth"
-)
+import "context"
 
 // Server implements proto interface
 type Server struct {
-	auth.UnimplementedAuthenticationServer
+	UnimplementedAuthenticationServer
 }
 
 // CreateUser create user using gRPC
-func (s *Server) registerUser(ctx context.Context, in *auth.User) (*auth.Empty, error) {
+func (s *Server) registerUser(ctx context.Context, in *User) (*Empty, error) {
 	return nil, nil
 }

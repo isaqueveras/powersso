@@ -5,6 +5,8 @@
 package server
 
 import (
+	"golang.org/x/sync/errgroup"
+
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
@@ -16,14 +18,16 @@ const (
 
 // Server struct
 type Server struct {
-	cfg  *config.Config
-	logg *logger.Logger
+	cfg   *config.Config
+	logg  *logger.Logger
+	group *errgroup.Group
 }
 
 // NewServer new server constructor
-func NewServer(cfg *config.Config, logg *logger.Logger) *Server {
+func NewServer(cfg *config.Config, logg *logger.Logger, group *errgroup.Group) *Server {
 	return &Server{
-		cfg:  cfg,
-		logg: logg,
+		cfg:   cfg,
+		logg:  logg,
+		group: group,
 	}
 }

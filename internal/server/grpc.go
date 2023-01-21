@@ -6,29 +6,64 @@ package server
 
 import (
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	gogrpc "google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
-	authApp "github.com/isaqueveras/power-sso/internal/application/auth"
-	authInterface "github.com/isaqueveras/power-sso/internal/interface/auth"
+	"github.com/isaqueveras/power-sso/config"
+	"github.com/isaqueveras/power-sso/internal/interface/grpc/auth"
+	"github.com/isaqueveras/power-sso/internal/middleware"
+	"github.com/isaqueveras/power-sso/pkg/logger"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
-func (s *Server) RunGRPC() (err error) {
+func (s *Server) ServerGRPC() (err error) {
+	defer s.logg.Info("Server GRPC is running")
+
 	var (
-		listen net.Listener
-		server = gogrpc.NewServer()
+		listen     net.Listener
+		serverGRPC = gogrpc.NewServer(
+			// TODO: grpc.Creds(credentials.NewTLS(nil)),
+			gogrpc.UnaryInterceptor(
+				grpcMiddleware.ChainUnaryServer(
+					middleware.GRPCZap(),
+					grpcRecovery.UnaryServerInterceptor(
+						grpcRecovery.WithRecoveryHandler(logger.PanicRecovery),
+					),
+				),
+			),
+		)
 	)
 
+	if s.cfg.Server.Mode == config.ModeDevelopment {
+		s.logg.Debug("RUNNING IN DEVELOPMENT: REFLECTION ON")
+		reflection.Register(serverGRPC)
+	}
+
+	go func(server *gogrpc.Server) {
+		signalOS := make(chan os.Signal, 1)
+		signal.Notify(signalOS, syscall.SIGINT, syscall.SIGTERM)
+		for range signalOS {
+			server.GracefulStop()
+			return
+		}
+	}(serverGRPC)
+
+	// TODO: use address in config file
 	if listen, err = net.Listen("tcp", "localhost:50050"); err != nil {
 		return oops.Err(err)
 	}
 
-	authApp.RegisterAuthenticationServer(server, &authInterface.Server{})
+	auth.RegisterAuthenticationServer(serverGRPC, &auth.Server{})
 
-	if err = server.Serve(listen); err != nil {
-		return oops.Err(err)
-	}
+	s.group.Go(func() error {
+		return serverGRPC.Serve(listen)
+	})
 
 	return
 }

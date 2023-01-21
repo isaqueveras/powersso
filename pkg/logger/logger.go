@@ -122,3 +122,9 @@ func (l *Logger) Fatal(args ...interface{}) {
 func (l *Logger) Fatalf(template string, args ...interface{}) {
 	logg.Fatalf(template, args...)
 }
+
+// PanicRecovery handles recovered panics
+func PanicRecovery(msg interface{}) (err error) {
+	logg.Error("PANIC detected: ", msg)
+	return
+}

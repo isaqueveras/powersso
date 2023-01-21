@@ -7,6 +7,8 @@ package main
 import (
 	"log"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/server"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
@@ -33,13 +35,22 @@ func main() {
 	redis := redis.NewRedisClient(cfg)
 	defer redis.Close()
 
-	server := server.NewServer(cfg, logg)
+	var (
+		group  = &errgroup.Group{}
+		server = server.NewServer(cfg, logg, group)
+	)
 
-	if err = server.RunRest(); err != nil {
-		logg.Fatal("Error while serving the application: ", err)
+	// TODO: add in the configuration if it is to run http server
+	if err = server.ServerHTTP(); err != nil {
+		logg.Fatal("Error while serving the server HTTP: ", err)
 	}
 
-	if err = server.RunGRPC(); err != nil {
-		logg.Fatal("Error while serving the server gRPC: ", err)
+	// TODO: add in the configuration if it is to run grpc server
+	if err = server.ServerGRPC(); err != nil {
+		logg.Fatal("Error while serving the server GRPC: ", err)
+	}
+
+	if err = group.Wait(); err != nil {
+		logg.Fatal("Error while serving the servers: ", err)
 	}
 }
