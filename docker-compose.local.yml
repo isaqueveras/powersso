@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=power-sso
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - postgres_data:/data/postgres
     networks:
       - power_sso
     
@@ -38,3 +38,6 @@ services:
 networks:
   power_sso:
     driver: bridge
+
+volumes:
+  postgres_data:
