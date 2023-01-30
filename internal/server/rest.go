@@ -13,7 +13,6 @@ import (
 	"github.com/isaqueveras/endless"
 	gopowersso "github.com/isaqueveras/go-powersso"
 
-	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/interface/http/auth"
 	"github.com/isaqueveras/power-sso/internal/interface/project"
 	"github.com/isaqueveras/power-sso/internal/middleware"
@@ -21,9 +20,12 @@ import (
 )
 
 func (s *Server) ServerHTTP() (err error) {
-	defer s.logg.Info("Server HTTP is running")
+	if !s.cfg.Server.StartHTTP {
+		return
+	}
 
-	if s.cfg.Server.Mode == config.ModeProduction {
+	s.logg.Info("Server HTTP is running")
+	if s.cfg.Server.IsModeProduction() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

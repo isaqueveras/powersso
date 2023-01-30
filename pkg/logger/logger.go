@@ -29,7 +29,7 @@ func NewLogger(cfg *config.Config) *Logger {
 func (l *Logger) InitLogger() {
 	var cfg zap.Config
 
-	if l.cfg.Server.Mode != config.ModeDevelopment {
+	if !l.cfg.Server.IsModeDevelopment() {
 		cfg = zap.NewProductionConfig()
 		cfg.DisableStacktrace = true
 		cfg.EncoderConfig = zap.NewProductionEncoderConfig()

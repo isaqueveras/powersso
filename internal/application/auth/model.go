@@ -78,7 +78,7 @@ func (rr *RegisterRequest) GeneratePassword() error {
 	rr.RefreshTokenKey()
 
 	cost := auth.CostHashPasswordDevelopment
-	if config.Get().Server.Mode == config.ModeProduction {
+	if config.Get().Server.IsModeProduction() {
 		cost = auth.CostHashPasswordProduction
 	}
 
