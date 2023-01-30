@@ -15,7 +15,6 @@ import (
 	gogrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/interface/grpc/auth"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/logger"
@@ -23,7 +22,9 @@ import (
 )
 
 func (s *Server) ServerGRPC() (err error) {
-	defer s.logg.Info("Server GRPC is running")
+	if !s.cfg.Server.StartGRPC {
+		return
+	}
 
 	var (
 		listen     net.Listener
@@ -40,7 +41,8 @@ func (s *Server) ServerGRPC() (err error) {
 		)
 	)
 
-	if s.cfg.Server.Mode == config.ModeDevelopment {
+	s.logg.Info("Server GRPC is running")
+	if s.cfg.Server.IsModeDevelopment() {
 		s.logg.Debug("RUNNING IN DEVELOPMENT: REFLECTION ON")
 		reflection.Register(serverGRPC)
 	}

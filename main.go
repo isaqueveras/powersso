@@ -40,7 +40,6 @@ func main() {
 		server = server.NewServer(cfg, logg, group)
 	)
 
-	// TODO: add in the configuration if it is to run http server
 	if err = server.ServerHTTP(); err != nil {
 		logg.Fatal("Error while serving the server HTTP: ", err)
 	}

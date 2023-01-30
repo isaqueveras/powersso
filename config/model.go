@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	// ModeDevelopment represents the development environment mode
-	ModeDevelopment string = "development"
-	// ModeDevelopment represents the production environment mode
-	ModeProduction string = "production"
+	// modeDevelopment represents the development environment mode
+	modeDevelopment string = "development"
+	// modeDevelopment represents the production environment mode
+	modeProduction string = "production"
 )
 
 const (
@@ -56,6 +56,8 @@ type (
 		SSL                bool
 		CSRF               bool
 		Debug              bool
+		StartHTTP          bool
+		StartGRPC          bool
 		CtxDefaultTimeout  time.Duration
 		ReadTimeout        time.Duration
 		WriteTimeout       time.Duration
@@ -115,3 +117,13 @@ type (
 		Duration  int64
 	}
 )
+
+// IsModeDevelopment returns if in development mode
+func (sc *ServerConfig) IsModeDevelopment() bool {
+	return sc.Mode == modeDevelopment
+}
+
+// IsModeProduction returns if in production mode
+func (sc *ServerConfig) IsModeProduction() bool {
+	return sc.Mode == modeProduction
+}
