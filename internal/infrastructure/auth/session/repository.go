@@ -5,7 +5,7 @@
 package session
 
 import (
-	"github.com/isaqueveras/power-sso/internal/domain/session"
+	"github.com/isaqueveras/power-sso/internal/domain/auth/session"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
 

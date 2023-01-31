@@ -10,7 +10,7 @@ type IAuth interface {
 	Login(email *string) (password *string, err error)
 	SendMailActivationAccount(email *string, token *string) error
 	GetActivateAccountToken(token *string) (*ActivateAccountToken, error)
-	CreateAccessToken(userID *string) (string, error)
+	CreateAccessToken(userID *string) (*string, error)
 	MarkTokenAsUsed(token *string) error
 	AddNumberFailedAttempts(userID *string) error
 }

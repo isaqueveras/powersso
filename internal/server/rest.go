@@ -14,7 +14,7 @@ import (
 	gopowersso "github.com/isaqueveras/go-powersso"
 
 	"github.com/isaqueveras/power-sso/internal/interface/http/auth"
-	"github.com/isaqueveras/power-sso/internal/interface/project"
+	"github.com/isaqueveras/power-sso/internal/interface/http/project"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 	"github.com/isaqueveras/power-sso/pkg/i18n"
 )

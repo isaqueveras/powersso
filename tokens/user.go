@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/domain/user"
+	"github.com/isaqueveras/power-sso/internal/domain/auth/user"
 	"github.com/isaqueveras/power-sso/pkg/security"
 )
 

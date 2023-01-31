@@ -50,7 +50,7 @@ func (r *repository) GetActivateAccountToken(token *string) (*auth.ActivateAccou
 }
 
 // CreateAccessToken contains the flow for the create access token
-func (r *repository) CreateAccessToken(userID *string) (string, error) {
+func (r *repository) CreateAccessToken(userID *string) (*string, error) {
 	return r.pg.createAccessToken(userID)
 }
 

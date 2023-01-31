@@ -44,7 +44,6 @@ func main() {
 		logg.Fatal("Error while serving the server HTTP: ", err)
 	}
 
-	// TODO: add in the configuration if it is to run grpc server
 	if err = server.ServerGRPC(); err != nil {
 		logg.Fatal("Error while serving the server GRPC: ", err)
 	}

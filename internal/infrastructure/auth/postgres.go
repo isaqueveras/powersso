@@ -42,7 +42,7 @@ func (pg *pgAuth) register(input *auth.Register) (userID *string, err error) {
 }
 
 // createAccessToken create the access token for the user
-func (pg *pgAuth) createAccessToken(userID *string) (token string, err error) {
+func (pg *pgAuth) createAccessToken(userID *string) (token *string, err error) {
 	if err = pg.DB.Builder.
 		Insert("activate_account_tokens").
 		Columns("user_id", "expires_at").

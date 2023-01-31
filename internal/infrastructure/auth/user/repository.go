@@ -5,7 +5,7 @@
 package user
 
 import (
-	"github.com/isaqueveras/power-sso/internal/domain/user"
+	"github.com/isaqueveras/power-sso/internal/domain/auth/user"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
 

@@ -10,11 +10,11 @@ import (
 	"github.com/isaqueveras/power-sso/config"
 	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
-	domainUser "github.com/isaqueveras/power-sso/internal/domain/user"
+	domainUser "github.com/isaqueveras/power-sso/internal/domain/auth/user"
 	"github.com/isaqueveras/power-sso/internal/infrastructure/auth"
 	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
-	infraSession "github.com/isaqueveras/power-sso/internal/infrastructure/session"
-	infraUser "github.com/isaqueveras/power-sso/internal/infrastructure/user"
+	infraSession "github.com/isaqueveras/power-sso/internal/infrastructure/auth/session"
+	infraUser "github.com/isaqueveras/power-sso/internal/infrastructure/auth/user"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/mailer"
@@ -41,11 +41,12 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 	in.Roles.Parse()
 
 	var (
-		exists   bool
-		userID   *string
-		data     *domain.Register
-		repo     = auth.New(transaction, mailer.Client(config.Get()))
-		repoUser = infraUser.New(transaction)
+		exists      bool
+		userID      *string
+		data        *domain.Register
+		accessToken = new(string)
+		repo        = auth.New(transaction, mailer.Client(config.Get()))
+		repoUser    = infraUser.New(transaction)
 	)
 
 	if exists, err = repoUser.FindByEmailUserExists(in.Email); err != nil {
@@ -53,7 +54,7 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 	}
 
 	if exists {
-		return oops.Err(ErrUserExists())
+		return oops.Err(domain.ErrUserExists())
 	}
 
 	if data, err = conversor.TypeConverter[domain.Register](&in); err != nil {
@@ -65,12 +66,11 @@ func Register(ctx context.Context, in *RegisterRequest) error {
 		return oops.Err(err)
 	}
 
-	var accessToken string
 	if accessToken, err = repo.CreateAccessToken(userID); err != nil {
 		return oops.Err(err)
 	}
 
-	if err = repo.SendMailActivationAccount(in.Email, &accessToken); err != nil {
+	if err = repo.SendMailActivationAccount(in.Email, accessToken); err != nil {
 		return oops.Err(err)
 	}
 
@@ -101,7 +101,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 	}
 
 	if *activeToken.Used || !*activeToken.IsValid {
-		return oops.Err(ErrTokenIsNotValid())
+		return oops.Err(domain.ErrTokenIsNotValid())
 	}
 
 	user := domainUser.User{
@@ -113,7 +113,7 @@ func Activation(ctx context.Context, token *string) (err error) {
 	}
 
 	if !roles.Exists(roles.ReadActivationToken, roles.Roles{String: *user.Roles}) {
-		return oops.Err(ErrNotHavePermissionActiveAccount())
+		return oops.Err(domain.ErrNotHavePermissionActiveAccount())
 	}
 
 	repoRoles := infraRoles.New(transaction)
@@ -171,15 +171,15 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 	}
 
 	if user.IsActive != nil && !*user.IsActive {
-		return nil, oops.Err(ErrUserNotExists())
+		return nil, oops.Err(domain.ErrUserNotExists())
 	}
 
 	if user.BlockedTemporarily != nil && *user.BlockedTemporarily {
-		return nil, oops.Err(ErrUserBlockedTemporarily())
+		return nil, oops.Err(domain.ErrUserBlockedTemporarily())
 	}
 
 	if passw, err = repo.Login(in.Email); err != nil {
-		return nil, oops.Err(ErrUserNotExists())
+		return nil, oops.Err(domain.ErrUserNotExists())
 	}
 
 	if err = in.ComparePasswords(passw, user.TokenKey); err != nil {
@@ -194,7 +194,7 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 	}
 
 	if !roles.Exists(roles.CreateSession, roles.Roles{String: *user.Roles}) {
-		return nil, oops.Err(ErrNotHavePermissionLogin())
+		return nil, oops.Err(domain.ErrNotHavePermissionLogin())
 	}
 
 	if sessionID, err = repoSession.Create(user.ID, &in.ClientIP, &in.UserAgent); err != nil {

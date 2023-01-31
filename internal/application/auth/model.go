@@ -11,9 +11,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/domain/auth"
+	domain "github.com/isaqueveras/power-sso/internal/domain/auth"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/roles"
-	"github.com/isaqueveras/power-sso/internal/domain/user"
+	"github.com/isaqueveras/power-sso/internal/domain/auth/user"
 	"github.com/isaqueveras/power-sso/internal/utils"
 	"github.com/isaqueveras/power-sso/pkg/security"
 )
@@ -23,7 +23,7 @@ type (
 	RegisterRequest struct {
 		FirstName   *string      `json:"first_name" binding:"required,lte=30"`
 		LastName    *string      `json:"last_name" binding:"required,lte=30"`
-		Email       *string      `json:"email,omitempty" binding:"omitempty,lte=60,email"`
+		Email       *string      `json:"email,omitempty" binding:"omitempty,required,lte=60,email"`
 		Password    *string      `json:"password,omitempty" binding:"omitempty,required,gte=6"`
 		About       *string      `json:"about,omitempty" binding:"omitempty,lte=1024"`
 		Avatar      *string      `json:"avatar,omitempty" binding:"omitempty,lte=512,url"`
@@ -77,9 +77,9 @@ func (rr *RegisterRequest) Prepare() (err error) {
 func (rr *RegisterRequest) GeneratePassword() error {
 	rr.RefreshTokenKey()
 
-	cost := auth.CostHashPasswordDevelopment
+	cost := domain.CostHashPasswordDevelopment
 	if config.Get().Server.IsModeProduction() {
-		cost = auth.CostHashPasswordProduction
+		cost = domain.CostHashPasswordProduction
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*rr.TokenKey+*rr.Password), cost)
@@ -126,7 +126,7 @@ func (lr *LoginRequest) Validate() {
 // ComparePasswords compare user password and payload
 func (lr *LoginRequest) ComparePasswords(passw, tokenKey *string) (err error) {
 	if err = bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*tokenKey+*lr.Password)); err != nil {
-		return ErrEmailOrPasswordIsNotValid()
+		return domain.ErrEmailOrPasswordIsNotValid()
 	}
 	lr.SanitizePassword()
 	return nil
