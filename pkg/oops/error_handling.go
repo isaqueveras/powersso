@@ -43,6 +43,11 @@ func (e *Error) Error() string {
 	return e.Message
 }
 
+// IsHandled check if error has already been handled
+func (e *Error) IsHandled() bool {
+	return e.Message != "" && e.Code != 0
+}
+
 // Wrap wraps an error adding an information message
 func Wrap(err error, message string) error {
 	return errors.Wrap(Err(err), message)
