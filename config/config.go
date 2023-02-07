@@ -6,6 +6,7 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -20,7 +21,7 @@ func LoadConfig(path ...string) {
 		path[0] = "."
 	}
 
-	v.SetConfigName("./config/config-local")
+	v.SetConfigName(getConfigPath(os.Getenv("CONFIG_POWER_SSO")))
 	v.AddConfigPath(path[0])
 	v.AutomaticEnv()
 
@@ -43,4 +44,12 @@ func Get() *Config {
 		log.Fatal("config was not successfully loaded")
 	}
 	return config
+}
+
+// Get config path for dev or production
+func getConfigPath(configPath string) string {
+	if configPath == modeProduction {
+		return "./config/config-prod"
+	}
+	return "./config/config-dev"
 }
