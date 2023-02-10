@@ -37,3 +37,6 @@ migrate-down:
 
 lint:
 	golangci-lint run ./...
+
+swag:
+	swag init -g main.go --output docs

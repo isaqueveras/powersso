@@ -17,3 +17,5 @@ pgdata/
 .vscode
 
 __debug_bin
+
+docs
