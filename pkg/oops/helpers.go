@@ -62,8 +62,6 @@ func handling(rawError error) error {
 
 		case strconv.ErrSyntax:
 			message, code = i18n.Value("errors.handling.error.strconv_err_syntax"), defaultCode+3
-		default:
-			message, code = err.Error(), defaultCode+4
 		}
 	case nil:
 		return nil

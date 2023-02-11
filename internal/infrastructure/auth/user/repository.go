@@ -5,6 +5,7 @@
 package user
 
 import (
+	"github.com/google/uuid"
 	"github.com/isaqueveras/power-sso/internal/domain/auth/user"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 )
@@ -29,4 +30,9 @@ func (r *repository) FindByEmailUserExists(email *string) (bool, error) {
 // GetUser contains the flow for the get user
 func (r *repository) GetUser(data *user.User) error {
 	return r.pg.getUser(data)
+}
+
+// DisableUser contains the flow for disable user
+func (r *repository) DisableUser(userUUID *uuid.UUID) error {
+	return r.pg.disableUser(userUUID)
 }
