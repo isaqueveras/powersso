@@ -12,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/endless"
 	gopowersso "github.com/isaqueveras/go-powersso"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/isaqueveras/power-sso/internal/interface/http/auth"
 	"github.com/isaqueveras/power-sso/internal/interface/http/project"
@@ -62,7 +64,10 @@ func (s *Server) ServerHTTP() (err error) {
 
 	s.routerDebugPProf(router)
 
-	return nil
+	// TODO: add permission in documentation route
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	return
 }
 
 func (s *Server) routerDebugPProf(router *gin.Engine) {

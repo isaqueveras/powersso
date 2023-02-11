@@ -48,6 +48,9 @@ $ make local
 # Run the migrations
 $ make migrate-up
 
+# Generate documentation
+$ make swag
+
 # Run the application in development mode
 $ go run main.go
 
@@ -62,9 +65,10 @@ $ npm run start
 ```
 
 ```bash
-- The frontend will open on the port:3000      # access http://localhost:3000
-- The backend will open on the port:5000       # access http://localhost:5000
-- The mailcatcher will open on the port:1080   # access http://localhost:1080
+- The frontend will open on the port:3000       # access http://localhost:3000
+- The backend will open on the port:5000        # access http://localhost:5000
+- The mailcatcher will open on the port:1080    # access http://localhost:1080
+- The documentation will open on the port:5000: # access http://localhost:5000/swagger/index.html
 ```
 ## 😯 How to contribute to the project
 

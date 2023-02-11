@@ -11,9 +11,18 @@ import (
 	gopowersso "github.com/isaqueveras/go-powersso"
 
 	"github.com/isaqueveras/power-sso/internal/application/project"
+	"github.com/isaqueveras/power-sso/internal/utils"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
+// create godoc
+// @Summary Register a projet
+// @Description Register a project including several users to the project
+// @Tags Http/Project
+// @Accept json
+// @Produce json
+// @Success 201 {object} utils.NoContent{}
+// @Router /v1/project/create [post]
 func create(ctx *gin.Context) {
 	var (
 		input   = new(project.CreateProjectReq)
@@ -37,5 +46,5 @@ func create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, nil)
+	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }

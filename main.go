@@ -10,12 +10,29 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/isaqueveras/power-sso/config"
+	_ "github.com/isaqueveras/power-sso/docs"
 	"github.com/isaqueveras/power-sso/internal/server"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/database/redis"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
+// @title Documentation PowerSSO
+// @version 1.0.0
+// @description This is PowerSSO app server.
+
+// @contact.name PowerSSO
+// @contact.url https://github.com/isaqueveras/power-sso/issues
+
+// @license.name MIT license
+// @license.url https://github.com/isaqueveras/power-sso/blob/main/LICENSE
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
+// @host localhost:5000
+// @BasePath /
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	config.LoadConfig(".")

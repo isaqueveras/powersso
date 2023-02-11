@@ -11,9 +11,18 @@ import (
 	gopowersso "github.com/isaqueveras/go-powersso"
 
 	"github.com/isaqueveras/power-sso/internal/application/auth"
+	"github.com/isaqueveras/power-sso/internal/utils"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
+// register godoc
+// @Summary Register a user
+// @Description Register a user
+// @Tags Http/Auth
+// @Accept json
+// @Produce json
+// @Success 201 {object} utils.NoContent{}
+// @Router /v1/auth/register [post]
 func register(ctx *gin.Context) {
 	var (
 		input auth.RegisterRequest
@@ -30,9 +39,17 @@ func register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{})
+	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
+// activation godoc
+// @Summary Activate the user
+// @Description Route to activate the user
+// @Tags Http/Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} utils.NoContent{}
+// @Router /v1/auth/activation/{token} [post]
 func activation(ctx *gin.Context) {
 	token := ctx.Param("token")
 
@@ -41,9 +58,17 @@ func activation(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{})
+	ctx.JSON(http.StatusOK, utils.NoContent{})
 }
 
+// login godoc
+// @Summary User login
+// @Description Route to login a user account into the system
+// @Tags Http/Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} auth.SessionResponse
+// @Router /v1/auth/login [post]
 func login(ctx *gin.Context) {
 	var (
 		input  auth.LoginRequest
@@ -68,6 +93,14 @@ func login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, output)
 }
 
+// logout godoc
+// @Summary User logout
+// @Description Route to logout a user account into the system
+// @Tags Http/Auth
+// @Accept json
+// @Produce json
+// @Success 204 {object} utils.NoContent{}
+// @Router /v1/auth/logout [delete]
 func logout(ctx *gin.Context) {
 	s := gopowersso.GetSession(ctx)
 	if err := auth.Logout(ctx, &s.SessionID); err != nil {
@@ -75,5 +108,5 @@ func logout(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusNoContent, gin.H{})
+	ctx.JSON(http.StatusNoContent, utils.NoContent{})
 }

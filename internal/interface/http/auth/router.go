@@ -4,9 +4,7 @@
 
 package auth
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "github.com/gin-gonic/gin"
 
 // Router is the router for the auth module.
 func Router(r *gin.RouterGroup) {

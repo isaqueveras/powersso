@@ -5,6 +5,8 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -24,7 +26,7 @@ func CORS() gin.HandlerFunc {
 		c.Writer.Header().Set("Content-Type", "application/json")
 
 		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
+			c.AbortWithStatus(http.StatusNoContent)
 			return
 		}
 

@@ -1,0 +1,202 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is PowerSSO app server.",
+        "title": "Documentation PowerSSO",
+        "contact": {
+            "name": "PowerSSO",
+            "url": "https://github.com/isaqueveras/power-sso/issues"
+        },
+        "license": {
+            "name": "MIT license",
+            "url": "https://github.com/isaqueveras/power-sso/blob/main/LICENSE"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:5000",
+    "basePath": "/",
+    "paths": {
+        "/v1/auth/activation/{token}": {
+            "post": {
+                "description": "Route to activate the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth"
+                ],
+                "summary": "Activate the user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/login": {
+            "post": {
+                "description": "Route to login a user account into the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth"
+                ],
+                "summary": "User login",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/auth.SessionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/logout": {
+            "delete": {
+                "description": "Route to logout a user account into the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth"
+                ],
+                "summary": "User logout",
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/register": {
+            "post": {
+                "description": "Register a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth"
+                ],
+                "summary": "Register a user",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/project/create": {
+            "post": {
+                "description": "Register a project including several users to the project",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Project"
+                ],
+                "summary": "Register a projet",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "auth.SessionResponse": {
+            "type": "object",
+            "properties": {
+                "about": {
+                    "type": "string"
+                },
+                "avatar_url": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "jwt_token": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "raw_data": {
+                    "type": "object"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.NoContent": {
+            "type": "object"
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
