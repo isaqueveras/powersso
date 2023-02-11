@@ -1,0 +1,135 @@
+basePath: /
+definitions:
+  auth.SessionResponse:
+    properties:
+      about:
+        type: string
+      avatar_url:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      expires_at:
+        type: string
+      first_name:
+        type: string
+      jwt_token:
+        type: string
+      last_name:
+        type: string
+      level:
+        type: string
+      phone_number:
+        type: string
+      raw_data:
+        type: object
+      roles:
+        items:
+          type: string
+        type: array
+      session_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  utils.NoContent:
+    type: object
+host: localhost:5000
+info:
+  contact:
+    name: PowerSSO
+    url: https://github.com/isaqueveras/power-sso/issues
+  description: This is PowerSSO app server.
+  license:
+    name: MIT license
+    url: https://github.com/isaqueveras/power-sso/blob/main/LICENSE
+  title: Documentation PowerSSO
+  version: 1.0.0
+paths:
+  /v1/auth/activation/{token}:
+    post:
+      consumes:
+      - application/json
+      description: Route to activate the user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: Activate the user
+      tags:
+      - Http/Auth
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Route to login a user account into the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.SessionResponse'
+            type: object
+      summary: User login
+      tags:
+      - Http/Auth
+  /v1/auth/logout:
+    delete:
+      consumes:
+      - application/json
+      description: Route to logout a user account into the system
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: User logout
+      tags:
+      - Http/Auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: Register a user
+      tags:
+      - Http/Auth
+  /v1/project/create:
+    post:
+      consumes:
+      - application/json
+      description: Register a project including several users to the project
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: Register a projet
+      tags:
+      - Http/Project
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
