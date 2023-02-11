@@ -8,6 +8,7 @@ import (
 	"database/sql"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
 
 	"github.com/isaqueveras/power-sso/internal/domain/auth/user"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
@@ -77,4 +78,22 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 		return oops.Err(err)
 	}
 	return nil
+}
+
+// disableUser disable user in database
+func (pg *pgUser) disableUser(userUUID *uuid.UUID) (err error) {
+	if err = pg.DB.Builder.
+		Update("users").
+		Set("is_active", false).
+		Set("updated_at", squirrel.Expr("NOW()")).
+		Where(squirrel.Eq{
+			"id":        userUUID,
+			"is_active": true,
+		}).
+		Suffix("RETURNING id").
+		Scan(new(string)); err != nil {
+		return oops.Err(err)
+	}
+
+	return
 }

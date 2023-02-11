@@ -4,16 +4,21 @@
 
 package auth
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/isaqueveras/power-sso/internal/interface/http/auth/user"
+)
 
 // Router is the router for the auth module.
 func Router(r *gin.RouterGroup) {
 	r.POST("activation/:token", activation)
+	r.POST("register", register)
 	r.POST("login", login)
 }
 
 // RouterAuthorization is the router for the auth module.
 func RouterAuthorization(r *gin.RouterGroup) {
-	r.POST("register", register)
 	r.DELETE("logout", logout)
+
+	user.RouterWithUUID(r.Group("user/:user_uuid"))
 }

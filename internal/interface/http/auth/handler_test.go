@@ -35,6 +35,7 @@ func (a *authHandlerSuite) SetupSuite() {
 	config.LoadConfig("../../../../")
 
 	a.router = gin.New()
+	Router(a.router.Group("v1/auth"))
 	RouterAuthorization(a.router.Group("v1/auth"))
 }
 
