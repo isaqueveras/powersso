@@ -32,7 +32,7 @@ import (
 // @name Authorization
 
 // @host localhost:5000
-// @BasePath /v1
+// @BasePath /
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	config.LoadConfig(".")

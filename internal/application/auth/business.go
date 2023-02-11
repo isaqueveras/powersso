@@ -209,11 +209,7 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 	userRoles.String = *user.Roles
 	userRoles.ParseArray()
 
-	if err = transaction.Commit(); err != nil {
-		return nil, oops.Err(err)
-	}
-
-	return &SessionResponse{
+	res := &SessionResponse{
 		SessionID:   sessionID,
 		Level:       user.UserType,
 		UserID:      user.ID,
@@ -226,10 +222,18 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		PhoneNumber: user.PhoneNumber,
 		CreatedAt:   user.CreatedAt,
 		Token:       &token,
-		RawData:     make(map[string]any),
-	}, nil
+		// TODO: implement the extra user data in the database
+		RawData: make(map[string]any),
+	}
+
+	if err = transaction.Commit(); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	return res, nil
 }
 
+// Logout is the business logic for the user logout
 func Logout(ctx context.Context, sessionID *string) (err error) {
 	var transaction *postgres.DBTransaction
 	if transaction, err = postgres.NewTransaction(ctx, false); err != nil {
