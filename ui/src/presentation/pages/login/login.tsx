@@ -38,7 +38,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
         email: state.email,
         password: state.password
       })
-      if (account !== undefined) setCurrentAccount(account)
+      setCurrentAccount(account)
       history.replace('/')
     } catch (error: any) {
       setState(old => ({
@@ -55,13 +55,13 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
         <form data-testid="form" className='w-96 max-w-4xl' onSubmit={handleSubmit}>
           <Input type="text" name="email" placeholder="Email address"/>
           <Input type="password" name="password" placeholder="Password"/>
-          <div className="flex justify-between items-center my-2">
+          {/* <div className="flex justify-between items-center my-2">
             <div className="form-group form-check">
               <input type="checkbox" className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-black checked:border-black focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" id="rememberMe" />
               <label className="form-check-label inline-block text-gray-800" htmlFor="rememberMe">Remember me</label>
             </div>
             <a href="#!" className="text-gray-800">Forgot password?</a>
-          </div>
+          </div> */}
           <div className="text-center lg:text-left mb-3">
             <button type="submit" className="w-full inline-block px-7 py-3 bg-black text-white font-medium text-sm leading-snug uppercase rounded hover:bg-black hover:shadow-lg focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Login</button>
             <p className="text-sm pt-1">

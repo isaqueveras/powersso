@@ -10,5 +10,5 @@ export namespace Authentication {
     password: string
   }
 
-  export type Model = AccountModel | undefined
+  export type Model = AccountModel
 }

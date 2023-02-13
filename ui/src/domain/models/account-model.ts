@@ -1,6 +1,4 @@
 export type AccountModel = {
-  accessToken: string
-  name: string
-  code: number
-  message: string
+  first_name: string
+  jwt_token: string
 }
