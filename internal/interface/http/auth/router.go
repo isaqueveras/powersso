@@ -6,6 +6,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/isaqueveras/power-sso/internal/interface/http/auth/user"
 )
 

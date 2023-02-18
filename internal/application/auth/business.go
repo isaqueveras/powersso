@@ -15,6 +15,7 @@ import (
 	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
 	infraSession "github.com/isaqueveras/power-sso/internal/infrastructure/auth/session"
 	infraUser "github.com/isaqueveras/power-sso/internal/infrastructure/auth/user"
+	"github.com/isaqueveras/power-sso/otp"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/mailer"
@@ -197,6 +198,12 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		return nil, oops.Err(domain.ErrNotHavePermissionLogin())
 	}
 
+	if user.OTPConfiguredAndEnabled() {
+		if err = otp.ValidateToken(user.OTPToken, in.OTP); err != nil {
+			return nil, oops.Err(domain.ErrOTPtokenInvalid())
+		}
+	}
+
 	if sessionID, err = repoSession.Create(user.ID, &in.ClientIP, &in.UserAgent); err != nil {
 		return nil, oops.Err(err)
 	}
@@ -216,6 +223,8 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		Email:       user.Email,
 		FirstName:   user.FirstName,
 		LastName:    user.LastName,
+		OTPEnabled:  user.OTPEnabled,
+		OTPSetUp:    user.OTPSetup,
 		Roles:       userRoles.Arrays(),
 		About:       user.About,
 		AvatarURL:   user.Avatar,
