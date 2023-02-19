@@ -200,7 +200,7 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 
 	if user.OTPConfiguredAndEnabled() {
 		if err = otp.ValidateToken(user.OTPToken, in.OTP); err != nil {
-			return nil, oops.Err(domain.ErrOTPtokenInvalid())
+			return nil, oops.Err(domain.ErrOTPTokenInvalid())
 		}
 	}
 
