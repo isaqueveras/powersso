@@ -8,6 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+
+	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/otp"
 )
 
@@ -36,6 +39,20 @@ func TestOTP(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("GetURLQRCode", func(t *testing.T) {
+		config.LoadConfig("../")
+
+		for i := range tokens {
+			userUUID := uuid.New()
+			url := otp.GetURLQRCode(tokens[i], userUUID)
+			urlCorrect := otp.QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + ":" + userUUID.String() + "%3Fsecret%3D" + tokens[i]
+
+			if urlCorrect != url {
+				t.Error("url not equal")
+			}
+		}
+	})
 }
 
 func BenchmarkOTP(b *testing.B) {
@@ -50,6 +67,20 @@ func BenchmarkOTP(b *testing.B) {
 			if err := otp.ValidateToken(&tokens[i], &code); err != nil {
 				b.Error(err)
 				continue
+			}
+		}
+	})
+
+	b.Run("GetURLQRCode", func(b *testing.B) {
+		config.LoadConfig("../")
+
+		for i := range tokens {
+			userUUID := uuid.New()
+			url := otp.GetURLQRCode(tokens[i], userUUID)
+			urlCorrect := otp.QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + ":" + userUUID.String() + "%3Fsecret%3D" + tokens[i]
+
+			if urlCorrect != url {
+				b.Error("url not equal")
 			}
 		}
 	})

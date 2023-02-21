@@ -15,12 +15,17 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
+	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
 const (
 	windowSize = 5
 	stepSize   = 30
+
+	QrCodeURL = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl="
 )
 
 // ValidateToken validates if the otp is valid
@@ -91,4 +96,9 @@ func GenerateToken(secret string, ts int64) (otp string, err error) {
 	}
 
 	return
+}
+
+// GetURLQRCode returns the url of qr code to configure the otp
+func GetURLQRCode(otpToken string, userUUID uuid.UUID) (url string) {
+	return QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + ":" + userUUID.String() + "%3Fsecret%3D" + otpToken
 }
