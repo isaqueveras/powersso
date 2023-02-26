@@ -5,6 +5,9 @@
 package otp
 
 import (
+	"database/sql"
+
+	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
@@ -26,6 +29,20 @@ func (pg *PGOTP) GetToken(userID *uuid.UUID) (userName, token *string, err error
 		Scan(&userName, &token); err != nil {
 		return nil, nil, oops.Err(err)
 	}
+	return
+}
 
+// Configure configure otp for a user
+func (pg *PGOTP) Configure(userID *uuid.UUID, secret *string) (err error) {
+	if _, err = pg.DB.Builder.
+		Update("users").
+		Set("otp_token", secret).
+		Set("otp", true).
+		Set("otp_setup", true).
+		Set("updated_at", squirrel.Expr("NOW()")).
+		Where("id = ?", userID).
+		Exec(); err != nil && err != sql.ErrNoRows {
+		return oops.Err(err)
+	}
 	return
 }

@@ -25,3 +25,8 @@ func New(transaction *postgres.DBTransaction) otp.IOTP {
 func (r *repository) GetToken(userID *uuid.UUID) (*string, *string, error) {
 	return r.pg.GetToken(userID)
 }
+
+// Configure configure otp for a user
+func (r *repository) Configure(userID *uuid.UUID, secret *string) error {
+	return r.pg.Configure(userID, secret)
+}

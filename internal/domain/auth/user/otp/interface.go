@@ -9,4 +9,5 @@ import "github.com/google/uuid"
 // IOTP define an interface for data layer access methods
 type IOTP interface {
 	GetToken(userID *uuid.UUID) (*string, *string, error)
+	Configure(userID *uuid.UUID, secret *string) error
 }

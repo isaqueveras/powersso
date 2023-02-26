@@ -44,6 +44,7 @@ func (o *otpHandlerSuite) SetupSuite() {
 	o.router.Use(middleware.RequestIdentifier())
 	Router(o.router.Group("v1/auth/user/:user_uuid/otp"))
 }
+
 func (o *otpHandlerSuite) TestShouldGetUrlQrCode() {
 	o.Run("Success", func() {
 		monkey.Patch(gopowersso.SameUserRequest, func(_ *gin.Context, _ string) bool {
@@ -51,10 +52,10 @@ func (o *otpHandlerSuite) TestShouldGetUrlQrCode() {
 		})
 		defer monkey.Unpatch(gopowersso.SameUserRequest)
 
-		monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
+		monkey.Patch(otp.GetQrCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
 			return &otp.QRCodeResponse{}, nil
 		})
-		defer monkey.Unpatch(otp.GetQRCode)
+		defer monkey.Unpatch(otp.GetQrCode)
 
 		var (
 			req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+uuid.New().String()+"/otp/qrcode", nil)
@@ -66,10 +67,10 @@ func (o *otpHandlerSuite) TestShouldGetUrlQrCode() {
 	})
 
 	o.Run("Error > Fetch another user's URL", func() {
-		monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
+		monkey.Patch(otp.GetQrCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
 			return &otp.QRCodeResponse{}, nil
 		})
-		defer monkey.Unpatch(otp.GetQRCode)
+		defer monkey.Unpatch(otp.GetQrCode)
 
 		var (
 			req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+uuid.New().String()+"/otp/qrcode", nil)
@@ -81,13 +82,65 @@ func (o *otpHandlerSuite) TestShouldGetUrlQrCode() {
 	})
 
 	o.Run("Error > Invalid UUID format", func() {
-		monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
+		monkey.Patch(otp.GetQrCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
 			return &otp.QRCodeResponse{}, nil
 		})
-		defer monkey.Unpatch(otp.GetQRCode)
+		defer monkey.Unpatch(otp.GetQrCode)
 
 		var (
 			req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/213213-23234-2341sdf-234d/otp/qrcode", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		o.router.ServeHTTP(w, req)
+		o.Assert().Equal(http.StatusBadRequest, w.Code)
+	})
+}
+
+func (o *otpHandlerSuite) TestShouldConfigure() {
+	o.Run("Success", func() {
+		monkey.Patch(gopowersso.SameUserRequest, func(_ *gin.Context, _ string) bool {
+			return true
+		})
+		defer monkey.Unpatch(gopowersso.SameUserRequest)
+
+		monkey.Patch(otp.Configure, func(_ context.Context, _ *uuid.UUID) error {
+			return nil
+		})
+		defer monkey.Unpatch(otp.Configure)
+
+		var (
+			req = httptest.NewRequest(http.MethodPost, "/v1/auth/user/"+uuid.New().String()+"/otp/configure", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		o.router.ServeHTTP(w, req)
+		o.Assert().Equal(http.StatusCreated, w.Code)
+	})
+
+	o.Run("Error > Fetch another user's URL", func() {
+		monkey.Patch(otp.Configure, func(_ context.Context, _ *uuid.UUID) error {
+			return nil
+		})
+		defer monkey.Unpatch(otp.Configure)
+
+		var (
+			req = httptest.NewRequest(http.MethodPost, "/v1/auth/user/"+uuid.New().String()+"/otp/configure", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		o.router.ServeHTTP(w, req)
+		o.Assert().Equal(http.StatusBadRequest, w.Code)
+	})
+
+	o.Run("Error > Invalid UUID format", func() {
+		monkey.Patch(otp.Configure, func(_ context.Context, _ *uuid.UUID) error {
+			return nil
+		})
+		defer monkey.Unpatch(otp.Configure)
+
+		var (
+			req = httptest.NewRequest(http.MethodPost, "/v1/auth/user/213213-23234-2341sdf-234d/otp/configure", nil)
 			w   = httptest.NewRecorder()
 		)
 

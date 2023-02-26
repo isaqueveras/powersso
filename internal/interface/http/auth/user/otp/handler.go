@@ -26,8 +26,22 @@ import (
 // @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/otp/configure [post]
 func configure(ctx *gin.Context) {
-	var err error
-	if err = otp.Configure(ctx); err != nil {
+	var (
+		err    error
+		userID uuid.UUID
+	)
+
+	if userID, err = uuid.Parse(ctx.Param("user_uuid")); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	if !gopowersso.SameUserRequest(ctx, userID.String()) {
+		oops.Handling(ctx, oops.New(i18n.Value("errors.handling.err_not_same_request_user")))
+		return
+	}
+
+	if err = otp.Configure(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -60,7 +74,7 @@ func qrcode(ctx *gin.Context) {
 		return
 	}
 
-	if res, err = otp.GetQRCode(ctx, &userID); err != nil {
+	if res, err = otp.GetQrCode(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
