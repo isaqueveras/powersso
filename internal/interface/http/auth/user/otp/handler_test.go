@@ -41,11 +41,7 @@ func (o *otpHandlerSuite) SetupSuite() {
 	logg.InitLogger()
 
 	o.router = gin.New()
-	o.router.Use(
-		middleware.RequestIdentifier(),
-		middleware.SetupI18n(),
-		middleware.GinZap(logg.ZapLogger(), *o.cfg),
-	)
+	o.router.Use(middleware.RequestIdentifier())
 	Router(o.router.Group("v1/auth/user/:user_uuid/otp"))
 }
 func (o *otpHandlerSuite) TestShouldGetUrlQrCode() {
