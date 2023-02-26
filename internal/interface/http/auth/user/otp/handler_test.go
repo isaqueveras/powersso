@@ -37,9 +37,6 @@ func (o *otpHandlerSuite) SetupSuite() {
 	config.LoadConfig("../../../../../../")
 	o.cfg = config.Get()
 
-	logg := logger.NewLogger(o.cfg)
-	logg.InitLogger()
-
 	o.router = gin.New()
 	o.router.Use(middleware.RequestIdentifier())
 	Router(o.router.Group("v1/auth/user/:user_uuid/otp"))
