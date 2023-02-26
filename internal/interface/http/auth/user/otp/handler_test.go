@@ -19,7 +19,6 @@ import (
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/application/auth/user/otp"
 	"github.com/isaqueveras/power-sso/internal/middleware"
-	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
 func TestHandlerOTPInterface(t *testing.T) {
@@ -28,14 +27,12 @@ func TestHandlerOTPInterface(t *testing.T) {
 
 type otpHandlerSuite struct {
 	router *gin.Engine
-	cfg    *config.Config
 
 	suite.Suite
 }
 
 func (o *otpHandlerSuite) SetupSuite() {
 	config.LoadConfig("../../../../../../")
-	o.cfg = config.Get()
 
 	o.router = gin.New()
 	o.router.Use(middleware.RequestIdentifier())
