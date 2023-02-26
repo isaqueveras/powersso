@@ -15,8 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
@@ -98,7 +96,7 @@ func GenerateToken(secret string, ts int64) (otp string, err error) {
 	return
 }
 
-// GetURLQRCode returns the url of qr code to configure the otp
-func GetURLQRCode(otpToken string, userUUID uuid.UUID) (url string) {
-	return QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + ":" + userUUID.String() + "%3Fsecret%3D" + otpToken
+// GetUrlQrCode returns the url of qr code to configure the otp
+func GetUrlQrCode(otpToken string, userName string) (url string) {
+	return QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + " " + userName + "%3Fsecret%3D" + otpToken
 }

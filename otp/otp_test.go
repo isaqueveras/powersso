@@ -45,8 +45,8 @@ func TestOTP(t *testing.T) {
 
 		for i := range tokens {
 			userUUID := uuid.New()
-			url := otp.GetURLQRCode(tokens[i], userUUID)
-			urlCorrect := otp.QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + ":" + userUUID.String() + "%3Fsecret%3D" + tokens[i]
+			url := otp.GetUrlQrCode(tokens[i], userUUID.String())
+			urlCorrect := otp.QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + " " + userUUID.String() + "%3Fsecret%3D" + tokens[i]
 
 			if urlCorrect != url {
 				t.Error("url not equal")
@@ -76,8 +76,8 @@ func BenchmarkOTP(b *testing.B) {
 
 		for i := range tokens {
 			userUUID := uuid.New()
-			url := otp.GetURLQRCode(tokens[i], userUUID)
-			urlCorrect := otp.QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + ":" + userUUID.String() + "%3Fsecret%3D" + tokens[i]
+			url := otp.GetUrlQrCode(tokens[i], userUUID.String())
+			urlCorrect := otp.QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + " " + userUUID.String() + "%3Fsecret%3D" + tokens[i]
 
 			if urlCorrect != url {
 				b.Error("url not equal")
