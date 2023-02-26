@@ -112,6 +112,87 @@
                 }
             }
         },
+        "/v1/auth/user/{user_uuid}/disable": {
+            "put": {
+                "description": "Route to disable a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth/User"
+                ],
+                "summary": "Disable user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID of the user",
+                        "name": "user_uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/user/{user_uuid}/otp/configure": {
+            "post": {
+                "description": "Configure a user's OTP",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth/OTP"
+                ],
+                "summary": "Configure a user's OTP",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/user/{user_uuid}/otp/qrcode": {
+            "get": {
+                "description": "Configure a user's OTP",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth/OTP"
+                ],
+                "summary": "Configure a user's OTP",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/otp.QRCodeResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/create": {
             "post": {
                 "description": "Register a project including several users to the project",
@@ -150,6 +231,9 @@
                 "created_at": {
                     "type": "string"
                 },
+                "data": {
+                    "type": "object"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -159,20 +243,20 @@
                 "first_name": {
                     "type": "string"
                 },
-                "jwt_token": {
-                    "type": "string"
-                },
                 "last_name": {
                     "type": "string"
                 },
                 "level": {
                     "type": "string"
                 },
+                "otp_enabled": {
+                    "type": "boolean"
+                },
+                "otp_setup": {
+                    "type": "boolean"
+                },
                 "phone_number": {
                     "type": "string"
-                },
-                "raw_data": {
-                    "type": "object"
                 },
                 "roles": {
                     "type": "array",
@@ -183,7 +267,18 @@
                 "session_id": {
                     "type": "string"
                 },
+                "token": {
+                    "type": "string"
+                },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "otp.QRCodeResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
                     "type": "string"
                 }
             }
