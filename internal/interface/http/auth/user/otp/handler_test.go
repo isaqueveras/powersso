@@ -13,10 +13,13 @@ import (
 	"bou.ke/monkey"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	gopowersso "github.com/isaqueveras/go-powersso"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/application/auth/user/otp"
+	"github.com/isaqueveras/power-sso/internal/middleware"
+	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
 func TestHandlerOTPInterface(t *testing.T) {
@@ -25,27 +28,74 @@ func TestHandlerOTPInterface(t *testing.T) {
 
 type otpHandlerSuite struct {
 	router *gin.Engine
+	cfg    *config.Config
 
 	suite.Suite
 }
 
 func (o *otpHandlerSuite) SetupSuite() {
 	config.LoadConfig("../../../../../../")
+	o.cfg = config.Get()
+
+	logg := logger.NewLogger(o.cfg)
+	logg.InitLogger()
 
 	o.router = gin.New()
+	o.router.Use(
+		middleware.RequestIdentifier(),
+		middleware.SetupI18n(),
+		middleware.GinZap(logg.ZapLogger(), *o.cfg),
+	)
 	Router(o.router.Group("v1/auth/user/:user_uuid/otp"))
 }
 func (o *otpHandlerSuite) TestShouldGetUrlQrCode() {
-	monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
-		return &otp.QRCodeResponse{}, nil
+	o.Run("Success", func() {
+		monkey.Patch(gopowersso.SameUserRequest, func(_ *gin.Context, _ string) bool {
+			return true
+		})
+		defer monkey.Unpatch(gopowersso.SameUserRequest)
+
+		monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
+			return &otp.QRCodeResponse{}, nil
+		})
+		defer monkey.Unpatch(otp.GetQRCode)
+
+		var (
+			req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+uuid.New().String()+"/otp/qrcode", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		o.router.ServeHTTP(w, req)
+		o.Assert().Equal(http.StatusOK, w.Code)
 	})
-	defer monkey.Unpatch(otp.GetQRCode)
 
-	var (
-		req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+uuid.New().String()+"/otp/qrcode", nil)
-		w   = httptest.NewRecorder()
-	)
+	o.Run("Error > Fetch another user's URL", func() {
+		monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
+			return &otp.QRCodeResponse{}, nil
+		})
+		defer monkey.Unpatch(otp.GetQRCode)
 
-	o.router.ServeHTTP(w, req)
-	o.Assert().Equal(http.StatusOK, w.Code)
+		var (
+			req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+uuid.New().String()+"/otp/qrcode", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		o.router.ServeHTTP(w, req)
+		o.Assert().Equal(http.StatusBadRequest, w.Code)
+	})
+
+	o.Run("Error > Invalid UUID format", func() {
+		monkey.Patch(otp.GetQRCode, func(_ context.Context, _ *uuid.UUID) (*otp.QRCodeResponse, error) {
+			return &otp.QRCodeResponse{}, nil
+		})
+		defer monkey.Unpatch(otp.GetQRCode)
+
+		var (
+			req = httptest.NewRequest(http.MethodGet, "/v1/auth/user/213213-23234-2341sdf-234d/otp/qrcode", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		o.router.ServeHTTP(w, req)
+		o.Assert().Equal(http.StatusBadRequest, w.Code)
+	})
 }

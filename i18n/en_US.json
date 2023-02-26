@@ -34,7 +34,8 @@
 			"err_user_not_exists": "User not found",
 			"err_email_or_password_is_not_valid": "Email or password is not valid",
 			"err_user_blocked_temporarily": "User is blocked temporarily",
-			"err_otp_token_invalid": "Token OTP invalid"
+			"err_otp_token_invalid": "Token OTP invalid",
+			"err_not_same_request_user": "You are not allowed to access information that does not belong to you"
 		}
 	}
 }

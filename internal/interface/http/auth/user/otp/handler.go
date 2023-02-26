@@ -9,9 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	gopowersso "github.com/isaqueveras/go-powersso"
 
 	"github.com/isaqueveras/power-sso/internal/application/auth/user/otp"
 	"github.com/isaqueveras/power-sso/internal/utils"
+	"github.com/isaqueveras/power-sso/pkg/i18n"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
@@ -50,6 +52,11 @@ func qrcode(ctx *gin.Context) {
 
 	if userID, err = uuid.Parse(ctx.Param("user_uuid")); err != nil {
 		oops.Handling(ctx, err)
+		return
+	}
+
+	if !gopowersso.SameUserRequest(ctx, userID.String()) {
+		oops.Handling(ctx, oops.New(i18n.Value("errors.handling.err_not_same_request_user")))
 		return
 	}
 

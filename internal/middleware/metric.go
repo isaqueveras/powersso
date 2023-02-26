@@ -49,10 +49,13 @@ func GinZap(logger *zap.Logger, cfg config.Config) gin.HandlerFunc {
 			)
 
 			if errors.As(err, &e) {
+				if e.Err != nil && len(e.Err.Error()) > 0 {
+					fields = append(fields, []zap.Field{zap.String("cause", e.Err.Error())}...)
+				}
+
 				fields = append(fields, []zap.Field{
 					zap.Int("error_code", e.Code),
 					zap.String("error", e.Error()),
-					zap.String("cause", e.Err.Error()),
 					zap.Strings("trace", e.Trace),
 				}...)
 				isError = true

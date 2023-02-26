@@ -7,6 +7,8 @@
   <p style="max-width: 70%"><i>PowerSSO is a fundamental piece that authenticates and manages users with the possibility of integration between systems using a Rest API and gRPC</i></p>
   
   <p>
+    <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
+    <img alt="" src="https://github.com/isaqueveras/power-sso/actions/workflows/go.yml/badge.svg">
     <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/power-sso">
     <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/isaqueveras/power-sso?color=%2304D361">
     <img alt="GitHub top language" src="https://img.shields.io/github/repo-size/isaqueveras/power-sso">

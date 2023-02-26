@@ -34,7 +34,8 @@
 			"err_user_not_exists": "El usuario no existe",
 			"err_email_or_password_is_not_valid": "El correo electrónico o la contraseña no son válidos",
 			"err_user_blocked_temporarily": "El usuario está bloqueado temporalmente",
-			"err_otp_token_invalid": "Token OTP inválido"
+			"err_otp_token_invalid": "Token OTP inválido",
+			"err_not_same_request_user": "No se le permite acceder a información que no le pertenece"
 		}
 	}
 }
