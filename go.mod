@@ -16,7 +16,7 @@ require (
 	github.com/gosimple/slug v1.13.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/isaqueveras/endless v0.0.0-20170109170031-447134032cb6
-	github.com/isaqueveras/go-powersso v0.0.0-20230226170047-978a96a9547c
+	github.com/isaqueveras/go-powersso v0.0.0-20230308214228-19254da208d9
 	github.com/isaqueveras/lingo v0.0.0-20181220065520-bfdb55fa4143
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/microcosm-cc/bluemonday v1.0.22
