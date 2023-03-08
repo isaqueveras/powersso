@@ -15,6 +15,7 @@ func Router(r *gin.RouterGroup) {
 	r.POST("activation/:token", activation)
 	r.POST("register", register)
 	r.POST("login", login)
+	r.GET("login/steps", loginSteps)
 }
 
 // RouterAuthorization is the router for the auth module.

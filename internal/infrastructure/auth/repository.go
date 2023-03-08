@@ -68,3 +68,8 @@ func (r *repository) Login(email *string) (*string, error) {
 func (r *repository) AddNumberFailedAttempts(userID *string) error {
 	return r.pg.addNumberFailedAttempts(userID)
 }
+
+// LoginSteps contains the flow to get the data needed to retrieve the steps required to log in a user
+func (r *repository) LoginSteps(email *string) (*auth.Steps, error) {
+	return r.pg.loginSteps(email)
+}

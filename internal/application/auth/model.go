@@ -57,6 +57,12 @@ type (
 		CreatedAt   *time.Time     `json:"created_at,omitempty"`
 		ExpiresAt   *time.Time     `json:"expires_at,omitempty"`
 	}
+
+	// StepsResponse returns the data for login
+	StepsResponse struct {
+		Name *string `json:"name,omitempty"`
+		OTP  *bool   `json:"otp,omitempty"`
+	}
 )
 
 // Prepare prepare data for registration

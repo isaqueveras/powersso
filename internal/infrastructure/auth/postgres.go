@@ -121,3 +121,17 @@ func (pg *pgAuth) addNumberFailedAttempts(userID *string) (err error) {
 
 	return
 }
+
+func (pg *pgAuth) loginSteps(email *string) (steps *auth.Steps, err error) {
+	steps = new(auth.Steps)
+	if err = pg.DB.Builder.
+		Select("COALESCE(otp AND otp_setup, FALSE), first_name").
+		From("users").
+		Where("email = ?", email).
+		Limit(1).
+		Scan(&steps.OTP, &steps.Name); err != nil && err != sql.ErrNoRows {
+		return nil, oops.Err(err)
+	}
+
+	return
+}

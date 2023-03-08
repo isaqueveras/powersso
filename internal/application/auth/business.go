@@ -244,21 +244,45 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 
 // Logout is the business logic for the user logout
 func Logout(ctx context.Context, sessionID *string) (err error) {
-	var transaction *postgres.DBTransaction
-	if transaction, err = postgres.NewTransaction(ctx, false); err != nil {
+	var tx *postgres.DBTransaction
+	if tx, err = postgres.NewTransaction(ctx, false); err != nil {
 		return oops.Err(err)
 	}
-	defer transaction.Rollback()
+	defer tx.Rollback()
 
 	if err = infraSession.
-		New(transaction).
+		New(tx).
 		Delete(sessionID); err != nil {
 		return oops.Err(err)
 	}
 
-	if err = transaction.Commit(); err != nil {
+	if err = tx.Commit(); err != nil {
 		return oops.Err(err)
 	}
+
+	return
+}
+
+// LoginSteps is the business logic needed to retrieve needed steps for log a user in
+func LoginSteps(ctx context.Context, email *string) (res *StepsResponse, err error) {
+	var tx *postgres.DBTransaction
+	if tx, err = postgres.NewTransaction(ctx, true); err != nil {
+		return nil, oops.Err(err)
+	}
+	defer tx.Rollback()
+
+	var (
+		repository = auth.New(tx, nil)
+		steps      *domain.Steps
+	)
+
+	if steps, err = repository.LoginSteps(email); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	res = new(StepsResponse)
+	res.Name = steps.Name
+	res.OTP = steps.OTP
 
 	return
 }
