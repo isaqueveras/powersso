@@ -64,6 +64,30 @@
                 }
             }
         },
+        "/v1/auth/login/steps": {
+            "get": {
+                "description": "Steps to login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth"
+                ],
+                "summary": "Steps to login",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/auth.StepsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/logout": {
             "delete": {
                 "description": "Route to logout a user account into the system",
@@ -193,6 +217,30 @@
                 }
             }
         },
+        "/v1/auth/user/{user_uuid}/otp/unconfigure": {
+            "put": {
+                "description": "unconfigure a user's OTP",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Http/Auth/OTP"
+                ],
+                "summary": "unconfigure a user's OTP",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/utils.NoContent"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/project/create": {
             "post": {
                 "description": "Register a project including several users to the project",
@@ -272,6 +320,17 @@
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "auth.StepsResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "boolean"
                 }
             }
         },

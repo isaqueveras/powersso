@@ -37,6 +37,13 @@ definitions:
       user_id:
         type: string
     type: object
+  auth.StepsResponse:
+    properties:
+      name:
+        type: string
+      otp:
+        type: boolean
+    type: object
   otp.QRCodeResponse:
     properties:
       url:
@@ -86,6 +93,22 @@ paths:
             $ref: '#/definitions/auth.SessionResponse'
             type: object
       summary: User login
+      tags:
+      - Http/Auth
+  /v1/auth/login/steps:
+    get:
+      consumes:
+      - application/json
+      description: Steps to login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.StepsResponse'
+            type: object
+      summary: Steps to login
       tags:
       - Http/Auth
   /v1/auth/logout:
@@ -172,6 +195,22 @@ paths:
             $ref: '#/definitions/otp.QRCodeResponse'
             type: object
       summary: Configure a user's OTP
+      tags:
+      - Http/Auth/OTP
+  /v1/auth/user/{user_uuid}/otp/unconfigure:
+    put:
+      consumes:
+      - application/json
+      description: unconfigure a user's OTP
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: unconfigure a user's OTP
       tags:
       - Http/Auth/OTP
   /v1/project/create:
