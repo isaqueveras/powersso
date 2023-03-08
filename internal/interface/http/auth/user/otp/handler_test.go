@@ -108,3 +108,35 @@ func (t *testSuite) TestShouldConfigure() {
 		t.Assert().Equal(http.StatusForbidden, w.Code)
 	})
 }
+
+func (t *testSuite) TestShouldUnconfigure() {
+	t.Run("Success", func() {
+		monkey.Patch(otp.Unconfigure, func(_ context.Context, _ *uuid.UUID) error {
+			return nil
+		})
+		defer monkey.Unpatch(otp.Unconfigure)
+
+		var (
+			req = httptest.NewRequest(http.MethodPut, "/v1/auth/user/"+sucessUserID+"/otp/unconfigure", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		t.router.ServeHTTP(w, req)
+		t.Assert().Equal(http.StatusCreated, w.Code)
+	})
+
+	t.Run("Error::FetchAnotherUserURL", func() {
+		monkey.Patch(otp.Unconfigure, func(_ context.Context, _ *uuid.UUID) error {
+			return nil
+		})
+		defer monkey.Unpatch(otp.Unconfigure)
+
+		var (
+			req = httptest.NewRequest(http.MethodPut, "/v1/auth/user/"+uuid.New().String()+"/otp/unconfigure", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		t.router.ServeHTTP(w, req)
+		t.Assert().Equal(http.StatusForbidden, w.Code)
+	})
+}
