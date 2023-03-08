@@ -21,22 +21,22 @@ import (
 
 // Configure performs business logic to configure otp for a user
 func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
-	transaction, err := postgres.NewTransaction(ctx, false)
-	if err != nil {
+	var tx *postgres.DBTransaction
+	if tx, err = postgres.NewTransaction(ctx, false); err != nil {
 		return oops.Err(err)
 	}
-	defer transaction.Rollback()
+	defer tx.Rollback()
 
 	data := []byte(security.RandomString(26))
 	dst := make([]byte, base32.StdEncoding.EncodedLen(len(data)))
 	base32.StdEncoding.Encode(dst, data)
 
-	repository := infraOTP.New(transaction)
+	repository := infraOTP.New(tx)
 	if err = repository.Configure(userID, utils.GetStringPointer(string(dst))); err != nil {
 		return oops.Err(err)
 	}
 
-	if err = transaction.Commit(); err != nil {
+	if err = tx.Commit(); err != nil {
 		return oops.Err(err)
 	}
 
@@ -44,15 +44,18 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 }
 
 // GetQrCode performs business logic to get qrcode url
-func GetQrCode(ctx context.Context, userID *uuid.UUID) (*QRCodeResponse, error) {
-	transaction, err := postgres.NewTransaction(ctx, true)
-	if err != nil {
+func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *QRCodeResponse, err error) {
+	var (
+		tx              *postgres.DBTransaction
+		userName, token *string
+	)
+
+	if tx, err = postgres.NewTransaction(ctx, true); err != nil {
 		return nil, oops.Err(err)
 	}
-	defer transaction.Rollback()
+	defer tx.Rollback()
 
-	var userName, token *string
-	if userName, token, err = infraOTP.New(transaction).GetToken(userID); err != nil {
+	if userName, token, err = infraOTP.New(tx).GetToken(userID); err != nil {
 		return nil, oops.Err(err)
 	}
 
@@ -60,6 +63,8 @@ func GetQrCode(ctx context.Context, userID *uuid.UUID) (*QRCodeResponse, error) 
 		*userName += " [DEV]"
 	}
 
-	url := otp.GetUrlQrCode(*token, *userName)
-	return &QRCodeResponse{Url: utils.GetStringPointer(url)}, nil
+	res = new(QRCodeResponse)
+	res.Url = utils.GetStringPointer(otp.GetUrlQrCode(*token, *userName))
+
+	return
 }
