@@ -30,3 +30,8 @@ func (r *repository) GetToken(userID *uuid.UUID) (*string, *string, error) {
 func (r *repository) Configure(userID *uuid.UUID, secret *string) error {
 	return r.pg.Configure(userID, secret)
 }
+
+// Unconfigure unconfigure otp for a user
+func (r *repository) Unconfigure(userID *uuid.UUID) error {
+	return r.pg.Unconfigure(userID)
+}

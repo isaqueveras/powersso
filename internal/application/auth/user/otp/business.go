@@ -43,6 +43,26 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 	return
 }
 
+// Unconfigure performs business logic to unconfigure otp for a user
+func Unconfigure(ctx context.Context, userID *uuid.UUID) (err error) {
+	var tx *postgres.DBTransaction
+	if tx, err = postgres.NewTransaction(ctx, false); err != nil {
+		return oops.Err(err)
+	}
+	defer tx.Rollback()
+
+	repository := infraOTP.New(tx)
+	if err = repository.Unconfigure(userID); err != nil {
+		return oops.Err(err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return oops.Err(err)
+	}
+
+	return
+}
+
 // GetQrCode performs business logic to get qrcode url
 func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *QRCodeResponse, err error) {
 	var (

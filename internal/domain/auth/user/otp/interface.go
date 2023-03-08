@@ -10,4 +10,5 @@ import "github.com/google/uuid"
 type IOTP interface {
 	GetToken(userID *uuid.UUID) (*string, *string, error)
 	Configure(userID *uuid.UUID, secret *string) error
+	Unconfigure(userID *uuid.UUID) error
 }

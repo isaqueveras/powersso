@@ -15,7 +15,7 @@ func Router(r *gin.RouterGroup) {
 
 	r.GET("qrcode", qrcode)
 	r.POST("configure", configure)
+	r.PUT("unconfigure", unconfigure)
 
-	// TODO: Create route to unconfigure otp
 	// TODO: Create route to check if OTP code is required when login
 }

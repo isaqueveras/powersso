@@ -46,3 +46,16 @@ func (pg *PGOTP) Configure(userID *uuid.UUID, secret *string) (err error) {
 	}
 	return
 }
+
+// Unconfigure unconfigure otp for a user
+func (pg *PGOTP) Unconfigure(userID *uuid.UUID) (err error) {
+	if _, err = pg.DB.Builder.
+		Update("users").
+		Set("otp", false).
+		Set("updated_at", squirrel.Expr("NOW()")).
+		Where("id = ?", userID).
+		Exec(); err != nil && err != sql.ErrNoRows {
+		return oops.Err(err)
+	}
+	return
+}

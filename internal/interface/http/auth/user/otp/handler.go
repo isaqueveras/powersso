@@ -42,6 +42,33 @@ func configure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
+// unconfigure godoc
+// @Summary unconfigure a user's OTP
+// @Description unconfigure a user's OTP
+// @Tags Http/Auth/OTP
+// @Accept json
+// @Produce json
+// @Success 201 {object} utils.NoContent{}
+// @Router /v1/auth/user/{user_uuid}/otp/unconfigure [put]
+func unconfigure(ctx *gin.Context) {
+	var (
+		err    error
+		userID uuid.UUID
+	)
+
+	if userID, err = uuid.Parse(ctx.Param("user_uuid")); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	if err = otp.Unconfigure(ctx, &userID); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, utils.NoContent{})
+}
+
 // qrcode godoc
 // @Summary Configure a user's OTP
 // @Description Configure a user's OTP
