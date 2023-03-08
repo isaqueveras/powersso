@@ -4,10 +4,15 @@
 
 package otp
 
-import "github.com/gin-gonic/gin"
+import (
+	gin "github.com/gin-gonic/gin"
+	gopowersso "github.com/isaqueveras/go-powersso"
+)
 
 // Router is the router for the otp module.
 func Router(r *gin.RouterGroup) {
+	r.Use(gopowersso.SameUser())
+
 	r.GET("qrcode", qrcode)
 	r.POST("configure", configure)
 
