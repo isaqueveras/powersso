@@ -95,3 +95,12 @@ func Err(err error) error {
 
 	return errors.WithStack(err)
 }
+
+// New creates and returns new normalized `Error` instance.
+func New(msg string) *Error {
+	return &Error{
+		Message:    msg,
+		Code:       defaultCode,
+		StatusCode: http.StatusBadRequest,
+	}
+}

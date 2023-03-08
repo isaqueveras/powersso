@@ -33,7 +33,8 @@
 			"err_not_have_permission_login": "Você não tem permissão para fazer login",
 			"err_user_not_exists": "Usuário não encontrado",
 			"err_email_or_password_is_not_valid": "E-mail ou senha inválidos",
-			"err_user_blocked_temporarily": "Usuário bloqueado temporariamente"
+			"err_user_blocked_temporarily": "Usuário bloqueado temporariamente",
+			"err_otp_token_invalid": "Token OTP inválido"
 		}
 	}
 }

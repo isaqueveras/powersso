@@ -38,13 +38,6 @@ func (pg *pgUser) findByEmailUserExists(email *string) (exists bool, err error) 
 
 // getUser get the user from the database
 func (pg *pgUser) getUser(data *user.User) (err error) {
-	var where squirrel.Eq
-	if data.ID != nil {
-		where = squirrel.Eq{"id": data.ID}
-	} else if data.Email != nil {
-		where = squirrel.Eq{"email": data.Email}
-	}
-
 	if err = pg.DB.Builder.
 		Select(`
 			U.id,
@@ -67,17 +60,25 @@ func (pg *pgUser) getUser(data *user.User) (err error) {
 			U.login_date,
 			U.is_active,
 			U.user_type,
-			U.number_failed_attempts >= 3 AND (U.last_failure_date + '1 hour') >= NOW() AS blocked_temporarily`).
+			U.number_failed_attempts >= 3 AND (U.last_failure_date + '1 hour') >= NOW() AS blocked_temporarily,
+			U.otp,
+			U.otp_token,
+			U.otp_setup`).
 		From("users U").
-		Where(where).
+		Where(squirrel.Or{
+			squirrel.Eq{"id": data.ID},
+			squirrel.Eq{"email": data.Email},
+		}).
 		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.Roles,
 			&data.About, &data.Avatar, &data.PhoneNumber, &data.Address, &data.City,
 			&data.Country, &data.Gender, &data.Postcode, &data.TokenKey, &data.Birthday,
 			&data.CreatedAt, &data.UpdatedAt, &data.LoginDate, &data.IsActive,
-			&data.UserType, &data.BlockedTemporarily); err != nil {
+			&data.UserType, &data.BlockedTemporarily, &data.OTPEnabled,
+			&data.OTPToken, &data.OTPSetup); err != nil {
 		return oops.Err(err)
 	}
-	return nil
+
+	return
 }
 
 // disableUser disable user in database

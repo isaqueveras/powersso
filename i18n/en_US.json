@@ -33,7 +33,8 @@
 			"err_not_have_permission_login": "You do not have permission to login",
 			"err_user_not_exists": "User not found",
 			"err_email_or_password_is_not_valid": "Email or password is not valid",
-			"err_user_blocked_temporarily": "User is blocked temporarily"
+			"err_user_blocked_temporarily": "User is blocked temporarily",
+			"err_otp_token_invalid": "Token OTP invalid"
 		}
 	}
 }

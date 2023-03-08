@@ -15,6 +15,7 @@ import (
 	infraRoles "github.com/isaqueveras/power-sso/internal/infrastructure/auth/roles"
 	infraSession "github.com/isaqueveras/power-sso/internal/infrastructure/auth/session"
 	infraUser "github.com/isaqueveras/power-sso/internal/infrastructure/auth/user"
+	"github.com/isaqueveras/power-sso/otp"
 	"github.com/isaqueveras/power-sso/pkg/conversor"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
 	"github.com/isaqueveras/power-sso/pkg/mailer"
@@ -197,6 +198,12 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		return nil, oops.Err(domain.ErrNotHavePermissionLogin())
 	}
 
+	if user.OTPConfiguredAndEnabled() {
+		if err = otp.ValidateToken(user.OTPToken, in.OTP); err != nil {
+			return nil, oops.Err(domain.ErrOTPTokenInvalid())
+		}
+	}
+
 	if sessionID, err = repoSession.Create(user.ID, &in.ClientIP, &in.UserAgent); err != nil {
 		return nil, oops.Err(err)
 	}
@@ -216,6 +223,8 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 		Email:       user.Email,
 		FirstName:   user.FirstName,
 		LastName:    user.LastName,
+		OTPEnabled:  user.OTPEnabled,
+		OTPSetUp:    user.OTPSetup,
 		Roles:       userRoles.Arrays(),
 		About:       user.About,
 		AvatarURL:   user.Avatar,
@@ -235,21 +244,45 @@ func Login(ctx context.Context, in *LoginRequest) (*SessionResponse, error) {
 
 // Logout is the business logic for the user logout
 func Logout(ctx context.Context, sessionID *string) (err error) {
-	var transaction *postgres.DBTransaction
-	if transaction, err = postgres.NewTransaction(ctx, false); err != nil {
+	var tx *postgres.DBTransaction
+	if tx, err = postgres.NewTransaction(ctx, false); err != nil {
 		return oops.Err(err)
 	}
-	defer transaction.Rollback()
+	defer tx.Rollback()
 
 	if err = infraSession.
-		New(transaction).
+		New(tx).
 		Delete(sessionID); err != nil {
 		return oops.Err(err)
 	}
 
-	if err = transaction.Commit(); err != nil {
+	if err = tx.Commit(); err != nil {
 		return oops.Err(err)
 	}
+
+	return
+}
+
+// LoginSteps is the business logic needed to retrieve needed steps for log a user in
+func LoginSteps(ctx context.Context, email *string) (res *StepsResponse, err error) {
+	var tx *postgres.DBTransaction
+	if tx, err = postgres.NewTransaction(ctx, true); err != nil {
+		return nil, oops.Err(err)
+	}
+	defer tx.Rollback()
+
+	var (
+		repository = auth.New(tx, nil)
+		steps      *domain.Steps
+	)
+
+	if steps, err = repository.LoginSteps(email); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	res = new(StepsResponse)
+	res.Name = steps.Name
+	res.OTP = steps.OTP
 
 	return
 }

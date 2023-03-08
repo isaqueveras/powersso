@@ -45,3 +45,8 @@ func ErrEmailOrPasswordIsNotValid() *oops.Error {
 func ErrUserBlockedTemporarily() *oops.Error {
 	return oops.NewError(i18n.Value("errors.handling.err_user_blocked_temporarily"), http.StatusForbidden)
 }
+
+// ErrOTPTokenInvalid creates and returns an error when validate token OTP
+func ErrOTPTokenInvalid() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_otp_token_invalid"), http.StatusForbidden)
+}

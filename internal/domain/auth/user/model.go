@@ -37,8 +37,23 @@ type User struct {
 	BlockedTemporarily *bool
 	TokenKey           *string
 	IsActive           *bool
+	OTPToken           *string
+	OTPEnabled         *bool
+	OTPSetup           *bool
 	Birthday           *time.Time
 	CreatedAt          *time.Time
 	UpdatedAt          *time.Time
 	LoginDate          *time.Time
+}
+
+// OTPConfiguredAndEnabled checks if the user has the otp configured and activated for use
+func (u *User) OTPConfiguredAndEnabled() bool {
+	enabled := u.OTPEnabled != nil && *u.OTPEnabled
+	setup := u.OTPSetup != nil && *u.OTPSetup
+
+	if enabled && setup {
+		return true
+	}
+
+	return false
 }

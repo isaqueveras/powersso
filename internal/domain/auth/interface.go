@@ -13,4 +13,5 @@ type IAuth interface {
 	CreateAccessToken(userID *string) (*string, error)
 	MarkTokenAsUsed(token *string) error
 	AddNumberFailedAttempts(userID *string) error
+	LoginSteps(email *string) (*Steps, error)
 }

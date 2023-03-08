@@ -49,11 +49,19 @@ type (
 		About       *string        `json:"about,omitempty"`
 		AvatarURL   *string        `json:"avatar_url,omitempty"`
 		PhoneNumber *string        `json:"phone_number,omitempty"`
+		OTPEnabled  *bool          `json:"otp_enabled,omitempty"`
+		OTPSetUp    *bool          `json:"otp_setup,omitempty"`
 		Roles       []string       `json:"roles,omitempty"`
-		Token       *string        `json:"jwt_token,omitempty"`
-		RawData     map[string]any `json:"raw_data,omitempty"`
+		Token       *string        `json:"token,omitempty"`
+		RawData     map[string]any `json:"data,omitempty"`
 		CreatedAt   *time.Time     `json:"created_at,omitempty"`
 		ExpiresAt   *time.Time     `json:"expires_at,omitempty"`
+	}
+
+	// StepsResponse returns the data for login
+	StepsResponse struct {
+		Name *string `json:"name,omitempty"`
+		OTP  *bool   `json:"otp,omitempty"`
 	}
 )
 
@@ -107,6 +115,7 @@ func (rr *RegisterRequest) RefreshTokenKey() {
 type LoginRequest struct {
 	Email    *string `json:"email" binding:"required,lte=60,email"`
 	Password *string `json:"password" binding:"required,gte=6"`
+	OTP      *string `json:"otp,omitempty"`
 
 	ClientIP  string `json:"-"`
 	UserAgent string `json:"-"`

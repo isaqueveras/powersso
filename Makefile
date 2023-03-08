@@ -10,6 +10,9 @@ DB_LOCAL := "postgres://postgres:postgres@localhost:5432/power-sso?sslmode=disab
 run:
 	go run main.go
 
+test:
+	go test ./...
+
 local:
 	docker compose -f docker-compose.local.yml up -d --build
 
