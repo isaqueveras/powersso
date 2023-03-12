@@ -12,9 +12,9 @@ const (
 )
 
 var (
-	errInvalidInput error = errors.New("Invalid input")
-	errNoneTagFound error = errors.New("No tag found")
-	errFieldNull    error = errors.New("Field null")
+	errInvalidInput error = errors.New("invalid input")
+	errNoneTagFound error = errors.New("no tag found")
+	errFieldNull    error = errors.New("field null")
 )
 
 // FormatValuesInUp format columns and values ​​for an insert or update query

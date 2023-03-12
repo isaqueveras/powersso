@@ -73,5 +73,5 @@ func findSendmailPath() (path string, err error) {
 		}
 	}
 
-	return "", errors.New("Failed to locate a sendmail executable path.")
+	return "", errors.New("failed to locate a sendmail executable path")
 }
