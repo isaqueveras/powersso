@@ -43,3 +43,6 @@ lint:
 
 swag:
 	swag init -g main.go --output docs
+
+check:
+	staticcheck ./...
