@@ -5,35 +5,28 @@
 package config
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
-
-	"github.com/spf13/viper"
 )
 
 var config *Config
 
 // LoadConfig config file from given path
-func LoadConfig(path ...string) {
-	v := viper.New()
-
-	if path == nil {
-		path[0] = "."
+func LoadConfig() {
+	path := "./app.json"
+	if val, set := os.LookupEnv("CONFIG_POWER_SSO"); set && val != "" {
+		path = val
 	}
 
-	v.SetConfigName(getConfigPath(os.Getenv("CONFIG_POWER_SSO")))
-	v.AddConfigPath(path[0])
-	v.AutomaticEnv()
-
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Fatal("Config file not found")
-		}
+	raw, err := ioutil.ReadFile(path)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := v.Unmarshal(&config); err != nil {
-		log.Fatalf("unable to decode into struct, %v", err)
+	if err = json.Unmarshal(raw, &config); err != nil {
+		log.Fatal(err)
 	}
 }
 
@@ -44,12 +37,4 @@ func Get() *Config {
 		log.Fatal("config was not successfully loaded")
 	}
 	return config
-}
-
-// Get config path for dev or production
-func getConfigPath(configPath string) string {
-	if configPath == modeProduction {
-		return "./config/config-prod"
-	}
-	return "./config/config-dev"
 }

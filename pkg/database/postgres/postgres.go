@@ -24,12 +24,12 @@ type postgres struct {
 
 // open open a transaction with the database
 func (p *postgres) open(c *config.Config) (err error) {
-	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
-		c.Postgres.Host,
-		c.Postgres.Port,
-		c.Postgres.User,
-		c.Postgres.Dbname,
-		c.Postgres.Password,
+	dataSourceName := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable password=%s",
+		c.Database.Host,
+		c.Database.Port,
+		c.Database.User,
+		c.Database.Dbname,
+		c.Database.Password,
 	)
 
 	driverConfig := stdlib.DriverConfig{
@@ -44,21 +44,21 @@ func (p *postgres) open(c *config.Config) (err error) {
 	}
 
 	stdlib.RegisterDriverConfig(&driverConfig)
-	db, err := sql.Open(c.Postgres.Driver, driverConfig.ConnectionString(dataSourceName))
+	db, err := sql.Open(c.Database.Driver, driverConfig.ConnectionString(dataSourceName))
 	if err != nil {
 		return err
 	}
 
-	db.SetMaxOpenConns(c.Postgres.MaxOpenConns)
-	db.SetConnMaxLifetime(c.Postgres.ConnMaxLifetime * time.Second)
-	db.SetMaxIdleConns(c.Postgres.MaxIdleConns)
-	db.SetConnMaxIdleTime(c.Postgres.ConnMaxIdleTime * time.Second)
+	db.SetMaxOpenConns(c.Database.MaxOpenConns)
+	db.SetConnMaxLifetime(c.Database.ConnMaxLifetime * time.Second)
+	db.SetMaxIdleConns(c.Database.MaxIdleConns)
+	db.SetConnMaxIdleTime(c.Database.ConnMaxIdleTime * time.Second)
 	if err = db.Ping(); err != nil {
 		return err
 	}
 
 	p.db = db
-	p.timeout = int(c.Postgres.Timeout)
+	p.timeout = int(c.Database.Timeout)
 
 	return nil
 }

@@ -33,7 +33,7 @@ type testSuite struct {
 }
 
 func (a *testSuite) SetupSuite() {
-	config.LoadConfig("../../../../")
+	config.LoadConfig()
 
 	a.router = gin.New()
 	Router(a.router.Group("v1/auth"))

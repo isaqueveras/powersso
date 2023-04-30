@@ -14,17 +14,8 @@ services:
     volumes:
       - postgres_data:/data/postgres
     networks:
-      - power_sso
+      - powersso
     
-  redis:
-    image: redis:6.0.9-alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-    restart: always
-    networks:
-      - power_sso
-  
   mailcatcher:
     container_name: mailcatcher
     image: sj26/mailcatcher
@@ -35,9 +26,51 @@ services:
       - 1025:1025
       - 1080:1080
 
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgesql
+    restart: always
+    environment:
+      - CONFIG_POWER_SSO=/etc/powersso/app.json
+      - GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
+    volumes:
+      - /etc/powersso:/etc/powersso
+      - logs:/var/log/powersso
+      - ${CONFIG_POWER_SSO:-/etc/powersso/app.json}:/etc/powersso/app.json
+    networks:
+      - powersso
+
+  web:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    # volumes:
+      # - frontend/build:/app/frontend/build
+    networks:
+      - powersso
+
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - powersso
+
 networks:
-  power_sso:
+  powersso:
     driver: bridge
 
 volumes:
   postgres_data:
+  logs:

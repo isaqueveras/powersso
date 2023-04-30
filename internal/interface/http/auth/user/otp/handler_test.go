@@ -33,7 +33,7 @@ type testSuite struct {
 }
 
 func (o *testSuite) SetupSuite() {
-	config.LoadConfig("../../../../../../")
+	config.LoadConfig()
 	var handleUserLog = func() gin.HandlerFunc {
 		return func(ctx *gin.Context) {
 			ctx.Set("UID", sucessUserID)

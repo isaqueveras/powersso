@@ -13,7 +13,6 @@ import (
 	_ "github.com/isaqueveras/power-sso/docs"
 	"github.com/isaqueveras/power-sso/internal/server"
 	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/database/redis"
 	"github.com/isaqueveras/power-sso/pkg/logger"
 )
 
@@ -35,37 +34,28 @@ import (
 // @BasePath /
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	config.LoadConfig(".")
 
-	var (
-		cfg  = config.Get()
-		logg = logger.NewLogger(cfg)
-		err  error
-	)
+	config.LoadConfig()
+	cfg := config.Get()
 
+	logg := logger.NewLogger(cfg)
 	logg.InitLogger()
-	if err = postgres.OpenConnections(cfg); err != nil {
-		logg.Fatal("Unable to open connections to database: ", err)
-	}
+
+	postgres.OpenConnections(cfg)
 	defer postgres.CloseConnections()
 
-	redis := redis.NewRedisClient(cfg)
-	defer redis.Close()
+	group := &errgroup.Group{}
+	server := server.NewServer(cfg, logg, group)
 
-	var (
-		group  = &errgroup.Group{}
-		server = server.NewServer(cfg, logg, group)
-	)
-
-	if err = server.ServerHTTP(); err != nil {
+	if err := server.ServerHTTP(); err != nil {
 		logg.Fatal("Error while serving the server HTTP: ", err)
 	}
 
-	if err = server.ServerGRPC(); err != nil {
+	if err := server.ServerGRPC(); err != nil {
 		logg.Fatal("Error while serving the server GRPC: ", err)
 	}
 
-	if err = group.Wait(); err != nil {
+	if err := group.Wait(); err != nil {
 		logg.Fatal("Error while serving the servers: ", err)
 	}
 }

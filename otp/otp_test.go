@@ -41,7 +41,7 @@ func TestOTP(t *testing.T) {
 	})
 
 	t.Run("GetURLQRCode", func(t *testing.T) {
-		config.LoadConfig("../")
+		config.LoadConfig()
 
 		for i := range tokens {
 			userUUID := uuid.New()
@@ -72,7 +72,7 @@ func BenchmarkOTP(b *testing.B) {
 	})
 
 	b.Run("GetURLQRCode", func(b *testing.B) {
-		config.LoadConfig("../")
+		config.LoadConfig()
 
 		for i := range tokens {
 			userUUID := uuid.New()
