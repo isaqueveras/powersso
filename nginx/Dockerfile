@@ -1,8 +1,5 @@
-# FIXME: (@isaqueveras) fix version
-FROM nginx:latest
+FROM nginx:1.15
 
-# Copy Nginx configuration file to the container
-COPY nginx.conf /etc/nginx/conf.d
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
 EXPOSE 80

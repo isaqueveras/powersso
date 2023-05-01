@@ -32,6 +32,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
+      - "5555:5555"
     depends_on:
       - postgesql
     restart: always
@@ -45,14 +46,14 @@ services:
     networks:
       - powersso
 
-  web:
+  nginx:
     build: ./nginx
     ports:
       - "80:80"
     depends_on:
       - backend
-    # volumes:
-      # - frontend/build:/app/frontend/build
+    volumes:
+      - ./ui/build:/app/frontend/build
     networks:
       - powersso
 
@@ -64,6 +65,10 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    environment:
+      - API_URL=http://localhost/api/v1/
+    env_file:
+      - ./ui/.env 
     networks:
       - powersso
 

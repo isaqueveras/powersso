@@ -28,26 +28,29 @@ image-build: ## Docker Build
 			.
 
 run:
-	go run main.go
+	@ go run main.go
 
 test:
-	go test ./...
+	@ go test ./...
 
 local:
-	@ docker compose -f ./docker-compose.local.yml up -d --build
+	@ docker compose -f ./docker-compose.local.yml up -d 
+
+local-build:
+		@ docker compose -f ./docker-compose.local.yml up -d --build
 
 down-local:
-	docker stop $(FILES)
-	docker rm $(FILES)
+	@ docker stop $(FILES)
+	@ docker rm $(FILES)
 
 docker-clean:
-	docker system prune -f
+	@ docker system prune -f
 
 logs-local:
-	docker logs -f $(FILES)
+	@ docker logs -f $(FILES)
 
 migrate-force:
-	migrate -source file://migrations -database $(DB_LOCAL) force 1
+	@ migrate -source file://migrations -database $(DB_LOCAL) force 1
 
 migrate-version:
 	migrate -source file://migrations -database $(DB_LOCAL) version
