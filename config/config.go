@@ -15,7 +15,7 @@ var config *Config
 
 // LoadConfig config file from given path
 func LoadConfig() {
-	path := "./app.json"
+	path := "../app.json"
 	if val, set := os.LookupEnv("CONFIG_POWER_SSO"); set && val != "" {
 		path = val
 	}

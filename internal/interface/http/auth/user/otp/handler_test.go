@@ -15,7 +15,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/application/auth/user/otp"
 	"github.com/isaqueveras/power-sso/internal/middleware"
 )
@@ -33,7 +32,6 @@ type testSuite struct {
 }
 
 func (o *testSuite) SetupSuite() {
-	config.LoadConfig()
 	var handleUserLog = func() gin.HandlerFunc {
 		return func(ctx *gin.Context) {
 			ctx.Set("UID", sucessUserID)
