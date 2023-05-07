@@ -6,7 +6,7 @@ import { currentAccountState } from '../../presentation/components'
 
 const PrivateRoute: React.FC<RouteProps> = (props: RouteProps) => {
   const { getCurrentAccount } = useRecoilValue(currentAccountState)
-  return getCurrentAccount()?.jwt_token
+  return getCurrentAccount()?.token
     ? <Route {...props} />
     : <Route {...props} component={() => <Redirect to="/auth/login" />} />
 }
