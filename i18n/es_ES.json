@@ -33,7 +33,8 @@
 			"err_not_have_permission_login": "No tienes permiso para iniciar sesión",
 			"err_user_not_exists": "El usuario no existe",
 			"err_email_or_password_is_not_valid": "El correo electrónico o la contraseña no son válidos",
-			"err_user_blocked_temporarily": "El usuario está bloqueado temporalmente"
+			"err_user_blocked_temporarily": "El usuario está bloqueado temporalmente",
+			"err_otp_token_invalid": "Token OTP inválido"
 		}
 	}
 }

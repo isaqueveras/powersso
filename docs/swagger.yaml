@@ -8,29 +8,45 @@ definitions:
         type: string
       created_at:
         type: string
+      data:
+        type: object
       email:
         type: string
       expires_at:
         type: string
       first_name:
         type: string
-      jwt_token:
-        type: string
       last_name:
         type: string
       level:
         type: string
+      otp_enabled:
+        type: boolean
+      otp_setup:
+        type: boolean
       phone_number:
         type: string
-      raw_data:
-        type: object
       roles:
         items:
           type: string
         type: array
       session_id:
         type: string
+      token:
+        type: string
       user_id:
+        type: string
+    type: object
+  auth.StepsResponse:
+    properties:
+      name:
+        type: string
+      otp:
+        type: boolean
+    type: object
+  otp.QRCodeResponse:
+    properties:
+      url:
         type: string
     type: object
   utils.NoContent:
@@ -79,6 +95,22 @@ paths:
       summary: User login
       tags:
       - Http/Auth
+  /v1/auth/login/steps:
+    get:
+      consumes:
+      - application/json
+      description: Steps to login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.StepsResponse'
+            type: object
+      summary: Steps to login
+      tags:
+      - Http/Auth
   /v1/auth/logout:
     delete:
       consumes:
@@ -111,6 +143,76 @@ paths:
       summary: Register a user
       tags:
       - Http/Auth
+  /v1/auth/user/{user_uuid}/disable:
+    put:
+      consumes:
+      - application/json
+      description: Route to disable a user
+      parameters:
+      - description: UUID of the user
+        in: path
+        name: user_uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: Disable user
+      tags:
+      - Http/Auth/User
+  /v1/auth/user/{user_uuid}/otp/configure:
+    post:
+      consumes:
+      - application/json
+      description: Configure a user's OTP
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: Configure a user's OTP
+      tags:
+      - Http/Auth/OTP
+  /v1/auth/user/{user_uuid}/otp/qrcode:
+    get:
+      consumes:
+      - application/json
+      description: Configure a user's OTP
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/otp.QRCodeResponse'
+            type: object
+      summary: Configure a user's OTP
+      tags:
+      - Http/Auth/OTP
+  /v1/auth/user/{user_uuid}/otp/unconfigure:
+    put:
+      consumes:
+      - application/json
+      description: unconfigure a user's OTP
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.NoContent'
+            type: object
+      summary: unconfigure a user's OTP
+      tags:
+      - Http/Auth/OTP
   /v1/project/create:
     post:
       consumes:

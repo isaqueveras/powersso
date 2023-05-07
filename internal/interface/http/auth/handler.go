@@ -110,3 +110,25 @@ func logout(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusNoContent, utils.NoContent{})
 }
+
+// loginSteps godoc
+// @Summary Steps to login
+// @Description Steps to login
+// @Tags Http/Auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} auth.StepsResponse
+// @Router /v1/auth/login/steps [get]
+func loginSteps(ctx *gin.Context) {
+	var (
+		res *auth.StepsResponse
+		err error
+	)
+
+	if res, err = auth.LoginSteps(ctx, utils.GetStringPointer(ctx.Query("email"))); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, res)
+}

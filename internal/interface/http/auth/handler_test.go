@@ -7,6 +7,7 @@ package auth
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -21,17 +22,17 @@ import (
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
 
-func TestHandlerAuthInterface(t *testing.T) {
-	suite.Run(t, new(authHandlerSuite))
+func TestHandlerAuth(t *testing.T) {
+	suite.Run(t, new(testSuite))
 }
 
-type authHandlerSuite struct {
+type testSuite struct {
 	router *gin.Engine
 
 	suite.Suite
 }
 
-func (a *authHandlerSuite) SetupSuite() {
+func (a *testSuite) SetupSuite() {
 	config.LoadConfig("../../../../")
 
 	a.router = gin.New()
@@ -39,7 +40,7 @@ func (a *authHandlerSuite) SetupSuite() {
 	RouterAuthorization(a.router.Group("v1/auth"))
 }
 
-func (a *authHandlerSuite) TestShouldCreateUser() {
+func (a *testSuite) TestShouldCreateUser() {
 	monkey.Patch(auth.Register, func(_ context.Context, _ *auth.RegisterRequest) error {
 		return nil
 	})
@@ -65,4 +66,36 @@ func (a *authHandlerSuite) TestShouldCreateUser() {
 
 	a.router.ServeHTTP(w, req)
 	a.Assert().Equal(http.StatusCreated, w.Code)
+}
+
+func (t *testSuite) TestLoginSteps() {
+	t.Run("UserFound", func() {
+		monkey.Patch(auth.LoginSteps, func(ctx context.Context, email *string) (res *auth.StepsResponse, err error) {
+			return nil, nil
+		})
+		defer monkey.Unpatch(auth.LoginSteps)
+
+		var (
+			req = httptest.NewRequest(http.MethodGet, "/v1/auth/login/steps?email=luiz@bonfa.com", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		t.router.ServeHTTP(w, req)
+		t.Assert().Equal(http.StatusOK, w.Code)
+	})
+
+	t.Run("UserNotFound", func() {
+		monkey.Patch(auth.LoginSteps, func(ctx context.Context, email *string) (res *auth.StepsResponse, err error) {
+			return nil, sql.ErrNoRows
+		})
+		defer monkey.Unpatch(auth.LoginSteps)
+
+		var (
+			req = httptest.NewRequest(http.MethodGet, "/v1/auth/login/steps", nil)
+			w   = httptest.NewRecorder()
+		)
+
+		t.router.ServeHTTP(w, req)
+		t.Assert().Equal(http.StatusNotFound, w.Code)
+	})
 }
