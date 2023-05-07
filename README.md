@@ -1,25 +1,21 @@
-<div align="center" >
-  <h1>
-    <img alt="PowerSSO" title="#PowerSSO" src=".public/power-sso-logo.png" width="145px" height="145px" />
-    <br/>PowerSSO
-  </h1>
+# PowerSSO
+PowerSSO is a fundamental piece that authenticates and manages users with the possibility of integration between systems using a Rest API and gRPC
 
-  <p style="max-width: 70%"><i>PowerSSO is a fundamental piece that authenticates and manages users with the possibility of integration between systems using a Rest API and gRPC</i></p>
-  
-  <p>
-    <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
-    <img alt="" src="https://github.com/isaqueveras/power-sso/actions/workflows/go.yml/badge.svg">
-    <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/power-sso">
-    <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/isaqueveras/power-sso?color=%2304D361">
-    <img alt="GitHub top language" src="https://img.shields.io/github/repo-size/isaqueveras/power-sso">
-    <a href="https://github.com/isaqueveras/power-sso/commits/main">
-      <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/isaqueveras/power-sso">
-    </a>
-    <a href="https://github.com/isaqueveras/power-sso/stargazers">
-      <img alt="Stargazers" src="https://img.shields.io/github/stars/isaqueveras/power-sso?style=social">
-    </a>
-  </p>
-</div>
+<p>
+  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
+  <img alt="" src="https://github.com/isaqueveras/power-sso/actions/workflows/go.yml/badge.svg">
+  <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/power-sso">
+  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/isaqueveras/power-sso">
+  <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/isaqueveras">  
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/isaqueveras/power-sso?color=%2304D361">
+  <img alt="GitHub top language" src="https://img.shields.io/github/repo-size/isaqueveras/power-sso">
+  <a href="https://github.com/isaqueveras/power-sso/commits/main">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/isaqueveras/power-sso">
+  </a>
+  <a href="https://github.com/isaqueveras/power-sso/stargazers">
+    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/isaqueveras/power-sso">
+  </a>
+</p>
 
 ## 🛠 Technologies
 
