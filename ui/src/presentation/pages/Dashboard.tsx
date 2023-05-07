@@ -1,6 +1,6 @@
 import Sidebar from '../components/sidebar'
 
-const Dashboard: React.FC  = () => {
+const Dashboard: React.FC = () => {
   return (
     <div className="flex flex-row dark:bg-black/95 w-screen">
       <div className="w-64">
