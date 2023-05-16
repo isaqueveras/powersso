@@ -1,11 +1,11 @@
 import React from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { loginState } from './atoms'
+import { createAccountState } from './atoms'
 import { FormStatusBase } from '../../../../presentation/components'
 
 const FormStatus: React.FC = () => {
-  const state = useRecoilValue(loginState)
+  const state = useRecoilValue(createAccountState)
   return <FormStatusBase messageError={state.messageError} />
 }
 

@@ -9,10 +9,10 @@ import { loginState, Input, FormStatus, SubmitButton } from './components'
 
 type Props = {
   validation: Validation
-  authentication: Authentication
+  usecase: Authentication
 }
 
-const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
+const Login: React.FC<Props> = ({ validation, usecase }: Props) => {
   const resetLoginState = useResetRecoilState(loginState)
   const [state, setState] = useRecoilState(loginState)
   const { setCurrentAccount } = useRecoilValue(currentAccountState)
@@ -34,30 +34,36 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
     try {
       if (state.isLoading || state.isFormInvalid) return
       setState(old => ({ ...old, isLoading: true }))
-      const account = await authentication.auth({ email: state.email, password: state.password })
+      const account = await usecase.auth({ email: state.email, password: state.password })
       setCurrentAccount(account)
       history.replace('/')
     } catch (error: any) {
-      setState(old => ({ ...old, isLoading: false, mainError: error.message }))
+      setState(old => ({ ...old, isLoading: false, messageError: error.message }))
     }
   }
 
   return (
-    <section className='h-screen flex justify-center items-center bg-gray-200'>
-      <section>
-        <section className='mb-4'>
-          <h3 className='font-bold text-3xl'>Welcome to PowerSSO</h3>
-          <p className='text-gray-600 pt-2'>Sign in to your account.</p>
-        </section>
-        <section className='flex xl:justify-center lg:justify-between items-center flex-wrap bg-white p-8 rounded py-16'>
-          <form data-testid='form' className='w-96 max-w-4xl' onSubmit={handleSubmit}>
-            <FormStatus />
-            <Input type='text' name='email' placeholder='Email address'/>
-            <Input type='password' name='password' placeholder='Password'/>
-            <SubmitButton text='Login' />
-          </form>
-        </section>
-      </section>
+    <section className='h-screen flex justify-center items-center bg-pink-50'>
+      <form data-testid='form' onSubmit={handleSubmit}>
+        <div className="space-y-6 bg-white p-12 rounded-md shadow-md">
+          <div className="border-b border-gray-900/10 pb-6">
+            <h2 className="text-2xl font-bold leading-7 text-gray-900">Welcome to PowerSSO</h2>
+            <p className="mt-1 text-sm leading-6 text-gray-600 mb-6">Sign in to your account.</p>
+            <div className='border-t border-gray-900/10 pt-3 grid grid-cols-1 gap-x-6 sm:grid-cols-6'>
+              <div className="sm:col-span-6">
+                <FormStatus />
+              </div>
+              <div className="sm:col-span-6">
+                <Input type='text' name='email' placeholder='Email address'/>
+              </div>
+              <div className="sm:col-span-6">
+                <Input type='password' name='password' placeholder='Password'/>
+              </div>
+            </div>
+          </div>
+          <SubmitButton text='Login' />
+        </div>
+      </form>
     </section>
   )
 }
