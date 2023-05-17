@@ -1,2 +1,2 @@
 export * from './authentication'
-export * from './register-user'
+export * from './create-account'

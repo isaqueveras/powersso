@@ -2,16 +2,16 @@ import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useRecoilState, useResetRecoilState } from 'recoil'
 
-import { RegisterUser } from '@/domain/usecases'
+import { CreateAccount } from '@/domain/usecases'
 import { Validation } from '@/presentation/protocols'
 import { createAccountState, FormStatus, Input, SubmitButton } from './components'
 
 type Props = {
   validation: Validation
-  usecase: RegisterUser
+  usecase: CreateAccount
 }
 
-const CreateAccount: React.FC<Props> = ({ validation, usecase }: Props) => {
+const CreateAccountPage: React.FC<Props> = ({ validation, usecase }: Props) => {
   const resetCreateAccountState = useResetRecoilState(createAccountState)
   const [state, setState] = useRecoilState(createAccountState)
 
@@ -104,4 +104,4 @@ const CreateAccount: React.FC<Props> = ({ validation, usecase }: Props) => {
   )
 }
 
-export default CreateAccount
+export default CreateAccountPage

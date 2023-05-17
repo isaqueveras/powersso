@@ -1,10 +1,10 @@
-import { Err } from "../models"
+import { Err } from '@/domain/models'
 
-export interface RegisterUser {
-  register: (params: RegisterUser.Params) => Promise<RegisterUser.Model>
+export interface CreateAccount {
+  register: (params: CreateAccount.Params) => Promise<CreateAccount.Model>
 }
 
-export namespace RegisterUser {
+export namespace CreateAccount {
   export type Params = {
     first_name: string
     last_name: string

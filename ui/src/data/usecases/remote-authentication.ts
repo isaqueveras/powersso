@@ -5,7 +5,7 @@ import { Oops } from '../../domain/errors'
 export class RemoteAuthentication implements Authentication {
   constructor (
     private readonly url: string,
-    private readonly httpClient: HttpClient<RemoteAuthentication.Model>
+    private readonly httpClient: HttpClient<Authentication.Model>
   ) {}
 
   async auth (params: Authentication.Params): Promise<Authentication.Model> {
@@ -15,8 +15,4 @@ export class RemoteAuthentication implements Authentication {
       default: throw new Oops(httpResponse.body.message)
     }
   }
-}
-
-export namespace RemoteAuthentication {
-  export type Model = Authentication.Model
 }
