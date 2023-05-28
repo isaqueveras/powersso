@@ -10,113 +10,93 @@ import (
 
 const (
 	// modeDevelopment represents the development environment mode
-	modeDevelopment string = "development"
+	modeDevelopment string = "dev"
 	// modeDevelopment represents the production environment mode
-	modeProduction string = "production"
+	modeProduction string = "prod"
 )
 
-const (
-	// LoggerEncodingConsole represents the encoding form that the log represents
-	LoggerEncodingConsole string = "console"
-)
+// LoggerEncodingConsole represents the encoding form that the log represents
+const LoggerEncodingConsole string = "console"
 
 // type represents the application settings
-type (
-	// App config struct
-	Config struct {
-		Meta MetaConfig
+type
+// App config struct
+Config struct {
+	Meta          MetaConfig     `json:"meta"`
+	Server        ServerConfig   `json:"server"`
+	Logger        Logger         `json:"logger"`
+	Mailer        MailerConfig   `json:"mailer"`
+	Database      DatabaseConfig `json:"database"`
+	UserAuthToken TokenConfig    `json:"user_auth_token"`
+}
 
-		Server ServerConfig
-		Logger Logger
-		Mailer MailerConfig
+// MetaConfig models the meta configuration
+type MetaConfig struct {
+	ProjectName string `json:"project_name"`
+	ProjectURL  string `json:"project_url"`
+}
 
-		Postgres PGConfig
-		Redis    RedisConfig
+// ServerConfig models a server's configuration data
+type ServerConfig struct {
+	Version            string        `json:"version"`
+	Port               string        `json:"port"`
+	PprofPort          string        `json:"pprof_port"`
+	Mode               string        `json:"mode"`
+	JwtSecretKey       string        `json:"jwt_secret_key"`
+	CookieName         string        `json:"cookie_name"`
+	AccessLogDirectory string        `json:"access_log_directory"`
+	ErrorLogDirectory  string        `json:"error_log_directory"`
+	PermissionBase     string        `json:"permission_base"`
+	SSL                bool          `json:"ssl"`
+	CSRF               bool          `json:"srf"`
+	Debug              bool          `json:"debug"`
+	StartHTTP          bool          `json:"start_http"`
+	StartGRPC          bool          `json:"start_grpc"`
+	CtxDefaultTimeout  time.Duration `json:"ctx_default_timeout"`
+	ReadTimeout        time.Duration `json:"read_timeout"`
+	WriteTimeout       time.Duration `json:"write_timeout"`
+}
 
-		UserAuthToken TokenConfig
-	}
+// DatabaseConfig models postgres database configuration data
+type DatabaseConfig struct {
+	Host            string        `json:"host"`
+	Port            int           `json:"port"`
+	User            string        `json:"user"`
+	Password        string        `json:"password"`
+	Dbname          string        `json:"dbname"`
+	Driver          string        `json:"driver"`
+	SSLMode         bool          `json:"sslmode"`
+	MaxOpenConns    int           `json:"max_open_conns"`
+	MaxIdleConns    int           `json:"max_idle_conns"`
+	Timeout         int64         `json:"timeout"`
+	ConnMaxLifetime time.Duration `json:"conn_max_life_time"`
+	ConnMaxIdleTime time.Duration `json:"conn_max_idle_time"`
+}
 
-	// MetaConfig models the meta configuration
-	MetaConfig struct {
-		ProjectName string
-		ProjectURL  string
-	}
+// Logger models the data for the logs configuration
+type Logger struct {
+	Development       bool   `json:"development"`
+	DisableCaller     bool   `json:"disable_caller"`
+	DisableStacktrace bool   `json:"disable_stacktrace"`
+	Encoding          string `json:"encoding"`
+	Level             string `json:"level"`
+}
 
-	// ServerConfig models a server's configuration data
-	ServerConfig struct {
-		Version            string
-		Port               string
-		PprofPort          string
-		Mode               string
-		JwtSecretKey       string
-		CookieName         string
-		AccessLogDirectory string
-		ErrorLogDirectory  string
-		PermissionBase     string
-		SSL                bool
-		CSRF               bool
-		Debug              bool
-		StartHTTP          bool
-		StartGRPC          bool
-		CtxDefaultTimeout  time.Duration
-		ReadTimeout        time.Duration
-		WriteTimeout       time.Duration
-	}
+// MailerConfig models the data for the mailer configuration
+type MailerConfig struct {
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	TLS      bool   `json:"tls"`
+}
 
-	// PGConfig models postgres database configuration data
-	PGConfig struct {
-		Host            string
-		Port            string
-		User            string
-		Password        string
-		Dbname          string
-		SSLMode         bool
-		Driver          string
-		MaxOpenConns    int
-		MaxIdleConns    int
-		ConnMaxLifetime time.Duration
-		ConnMaxIdleTime time.Duration
-		Timeout         int64
-	}
-
-	// RedisConfig models redis database configuration data
-	RedisConfig struct {
-		RedisAddr      string
-		RedisPassword  string
-		RedisDB        string
-		RedisDefaultdb string
-		MinIdleConns   int
-		PoolSize       int
-		PoolTimeout    int
-		Password       string
-		DB             int
-	}
-
-	// Logger models the data for the logs configuration
-	Logger struct {
-		Development       bool
-		DisableCaller     bool
-		DisableStacktrace bool
-		Encoding          string
-		Level             string
-	}
-
-	// MailerConfig models the data for the mailer configuration
-	MailerConfig struct {
-		Host     string
-		Port     int
-		Email    string
-		Username string
-		Password string
-		TLS      bool
-	}
-
-	// TokenConfig models the data for the token configuration
-	TokenConfig struct {
-		SecretKey string
-		Duration  int64
-	}
-)
+// TokenConfig models the data for the token configuration
+type TokenConfig struct {
+	SecretKey string `json:"secret_key"`
+	Duration  int64  `json:"duration"`
+}
 
 // IsModeDevelopment returns if in development mode
 func (sc *ServerConfig) IsModeDevelopment() bool {

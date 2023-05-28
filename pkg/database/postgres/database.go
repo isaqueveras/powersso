@@ -7,6 +7,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/Masterminds/squirrel"
@@ -34,18 +35,16 @@ type DBTransaction struct {
 }
 
 // OpenConnections open connections with database
-func OpenConnections(c *config.Config) (err error) {
+func OpenConnections(c *config.Config) {
 	if connection != nil {
-		return nil
+		return
 	}
 
 	connection = &postgres{}
-	if err = connection.open(c); err != nil {
-		return err
+	if err := connection.open(c); err != nil {
+		log.Fatal("Unable to open connections to database: ", err)
 	}
-	return nil
 }
-
 
 // OpenConnectionsForTests opens connections to the mocked database
 func OpenConnectionsForTests() (mock sqlmock.Sqlmock, err error) {

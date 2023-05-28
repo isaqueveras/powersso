@@ -17,7 +17,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/isaqueveras/power-sso/config"
 	"github.com/isaqueveras/power-sso/internal/application/auth"
 	"github.com/isaqueveras/power-sso/pkg/oops"
 )
@@ -33,8 +32,6 @@ type testSuite struct {
 }
 
 func (a *testSuite) SetupSuite() {
-	config.LoadConfig("../../../../")
-
 	a.router = gin.New()
 	Router(a.router.Group("v1/auth"))
 	RouterAuthorization(a.router.Group("v1/auth"))
