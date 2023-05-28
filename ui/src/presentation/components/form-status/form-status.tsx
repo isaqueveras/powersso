@@ -1,10 +1,10 @@
 import React from 'react'
 
 type Props = {
-  messageError: string
+  errorMessage: string
 }
 
-const FormStatus: React.FC<Props> = ({ messageError }: Props) => {
+const FormStatus: React.FC<Props> = ({ errorMessage: messageError }: Props) => {
   return (
     <>
       {messageError && (

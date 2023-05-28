@@ -12,7 +12,7 @@ type Props = {
   usecase: Authentication
 }
 
-const Login: React.FC<Props> = ({ validation, usecase }: Props) => {
+const LoginPage: React.FC<Props> = ({ validation, usecase }: Props) => {
   const resetLoginState = useResetRecoilState(loginState)
   const [state, setState] = useRecoilState(loginState)
   const { setCurrentAccount } = useRecoilValue(currentAccountState)
@@ -68,4 +68,4 @@ const Login: React.FC<Props> = ({ validation, usecase }: Props) => {
   )
 }
 
-export default Login
+export default LoginPage

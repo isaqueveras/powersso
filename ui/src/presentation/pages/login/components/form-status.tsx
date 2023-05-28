@@ -6,7 +6,7 @@ import { FormStatusBase } from '../../../../presentation/components'
 
 const FormStatus: React.FC = () => {
   const state = useRecoilValue(loginState)
-  return <FormStatusBase messageError={state.messageError} />
+  return <FormStatusBase errorMessage={state.messageError} />
 }
 
 export default FormStatus
