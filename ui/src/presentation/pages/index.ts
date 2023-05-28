@@ -1,4 +1,2 @@
-// export * from './Dashboard'
-// export * from './Projects'
-
-export { default as Login } from './login/login'
+export { default as LoginPage } from './login/login'
+export { default as CreateAccountPage } from './create-account'

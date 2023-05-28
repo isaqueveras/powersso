@@ -11,7 +11,7 @@ const SubmitButton: React.FC<Props> = ({ state, text }: Props) => {
       data-testid='submit'
       disabled={state.isFormInvalid}
       type='submit'
-      className='w-full p-3 bg-rose-600 text-white font-medium text-sm rounded enabled:hover:shadow-lg focus:outline-none focus:ring-0 disabled:bg-rose-400'
+      className="block rounded-md bg-pink-600 w-full px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-pink-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600 disabled:bg-rose-500"
     >
       { state.isLoading && (
         <>
