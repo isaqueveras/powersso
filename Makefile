@@ -33,6 +33,9 @@ run:
 test:
 	@ go test ./...
 
+dev:
+	@ docker compose -f ./docker-compose.dev.yml up -d 
+
 local:
 	@ docker compose -f ./docker-compose.local.yml up -d 
 
