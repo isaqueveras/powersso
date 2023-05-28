@@ -26,7 +26,7 @@ func (ma *mailerAuth) sendMailActivationAccount(email *string, token *string) er
 		"Activate your "+ma.cfg.Meta.ProjectName+" registration",
 		`Click on the link below to activate your `+ma.cfg.Meta.ProjectName+` registration:
 
-		`+ma.cfg.Meta.ProjectURL+`/activate?token=`+*token+`
+		<a href="`+ma.cfg.Meta.ProjectURL+`/auth/activation/`+*token+`">`+ma.cfg.Meta.ProjectURL+`/auth/activation/`+*token+`</a>
 
 		If you have not made this request, please ignore this email.
 
