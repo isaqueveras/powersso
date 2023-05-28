@@ -1,14 +1,14 @@
-import { HttpClient, HttpStatusCode } from '../../data/protocols/http'
-import { CreateAccount } from '../../domain/usecases'
+import { HttpClient, HttpStatusCode } from '../protocols/http'
+import { Activation } from '../../domain/usecases'
 import { Err } from '../../domain/errors'
 
-export class RemoteCreateAccount implements CreateAccount {
+export class RemoteActivation implements Activation {
   constructor (
     private readonly url: string,
-    private readonly httpClient: HttpClient<CreateAccount.Model>
+    private readonly httpClient: HttpClient<Activation.Model>
   ) {}
 
-  async register (params: CreateAccount.Params): Promise<CreateAccount.Model> {
+  async activate (params: Activation.Params): Promise<Activation.Model> {
     const httpResponse = await this.httpClient.request({ url: this.url, method: 'post', body: params })
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok: return httpResponse.body

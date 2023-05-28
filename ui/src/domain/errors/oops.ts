@@ -1,6 +1,6 @@
-export class Oops extends Error {
+export class Err extends Error {
   constructor (message: string) {
     super(message)
-    this.name = 'OopsError'
+    this.name = 'ErrError'
   }
 }

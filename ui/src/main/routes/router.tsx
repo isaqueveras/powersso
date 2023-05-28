@@ -2,10 +2,10 @@ import React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
+import { PrivateRoute } from '../proxies'
 import { setCurrentAccountAdapter, getCurrentAccountAdapter } from '../../main/adapters'
 import { currentAccountState } from '../../presentation/components'
-import { makeLogin, makeHome, makeCreateAccount } from '../../main/factories/pages'
-import { PrivateRoute } from '../proxies'
+import { makeLoginPage, makeHomePage, makeCreateAccountPage, makeActivationPage } from '../../main/factories/pages'
 
 const Router: React.FC = () => {
   const state = {
@@ -17,9 +17,10 @@ const Router: React.FC = () => {
       <div className='h-screen'>
         <BrowserRouter>
           <Switch>
-            <Route path="/auth/login" exact component={makeLogin} />
-            <Route path="/auth/register" exact component={makeCreateAccount} />
-            <PrivateRoute path="/" exact component={makeHome} />
+            <Route path="/auth/login" exact component={makeLoginPage} />
+            <Route path="/auth/register" exact component={makeCreateAccountPage} />
+            <Route path="/auth/activation/:token" exact component={makeActivationPage} />
+            <PrivateRoute path="/" exact component={makeHomePage} />
           </Switch>
         </BrowserRouter>
       </div>
