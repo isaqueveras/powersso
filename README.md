@@ -1,19 +1,13 @@
 # PowerSSO
-PowerSSO is a fundamental piece that authenticates and manages users with the possibility of integration between systems using a Rest API and gRPC
+PowerSSO is a authenticator and user manager for systems (under construction) 
 
 <p>
-  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
-  <img alt="" src="https://github.com/isaqueveras/power-sso/actions/workflows/go.yml/badge.svg">
-  <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/power-sso">
-  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/isaqueveras/power-sso">
-  <img alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/isaqueveras">  
-  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/isaqueveras/power-sso?color=%2304D361">
-  <img alt="GitHub top language" src="https://img.shields.io/github/repo-size/isaqueveras/power-sso">
-  <a href="https://github.com/isaqueveras/power-sso/commits/main">
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/isaqueveras/power-sso">
-  </a>
-  <a href="https://github.com/isaqueveras/power-sso/stargazers">
-    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/isaqueveras/power-sso">
+  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/powersso">
+  <img alt="" src="https://github.com/isaqueveras/powersso/actions/workflows/go.yml/badge.svg">
+  <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/powersso">
+  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/isaqueveras/powersso">
+  <a href="https://github.com/isaqueveras/powersso/commits/main">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/isaqueveras/powersso">
   </a>
 </p>
 
@@ -32,16 +26,16 @@ Before you begin, you will need to have the following tools installed on your ma
 
 ```bash
 # Clone this repository
-$ git clone https://github.com/isaqueveras/power-sso
+$ git clone https://github.com/isaqueveras/powersso
 
 # Access the project folder in your terminal/cmd
-$ cd power-sso
+$ cd powersso
 
 # Install the dependencies
 $ go mod tidy
 
 # Run postgres database
-$ make local
+$ make dev
 
 # Run the migrations
 $ make migrate-up
@@ -78,8 +72,8 @@ $ npm run start
 If you have any questions, check this [GitHub Contributing Guide](https://github.com/firstcontributions/first-contributions)
 
 ## Contributors
-<a href="https://github.com/isaqueveras/power-sso/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=isaqueveras/power-sso&max=100" alt="List of contributors to the powerSSO project"/>
+<a href="https://github.com/isaqueveras/powersso/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=isaqueveras/powersso&max=100" alt="List of contributors to the powerSSO project"/>
 </a>
 
 [reactjs]: https://reactjs.org
