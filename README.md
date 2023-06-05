@@ -2,7 +2,7 @@
 PowerSSO is a authenticator and user manager for systems (under construction) 
 
 <p>
-  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/powersso">
+  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
   <img alt="" src="https://github.com/isaqueveras/powersso/actions/workflows/go.yml/badge.svg">
   <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/powersso">
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/isaqueveras/powersso">
