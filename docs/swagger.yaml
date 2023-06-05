@@ -1,10 +1,13 @@
 basePath: /
 definitions:
-  auth.SessionResponse:
+  auth.QRCode:
+    properties:
+      url:
+        type: string
+    type: object
+  auth.Session:
     properties:
       about:
-        type: string
-      avatar_url:
         type: string
       created_at:
         type: string
@@ -20,16 +23,6 @@ definitions:
         type: string
       level:
         type: string
-      otp_enabled:
-        type: boolean
-      otp_setup:
-        type: boolean
-      phone_number:
-        type: string
-      roles:
-        items:
-          type: string
-        type: array
       session_id:
         type: string
       token:
@@ -37,17 +30,12 @@ definitions:
       user_id:
         type: string
     type: object
-  auth.StepsResponse:
+  auth.Steps:
     properties:
       name:
         type: string
       otp:
         type: boolean
-    type: object
-  otp.QRCodeResponse:
-    properties:
-      url:
-        type: string
     type: object
   utils.NoContent:
     type: object
@@ -55,11 +43,11 @@ host: localhost:5000
 info:
   contact:
     name: PowerSSO
-    url: https://github.com/isaqueveras/power-sso/issues
+    url: https://github.com/isaqueveras/powersso/issues
   description: This is PowerSSO app server.
   license:
     name: MIT license
-    url: https://github.com/isaqueveras/power-sso/blob/main/LICENSE
+    url: https://github.com/isaqueveras/powersso/blob/main/LICENSE
   title: Documentation PowerSSO
   version: 1.0.0
 paths:
@@ -90,7 +78,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.SessionResponse'
+            $ref: '#/definitions/auth.Session'
             type: object
       summary: User login
       tags:
@@ -106,7 +94,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.StepsResponse'
+            $ref: '#/definitions/auth.Steps'
             type: object
       summary: Steps to login
       tags:
@@ -192,7 +180,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/otp.QRCodeResponse'
+            $ref: '#/definitions/auth.QRCode'
             type: object
       summary: Configure a user's OTP
       tags:
