@@ -7,8 +7,8 @@ package server
 import (
 	"golang.org/x/sync/errgroup"
 
-	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/pkg/logger"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/pkg/logger"
 )
 
 const (

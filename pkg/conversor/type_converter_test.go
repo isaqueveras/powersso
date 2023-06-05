@@ -7,7 +7,7 @@ package conversor_test
 import (
 	"testing"
 
-	"github.com/isaqueveras/power-sso/pkg/conversor"
+	"github.com/isaqueveras/powersso/pkg/conversor"
 )
 
 func TestTypeConverter(t *testing.T) {

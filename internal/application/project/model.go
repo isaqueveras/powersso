@@ -10,7 +10,7 @@ import (
 
 	"github.com/gosimple/slug"
 
-	"github.com/isaqueveras/power-sso/internal/utils"
+	"github.com/isaqueveras/powersso/internal/utils"
 )
 
 // CreateProjectReq models the data to create a project

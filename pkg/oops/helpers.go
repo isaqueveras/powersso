@@ -17,7 +17,7 @@ import (
 	"github.com/jackc/pgx"
 	"github.com/pkg/errors"
 
-	"github.com/isaqueveras/power-sso/pkg/i18n"
+	"github.com/isaqueveras/powersso/pkg/i18n"
 )
 
 type stackTracer interface {

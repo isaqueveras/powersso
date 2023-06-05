@@ -10,8 +10,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/otp"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/otp"
 )
 
 var tokens = []string{

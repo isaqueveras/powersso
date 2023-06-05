@@ -2,28 +2,28 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package auth
+package postgres
 
 import (
 	"database/sql"
 	"time"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
 
-	"github.com/isaqueveras/power-sso/internal/domain/auth"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/pkg/query"
+	"github.com/isaqueveras/powersso/internal/domain/auth"
+	pg "github.com/isaqueveras/powersso/pkg/database/postgres"
+	"github.com/isaqueveras/powersso/pkg/oops"
+	"github.com/isaqueveras/powersso/pkg/query"
 )
 
-// pgAuth is the implementation
-// of transaction for the auth repository
-type pgAuth struct {
-	DB *postgres.DBTransaction
+// PGAuth is the implementation of transaction for the auth repository
+type PGAuth struct {
+	DB *pg.Transaction
 }
 
-// register register the user in the database
-func (pg *pgAuth) register(input *auth.Register) (userID *string, err error) {
+// Register register the user in the database
+func (pg *PGAuth) Register(input *auth.Register) (userID *uuid.UUID, err error) {
 	_cols, _vals, err := query.FormatValuesInUp(input)
 	if err != nil {
 		return nil, oops.Err(err)
@@ -41,8 +41,8 @@ func (pg *pgAuth) register(input *auth.Register) (userID *string, err error) {
 	return
 }
 
-// createAccessToken create the access token for the user
-func (pg *pgAuth) createAccessToken(userID *string) (token *string, err error) {
+// CreateAccessToken create the access token for the user
+func (pg *PGAuth) CreateAccessToken(userID *uuid.UUID) (token *uuid.UUID, err error) {
 	if err = pg.DB.Builder.
 		Insert("activate_account_tokens").
 		Columns("user_id", "expires_at").
@@ -55,34 +55,32 @@ func (pg *pgAuth) createAccessToken(userID *string) (token *string, err error) {
 	return
 }
 
-// getActivateAccountToken get the activate account token from the database
-func (pg *pgAuth) getActivateAccountToken(token *string) (res *auth.ActivateAccountToken, err error) {
+// GetActivateAccountToken get the activate account token from the database
+func (pg *PGAuth) GetActivateAccountToken(token *uuid.UUID) (res *auth.ActivateAccountToken, err error) {
 	res = new(auth.ActivateAccountToken)
 
-	err = pg.DB.Builder.
-		Select(`
-			id,
-			user_id,
-			used,
-			expires_at >= now() AS "valid",
-			expires_at,
-			created_at,
-			updated_at`).
+	if err = pg.DB.Builder.
+		Select("id, user_id, used, expires_at >= now(), expires_at, created_at, updated_at").
 		From("activate_account_tokens").
 		Where("id = ?", token).
 		Limit(1).
-		Scan(&res.ID, &res.UserID, &res.Used, &res.IsValid,
-			&res.ExpiresAt, &res.CreatedAt, &res.UpdatedAt)
-
-	if err != nil && err != sql.ErrNoRows {
+		Scan(
+			&res.ID,
+			&res.UserID,
+			&res.Used,
+			&res.Valid,
+			&res.ExpiresAt,
+			&res.CreatedAt,
+			&res.UpdatedAt,
+		); err != nil && err != sql.ErrNoRows {
 		return nil, oops.Err(err)
 	}
 
 	return
 }
 
-// markTokenAsUsed mark the token as used in the database
-func (pg *pgAuth) markTokenAsUsed(token *string) (err error) {
+// MarkTokenAsUsed mark the token as used in the database
+func (pg *PGAuth) MarkTokenAsUsed(token *uuid.UUID) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("activate_account_tokens").
 		Set("used", true).
@@ -95,21 +93,7 @@ func (pg *pgAuth) markTokenAsUsed(token *string) (err error) {
 	return
 }
 
-// login get the user password from the database
-func (pg *pgAuth) login(email *string) (password *string, err error) {
-	if err = pg.DB.Builder.
-		Select("password").
-		From("users").
-		Where("email = ?", email).
-		Limit(1).
-		Scan(&password); err != nil {
-		return nil, oops.Err(err)
-	}
-
-	return
-}
-
-func (pg *pgAuth) addNumberFailedAttempts(userID *string) (err error) {
+func (pg *PGAuth) AddAttempts(userID *uuid.UUID) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("users").
 		Set("number_failed_attempts", squirrel.Expr("number_failed_attempts + 1")).
@@ -122,7 +106,7 @@ func (pg *pgAuth) addNumberFailedAttempts(userID *string) (err error) {
 	return
 }
 
-func (pg *pgAuth) loginSteps(email *string) (steps *auth.Steps, err error) {
+func (pg *PGAuth) LoginSteps(email *string) (steps *auth.Steps, err error) {
 	steps = new(auth.Steps)
 	if err = pg.DB.Builder.
 		Select("COALESCE(otp AND otp_setup, FALSE), first_name").

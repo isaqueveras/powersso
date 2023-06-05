@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/isaqueveras/power-sso/pkg/params"
+	"github.com/isaqueveras/powersso/pkg/params"
 )
 
 // MakePagination constructs pagination data for a given database query

@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 const (

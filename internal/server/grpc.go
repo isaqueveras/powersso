@@ -15,10 +15,10 @@ import (
 	gogrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/isaqueveras/power-sso/internal/interface/grpc/auth"
-	"github.com/isaqueveras/power-sso/internal/middleware"
-	"github.com/isaqueveras/power-sso/pkg/logger"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/powersso/internal/interface/grpc/auth"
+	"github.com/isaqueveras/powersso/internal/middleware"
+	"github.com/isaqueveras/powersso/pkg/logger"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 func (s *Server) ServerGRPC() (err error) {

@@ -5,8 +5,8 @@
 package project
 
 import (
-	"github.com/isaqueveras/power-sso/internal/domain/project"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
+	"github.com/isaqueveras/powersso/internal/domain/project"
+	"github.com/isaqueveras/powersso/pkg/database/postgres"
 )
 
 // repository is the implementation of the session repository
@@ -15,7 +15,7 @@ type repository struct {
 }
 
 // New creates a new repository
-func New(transaction *postgres.DBTransaction) project.IProject {
+func New(transaction *postgres.Transaction) project.IProject {
 	return &repository{pg: &pg{DB: transaction}}
 }
 

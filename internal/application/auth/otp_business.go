@@ -2,26 +2,26 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package otp
+package auth
 
 import (
 	"context"
 	"encoding/base32"
 
 	"github.com/google/uuid"
-
-	"github.com/isaqueveras/power-sso/config"
-	infraOTP "github.com/isaqueveras/power-sso/internal/infrastructure/auth/user/otp"
-	"github.com/isaqueveras/power-sso/internal/utils"
-	"github.com/isaqueveras/power-sso/otp"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/oops"
-	"github.com/isaqueveras/power-sso/pkg/security"
+	"github.com/isaqueveras/powersso/config"
+	domain "github.com/isaqueveras/powersso/internal/domain/auth"
+	"github.com/isaqueveras/powersso/internal/infrastructure/persistencie/auth"
+	"github.com/isaqueveras/powersso/internal/utils"
+	"github.com/isaqueveras/powersso/otp"
+	"github.com/isaqueveras/powersso/pkg/database/postgres"
+	"github.com/isaqueveras/powersso/pkg/oops"
+	"github.com/isaqueveras/powersso/pkg/security"
 )
 
 // Configure performs business logic to configure otp for a user
 func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
-	var tx *postgres.DBTransaction
+	var tx *postgres.Transaction
 	if tx, err = postgres.NewTransaction(ctx, false); err != nil {
 		return oops.Err(err)
 	}
@@ -31,8 +31,8 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 	dst := make([]byte, base32.StdEncoding.EncodedLen(len(data)))
 	base32.StdEncoding.Encode(dst, data)
 
-	repository := infraOTP.New(tx)
-	if err = repository.Configure(userID, utils.GetStringPointer(string(dst))); err != nil {
+	repo := auth.NewOTPRepository(tx)
+	if err = repo.Configure(userID, utils.GetStringPointer(string(dst))); err != nil {
 		return oops.Err(err)
 	}
 
@@ -45,13 +45,13 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 
 // Unconfigure performs business logic to unconfigure otp for a user
 func Unconfigure(ctx context.Context, userID *uuid.UUID) (err error) {
-	var tx *postgres.DBTransaction
+	var tx *postgres.Transaction
 	if tx, err = postgres.NewTransaction(ctx, false); err != nil {
 		return oops.Err(err)
 	}
 	defer tx.Rollback()
 
-	repository := infraOTP.New(tx)
+	repository := auth.NewOTPRepository(tx)
 	if err = repository.Unconfigure(userID); err != nil {
 		return oops.Err(err)
 	}
@@ -64,18 +64,15 @@ func Unconfigure(ctx context.Context, userID *uuid.UUID) (err error) {
 }
 
 // GetQrCode performs business logic to get qrcode url
-func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *QRCodeResponse, err error) {
-	var (
-		tx              *postgres.DBTransaction
-		userName, token *string
-	)
-
+func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *domain.QRCode, err error) {
+	var tx *postgres.Transaction
 	if tx, err = postgres.NewTransaction(ctx, true); err != nil {
 		return nil, oops.Err(err)
 	}
 	defer tx.Rollback()
 
-	if userName, token, err = infraOTP.New(tx).GetToken(userID); err != nil {
+	var userName, token *string
+	if userName, token, err = auth.NewOTPRepository(tx).GetToken(userID); err != nil {
 		return nil, oops.Err(err)
 	}
 
@@ -83,8 +80,6 @@ func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *QRCodeResponse, err
 		*userName += " [DEV]"
 	}
 
-	res = new(QRCodeResponse)
-	res.Url = utils.GetStringPointer(otp.GetUrlQrCode(*token, *userName))
-
+	res = &domain.QRCode{Url: utils.GetStringPointer(otp.GetUrlQrCode(*token, *userName))}
 	return
 }

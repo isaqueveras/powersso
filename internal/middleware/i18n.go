@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/lingo"
 
-	"github.com/isaqueveras/power-sso/pkg/i18n"
+	"github.com/isaqueveras/powersso/pkg/i18n"
 )
 
 // SetupI18n implements i18n configuration to be used in middleware

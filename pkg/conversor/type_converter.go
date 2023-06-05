@@ -8,16 +8,12 @@ import "encoding/json"
 
 // TypeConverter converts all data to a destination data output.
 func TypeConverter[T any](data any) (*T, error) {
-	var (
-		result T
-		b      []byte
-		err    error
-	)
-
-	if b, err = json.Marshal(&data); err != nil {
+	b, err := json.Marshal(&data)
+	if err != nil {
 		return nil, err
 	}
 
+	var result T
 	if err = json.Unmarshal(b, &result); err != nil {
 		return nil, err
 	}

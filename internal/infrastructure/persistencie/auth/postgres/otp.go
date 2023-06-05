@@ -2,21 +2,20 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package otp
+package postgres
 
 import (
 	"database/sql"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
-
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	pg "github.com/isaqueveras/powersso/pkg/database/postgres"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 // PGOTP is the implementation of transaction for the otp repository
 type PGOTP struct {
-	DB *postgres.DBTransaction
+	DB *pg.Transaction
 }
 
 // GetToken fetch the token of a user's otp

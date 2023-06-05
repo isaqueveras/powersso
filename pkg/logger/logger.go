@@ -10,8 +10,8 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/middleware"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/internal/middleware"
 )
 
 var logg *zap.SugaredLogger

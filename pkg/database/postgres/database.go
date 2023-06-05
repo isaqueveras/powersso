@@ -12,7 +12,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/Masterminds/squirrel"
 
-	"github.com/isaqueveras/power-sso/config"
+	"github.com/isaqueveras/powersso/config"
 )
 
 type database interface {
@@ -28,8 +28,8 @@ type database interface {
 
 var connection database
 
-// DBTransaction used to aggregate transactions
-type DBTransaction struct {
+// Transaction used to aggregate transactions
+type Transaction struct {
 	postgres *sql.Tx
 	Builder  squirrel.StatementBuilderType
 }
@@ -62,8 +62,8 @@ func CloseConnections() {
 }
 
 // NewTransaction uses a transaction from a connection already opened in the database
-func NewTransaction(ctx context.Context, readOnly bool) (*DBTransaction, error) {
-	tx := &DBTransaction{}
+func NewTransaction(ctx context.Context, readOnly bool) (*Transaction, error) {
+	tx := &Transaction{}
 
 	pgsql, err := connection.transaction(ctx, readOnly)
 	if err != nil {
@@ -79,21 +79,21 @@ func NewTransaction(ctx context.Context, readOnly bool) (*DBTransaction, error) 
 }
 
 // Commit confirm pending transactions for all open databases
-func (t *DBTransaction) Commit() (erro error) {
+func (t *Transaction) Commit() (erro error) {
 	return t.postgres.Commit()
 }
 
 // Rollback close all pending transaction for all open databases
-func (t *DBTransaction) Rollback() {
+func (t *Transaction) Rollback() {
 	_ = t.postgres.Rollback()
 }
 
 // Query executes a query that returns rows, typically a SELECT.
-func (t *DBTransaction) Query(query string, args ...any) (*sql.Rows, error) {
+func (t *Transaction) Query(query string, args ...any) (*sql.Rows, error) {
 	return t.postgres.Query(query, args...)
 }
 
 // Execute executes a query that doesn't return rows, typically an INSERT/UPDATE/DELETE.
-func (t *DBTransaction) Execute(query string, args ...any) (sql.Result, error) {
+func (t *Transaction) Execute(query string, args ...any) (sql.Result, error) {
 	return t.postgres.Exec(query, args...)
 }

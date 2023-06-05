@@ -1,4 +1,4 @@
-module github.com/isaqueveras/power-sso
+module github.com/isaqueveras/powersso
 
 go 1.18
 

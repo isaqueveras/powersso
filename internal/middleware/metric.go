@@ -13,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 // GinZap add a custom middleware from zap

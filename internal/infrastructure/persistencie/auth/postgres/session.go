@@ -1,26 +1,25 @@
-// Copyright (c) 2022 Isaque Veras
+// Copyright (c) 2023 Isaque Veras
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package session
+package postgres
 
 import (
 	"database/sql"
 
 	"github.com/Masterminds/squirrel"
-
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/google/uuid"
+	"github.com/isaqueveras/powersso/pkg/database/postgres"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
-// pgSession is the implementation
-// of transaction for the session repository
-type pgSession struct {
-	DB *postgres.DBTransaction
+// PGSession is the implementation of transaction for the session repository
+type PGSession struct {
+	DB *postgres.Transaction
 }
 
-// create add session of the user in database
-func (pg *pgSession) create(userID, clientIP, userAgent *string) (sessionID *string, err error) {
+// Create add session of the user in database
+func (pg *PGSession) Create(userID *uuid.UUID, clientIP, userAgent *string) (sessionID *uuid.UUID, err error) {
 	if err = pg.DB.Builder.
 		Insert("sessions").
 		Columns("user_id", "expires_at", "ip", "user_agent").
@@ -32,8 +31,9 @@ func (pg *pgSession) create(userID, clientIP, userAgent *string) (sessionID *str
 
 	if _, err = pg.DB.Builder.
 		Update("users").
-		Set("number_failed_attempts", 0).
-		Set("last_failure_date", nil).
+		Set("attempts", 0).
+		Set("last_login", squirrel.Expr("NOW()")).
+		Set("last_failure", nil).
 		Where("id = ?", userID).
 		Exec(); err != nil && err != sql.ErrNoRows {
 		return nil, oops.Err(err)
@@ -42,12 +42,13 @@ func (pg *pgSession) create(userID, clientIP, userAgent *string) (sessionID *str
 	return
 }
 
-func (pg *pgSession) delete(sessionID *string) (err error) {
+// Delete delete session of the user in database
+func (pg *PGSession) Delete(sessionID *uuid.UUID) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("sessions").
 		Set("deleted_at", squirrel.Expr("NOW()")).
 		Where("id = ? AND deleted_at IS NULL", sessionID).
-		Exec(); err != nil {
+		Exec(); err != nil && err != sql.ErrNoRows {
 		return oops.Err(err)
 	}
 

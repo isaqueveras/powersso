@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 
-	"github.com/isaqueveras/power-sso/internal/utils/grpckit"
+	"github.com/isaqueveras/powersso/internal/utils/grpckit"
 )
 
 type ctxKey interface{}

@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/isaqueveras/power-sso/pkg/security"
+	"github.com/isaqueveras/powersso/pkg/security"
 )
 
 func TestNewToken(t *testing.T) {

@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	gopowersso "github.com/isaqueveras/go-powersso"
 
-	"github.com/isaqueveras/power-sso/internal/application/project"
-	"github.com/isaqueveras/power-sso/internal/utils"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/powersso/internal/application/project"
+	"github.com/isaqueveras/powersso/internal/utils"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 // create godoc

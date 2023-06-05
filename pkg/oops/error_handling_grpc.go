@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/isaqueveras/power-sso/config"
-	"github.com/isaqueveras/power-sso/internal/utils/grpckit"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/internal/utils/grpckit"
 )
 
 // HandlingGRPC handle an error by defining HTTP response body and code

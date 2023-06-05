@@ -14,7 +14,7 @@ import (
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/stdlib"
 
-	"github.com/isaqueveras/power-sso/config"
+	"github.com/isaqueveras/powersso/config"
 )
 
 type postgres struct {

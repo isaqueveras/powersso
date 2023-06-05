@@ -15,10 +15,10 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/isaqueveras/power-sso/internal/interface/http/auth"
-	"github.com/isaqueveras/power-sso/internal/interface/http/project"
-	"github.com/isaqueveras/power-sso/internal/middleware"
-	"github.com/isaqueveras/power-sso/pkg/i18n"
+	"github.com/isaqueveras/powersso/internal/interface/http/auth"
+	"github.com/isaqueveras/powersso/internal/interface/http/project"
+	"github.com/isaqueveras/powersso/internal/middleware"
+	"github.com/isaqueveras/powersso/pkg/i18n"
 )
 
 func (s *Server) ServerHTTP() (err error) {

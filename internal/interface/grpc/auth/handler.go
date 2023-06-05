@@ -6,12 +6,11 @@ package auth
 
 import (
 	"context"
-	"strconv"
-	"time"
 
-	"github.com/isaqueveras/power-sso/internal/application/auth"
-	"github.com/isaqueveras/power-sso/internal/utils"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	app "github.com/isaqueveras/powersso/internal/application/auth"
+	domain "github.com/isaqueveras/powersso/internal/domain/auth"
+	"github.com/isaqueveras/powersso/internal/utils"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 // Server implements proto interface
@@ -21,30 +20,13 @@ type Server struct {
 
 // RegisterUser register user
 func (s *Server) RegisterUser(ctx context.Context, in *User) (_ *Empty, err error) {
-	postcode, err := strconv.Atoi(in.GetPostCode())
-	if err != nil {
-		return nil, oops.HandlingGRPC(err)
-	}
-
-	birthday, err := time.Parse(time.RFC3339, in.Birthday)
-	if err != nil {
-		return nil, oops.HandlingGRPC(err)
-	}
-
-	if err = auth.Register(ctx, &auth.RegisterRequest{
-		FirstName:   utils.GetStringPointer(in.FirstName),
-		LastName:    utils.GetStringPointer(in.LastName),
-		Email:       utils.GetStringPointer(in.Email),
-		Password:    utils.GetStringPointer(in.Password),
-		About:       utils.GetStringPointer(in.About),
-		Avatar:      utils.GetStringPointer(in.Avatar),
-		PhoneNumber: utils.GetStringPointer(in.PhoneNumber),
-		Address:     utils.GetStringPointer(in.Address),
-		City:        utils.GetStringPointer(in.City),
-		Country:     utils.GetStringPointer(in.Country),
-		Gender:      utils.GetStringPointer(in.Gender),
-		Postcode:    utils.GetIntPointer(postcode),
-		Birthday:    utils.GetTimePointer(birthday),
+	if err = app.Register(ctx, &domain.Register{
+		FirstName: utils.GetStringPointer(in.FirstName),
+		LastName:  utils.GetStringPointer(in.LastName),
+		Email:     utils.GetStringPointer(in.Email),
+		Password:  utils.GetStringPointer(in.Password),
+		About:     utils.GetStringPointer(in.About),
+		Avatar:    utils.GetStringPointer(in.Avatar),
 	}); err != nil {
 		return nil, oops.HandlingGRPC(err)
 	}

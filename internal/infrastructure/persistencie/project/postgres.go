@@ -5,14 +5,14 @@
 package project
 
 import (
-	"github.com/isaqueveras/power-sso/internal/domain/project"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/oops"
+	"github.com/isaqueveras/powersso/internal/domain/project"
+	"github.com/isaqueveras/powersso/pkg/database/postgres"
+	"github.com/isaqueveras/powersso/pkg/oops"
 )
 
 // pg is the implementation of transaction for the session repository
 type pg struct {
-	DB *postgres.DBTransaction
+	DB *postgres.Transaction
 }
 
 // Create contains the flow for create project in database

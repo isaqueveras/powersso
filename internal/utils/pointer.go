@@ -4,7 +4,11 @@
 
 package utils
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 // GetStringPointer returns a pointer reference
 func GetStringPointer(value string) *string {
@@ -18,5 +22,10 @@ func GetIntPointer(value int) *int {
 
 // GetTimePointer returns a pointer reference
 func GetTimePointer(value time.Time) *time.Time {
+	return &value
+}
+
+// GetUUIDPointer returns a pointer reference
+func GetUUIDPointer(value uuid.UUID) *uuid.UUID {
 	return &value
 }
