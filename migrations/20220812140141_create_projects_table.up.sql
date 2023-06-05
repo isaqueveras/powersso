@@ -7,8 +7,9 @@ CREATE TABLE projects (
 	created_by	    UUID NOT NULL REFERENCES users (id),
 	"name" 			    VARCHAR(20) NOT NULL,
 	"description"   VARCHAR(50),
-  color           VARCHAR(7),
+	"uri_redirect"	VARCHAR(200) NOT NULL,
+  "color"         VARCHAR(7),
   slug            VARCHAR,
-	created_at	    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	created_at	    TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 	updated_at	    TIMESTAMP WITH TIME ZONE
 );

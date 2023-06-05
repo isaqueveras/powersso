@@ -3,4 +3,5 @@
 -- license that can be found in the LICENSE file.
 
 DROP TABLE IF EXISTS users CASCADE;
-DROP TYPE user_types;
+DROP TYPE "level";
+DROP INDEX users_email_idx;
