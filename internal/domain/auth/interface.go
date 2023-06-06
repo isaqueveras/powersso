@@ -8,9 +8,9 @@ import "github.com/google/uuid"
 
 // IAuth define an interface for data layer access methods
 type IAuth interface {
-	Register(*Register) (userID *uuid.UUID, err error)
+	CreateAccount(*CreateAccount) (userID *uuid.UUID, err error)
 	SendMailActivationAccount(email *string, token *uuid.UUID) error
-	GetActivateAccountToken(token *uuid.UUID) (*ActivateAccountToken, error)
+	GetActivateAccountToken(data *ActivateAccount) error
 	CreateAccessToken(userID *uuid.UUID) (*uuid.UUID, error)
 	MarkTokenAsUsed(token *uuid.UUID) error
 	AddAttempts(userID *uuid.UUID) error

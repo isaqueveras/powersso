@@ -20,13 +20,11 @@ type Server struct {
 
 // RegisterUser register user
 func (s *Server) RegisterUser(ctx context.Context, in *User) (_ *Empty, err error) {
-	if err = app.Register(ctx, &domain.Register{
+	if err = app.CreateAccount(ctx, &domain.CreateAccount{
 		FirstName: utils.GetStringPointer(in.FirstName),
 		LastName:  utils.GetStringPointer(in.LastName),
 		Email:     utils.GetStringPointer(in.Email),
 		Password:  utils.GetStringPointer(in.Password),
-		About:     utils.GetStringPointer(in.About),
-		Avatar:    utils.GetStringPointer(in.Avatar),
 	}); err != nil {
 		return nil, oops.HandlingGRPC(err)
 	}

@@ -46,20 +46,17 @@ const (
 	CostHashPasswordDevelopment int = 1
 )
 
-// Register model the data to register user in the database
-type Register struct {
+// CreateAccount models the data to create an account
+type CreateAccount struct {
 	FirstName *string `sql:"first_name" json:"first_name"`
 	LastName  *string `sql:"last_name" json:"last_name"`
 	Email     *string `sql:"email" json:"email"`
 	Password  *string `sql:"password" json:"password"`
-	Role      *Flag   `sql:"roles" json:"-"`
-	About     *string `sql:"about" json:"about"`
-	Avatar    *string `sql:"avatar" json:"avatar"`
-	TokenKey  *string `sql:"token_key" json:"token_key"`
+	Key       *string `sql:"key" json:"-"`
 }
 
 // Prepare prepare data for registration
-func (rr *Register) Prepare() (err error) {
+func (rr *CreateAccount) Prepare() (err error) {
 	rr.Email = utils.GetStringPointer(strings.ToLower(strings.TrimSpace(*rr.Email)))
 	rr.Password = utils.GetStringPointer(strings.TrimSpace(*rr.Password))
 
@@ -72,13 +69,13 @@ func (rr *Register) Prepare() (err error) {
 
 // RefreshTokenKey generates and sets new random token key.
 // >> invalidate previously issued tokens
-func (rr *Register) RefreshTokenKey() {
-	rr.TokenKey = new(string)
-	rr.TokenKey = utils.GetStringPointer(security.RandomString(50))
+func (rr *CreateAccount) RefreshTokenKey() {
+	rr.Key = new(string)
+	rr.Key = utils.GetStringPointer(security.RandomString(50))
 }
 
 // GeneratePassword hash user password with bcrypt
-func (rr *Register) GeneratePassword() error {
+func (rr *CreateAccount) GeneratePassword() error {
 	rr.RefreshTokenKey()
 
 	cost := CostHashPasswordDevelopment
@@ -86,7 +83,7 @@ func (rr *Register) GeneratePassword() error {
 		cost = CostHashPasswordProduction
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*rr.TokenKey+*rr.Password), cost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*rr.Key+*rr.Password), cost)
 	if err != nil {
 		return err
 	}
@@ -96,24 +93,23 @@ func (rr *Register) GeneratePassword() error {
 }
 
 // SanitizePassword sanitize user password
-func (rr *Register) SanitizePassword() {
+func (rr *CreateAccount) SanitizePassword() {
 	rr.Password = nil
 }
 
-// ActivateAccountToken model the data to activate user account
-type ActivateAccountToken struct {
-	ID        *uuid.UUID
-	UserID    *uuid.UUID
-	Used      *bool
+// ActivateAccount model the data to activate user account
+type ActivateAccount struct {
+	ID        *uuid.UUID `sql:"id"`
+	UserID    *uuid.UUID `sql:"user_id"`
+	Used      *bool      `sql:"used"`
 	Valid     *bool
-	ExpiresAt *time.Time
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
+	ExpiresAt *time.Time `sql:"expires_at"`
+	CreatedAt *time.Time `sql:"created_at"`
 }
 
 // IsValid check if the token is valid
-func (a *ActivateAccountToken) IsValid() bool {
-	return (a.Used != nil && *a.Used) || (a.Valid != nil && !*a.Valid)
+func (a *ActivateAccount) IsValid() bool {
+	return (a.Used != nil && !*a.Used) && (a.Valid != nil && *a.Valid)
 }
 
 // Steps contains login steps
@@ -123,22 +119,24 @@ type Steps struct {
 }
 
 type User struct {
-	ID        *uuid.UUID `sql:"id"`
-	Email     *string    `sql:"email"`
-	Password  *string    `sql:"password" json:"-"`
-	FirstName *string    `sql:"first_name"`
-	LastName  *string    `sql:"last_name"`
-	About     *string    `sql:"about"`
-	Flag      *Flag      `sql:"flag"`
-	Level     *Level     `sql:"level"`
-	Avatar    *string    `sql:"avatar"`
-	Blocked   *bool      `sql:"attempts >= 3 AND (U.last_failure + '30 minutes') >= NOW()"`
-	Key       *string    `sql:"key"`
-	Active    *bool      `sql:"active"`
-	OTPToken  *string    `sql:"otp_token"`
-	CreatedBy *uuid.UUID `sql:"created_by"`
-	CreatedAt *time.Time `sql:"created_at"`
-	LastLogin *time.Time `sql:"last_login"`
+	ID        *uuid.UUID
+	Email     *string
+	Password  *string `json:"-"`
+	FirstName *string
+	LastName  *string
+	About     *string
+	Flag      *Flag
+	Level     *Level
+	Avatar    *string
+	Blocked   *bool
+	Key       *string
+	Active    *bool
+	OTPToken  *string
+	OTPEnable *bool
+	OTPSetUp  *bool
+	CreatedBy *uuid.UUID
+	CreatedAt *time.Time
+	LastLogin *time.Time
 }
 
 // HasFlag return 'true' if has flag

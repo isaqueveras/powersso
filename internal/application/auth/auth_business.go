@@ -17,27 +17,27 @@ import (
 	"github.com/isaqueveras/powersso/tokens"
 )
 
-// Register is the business logic for the user register
-func Register(ctx context.Context, input *domain.Register) error {
+// CreateAccount is the business logic for the user register
+func CreateAccount(ctx context.Context, in *domain.CreateAccount) error {
 	tx, err := postgres.NewTransaction(ctx, false)
 	if err != nil {
 		return oops.Err(err)
 	}
 	defer tx.Rollback()
 
-	if err = input.Prepare(); err != nil {
+	if err = in.Prepare(); err != nil {
 		return oops.Err(err)
 	}
 
 	repoAuth := infra.NewAuthRepository(tx, mailer.Client())
 	repoUser := infra.NewUserRepository(tx)
 
-	if err = repoUser.Exist(input.Email); err != nil {
+	if err = repoUser.Exist(in.Email); err != nil {
 		return oops.Err(err)
 	}
 
 	var userID *uuid.UUID
-	if userID, err = repoAuth.Register(input); err != nil {
+	if userID, err = repoAuth.CreateAccount(in); err != nil {
 		return oops.Err(err)
 	}
 
@@ -46,7 +46,7 @@ func Register(ctx context.Context, input *domain.Register) error {
 		return oops.Err(err)
 	}
 
-	if err = repoAuth.SendMailActivationAccount(input.Email, token); err != nil {
+	if err = repoAuth.SendMailActivationAccount(in.Email, token); err != nil {
 		return oops.Err(err)
 	}
 
@@ -71,8 +71,8 @@ func Activation(ctx context.Context, token *uuid.UUID) (err error) {
 		repoRole = infra.NewRoleRepository(tx)
 	)
 
-	var activeToken *domain.ActivateAccountToken
-	if activeToken, err = repoAuth.GetActivateAccountToken(token); err != nil {
+	activeToken := &domain.ActivateAccount{ID: token}
+	if err = repoAuth.GetActivateAccountToken(activeToken); err != nil {
 		return oops.Err(err)
 	}
 

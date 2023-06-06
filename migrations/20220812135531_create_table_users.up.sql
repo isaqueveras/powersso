@@ -13,14 +13,15 @@ CREATE TABLE users (
 	"password"     					VARCHAR(150)                NOT NULL CHECK ( octet_length(password) <> 8 ),
 	about        						VARCHAR(150),
 	avatar       						VARCHAR(200),
-	user_type    						"level" 										NOT NULL DEFAULT 'user',
+	"level"    							"level" 										NOT NULL DEFAULT 'user',
+	flag 										INTEGER 										NOT NULL DEFAULT 0,
 	"key"		 								VARCHAR(50)               	NOT NULL,
-	active 									BOOLEAN 										NOT NULL  DEFAULT TRUE,
-	attempts 								INTEGER 										NOT NULL  DEFAULT 0,
+	active 									BOOLEAN 										NOT NULL DEFAULT TRUE,
+	attempts 								INTEGER 										NOT NULL DEFAULT 0,
 	last_failure 						TIMESTAMP,
-	otp											BOOLEAN,
+	otp											VARCHAR,
 	created_by 							UUID,
-	created_at   						TIMESTAMP WITH TIME ZONE    NOT NULL 	DEFAULT NOW(),
+	created_at   						TIMESTAMP WITH TIME ZONE    NOT NULL DEFAULT NOW(),
 	last_login   						TIMESTAMP WITH TIME ZONE
 );
 

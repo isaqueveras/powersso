@@ -49,10 +49,10 @@ func (a *testSuite) SetupSuite() {
 }
 
 func (a *testSuite) TestShouldCreateUser() {
-	monkey.Patch(auth.Register, func(_ context.Context, _ *domain.Register) error {
+	monkey.Patch(auth.CreateAccount, func(_ context.Context, _ *domain.CreateAccount) error {
 		return nil
 	})
-	defer monkey.Unpatch(auth.Register)
+	defer monkey.Unpatch(auth.CreateAccount)
 
 	data, err := json.Marshal(map[string]interface{}{
 		"first_name": "any_first_name",
@@ -62,10 +62,8 @@ func (a *testSuite) TestShouldCreateUser() {
 	})
 	a.Assert().Nil(err, oops.Err(err))
 
-	var (
-		req = httptest.NewRequest(http.MethodPost, "/v1/auth/register", bytes.NewBuffer(data))
-		w   = httptest.NewRecorder()
-	)
+	req := httptest.NewRequest(http.MethodPost, "/v1/auth/create_account", bytes.NewBuffer(data))
+	w := httptest.NewRecorder()
 
 	a.router.ServeHTTP(w, req)
 	a.Assert().Equal(http.StatusCreated, w.Code)

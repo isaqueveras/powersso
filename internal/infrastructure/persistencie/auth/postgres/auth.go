@@ -22,8 +22,8 @@ type PGAuth struct {
 	DB *pg.Transaction
 }
 
-// Register register the user in the database
-func (pg *PGAuth) Register(input *auth.Register) (userID *uuid.UUID, err error) {
+// CreateAccount register the user in the database
+func (pg *PGAuth) CreateAccount(input *auth.CreateAccount) (userID *uuid.UUID, err error) {
 	_cols, _vals, err := query.FormatValuesInUp(input)
 	if err != nil {
 		return nil, oops.Err(err)
@@ -46,7 +46,7 @@ func (pg *PGAuth) CreateAccessToken(userID *uuid.UUID) (token *uuid.UUID, err er
 	if err = pg.DB.Builder.
 		Insert("activate_account_tokens").
 		Columns("user_id", "expires_at").
-		Values(userID, time.Now().Add(15*time.Minute)).
+		Values(userID, time.Now().Add(30*time.Minute)).
 		Suffix(`RETURNING "id"`).
 		Scan(&token); err != nil {
 		return token, oops.Err(err)
@@ -56,24 +56,14 @@ func (pg *PGAuth) CreateAccessToken(userID *uuid.UUID) (token *uuid.UUID, err er
 }
 
 // GetActivateAccountToken get the activate account token from the database
-func (pg *PGAuth) GetActivateAccountToken(token *uuid.UUID) (res *auth.ActivateAccountToken, err error) {
-	res = new(auth.ActivateAccountToken)
-
+func (pg *PGAuth) GetActivateAccountToken(data *auth.ActivateAccount) (err error) {
 	if err = pg.DB.Builder.
-		Select("id, user_id, used, expires_at >= now(), expires_at, created_at, updated_at").
+		Select("user_id, used, expires_at >= now(), expires_at, created_at").
 		From("activate_account_tokens").
-		Where("id = ?", token).
+		Where("id = ?", data.ID).
 		Limit(1).
-		Scan(
-			&res.ID,
-			&res.UserID,
-			&res.Used,
-			&res.Valid,
-			&res.ExpiresAt,
-			&res.CreatedAt,
-			&res.UpdatedAt,
-		); err != nil && err != sql.ErrNoRows {
-		return nil, oops.Err(err)
+		Scan(&data.UserID, &data.Used, &data.Valid, &data.ExpiresAt, &data.CreatedAt); err != nil && err != sql.ErrNoRows {
+		return oops.Err(err)
 	}
 
 	return
@@ -84,7 +74,6 @@ func (pg *PGAuth) MarkTokenAsUsed(token *uuid.UUID) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("activate_account_tokens").
 		Set("used", true).
-		Set("updated_at", time.Now()).
 		Where("id = ?", token).
 		Exec(); err != nil {
 		return oops.Err(err)

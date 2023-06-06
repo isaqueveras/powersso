@@ -24,15 +24,15 @@ import (
 // @Accept json
 // @Produce json
 // @Success 201 {object} utils.NoContent{}
-// @Router /v1/auth/register [post]
-func register(ctx *gin.Context) {
-	var input domain.Register
+// @Router /v1/auth/create_account [post]
+func createAccount(ctx *gin.Context) {
+	var input domain.CreateAccount
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
 
-	if err := app.Register(ctx, &input); err != nil {
+	if err := app.CreateAccount(ctx, &input); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}

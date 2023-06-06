@@ -54,7 +54,7 @@ func (a *authSuite) TestShouldCreateUser() {
 	var (
 		err    error
 		userID *uuid.UUID
-		input  = &auth.Register{
+		input  = &auth.CreateAccount{
 			FirstName: utils.GetStringPointer("Ayrton"),
 			LastName:  utils.GetStringPointer("Senna"),
 			Email:     utils.GetStringPointer("ayrton.senna@powersso.io"),
@@ -71,7 +71,7 @@ func (a *authSuite) TestShouldCreateUser() {
 	a.Require().NotNil(a.pg.DB)
 	a.Require().Nil(err, oops.Err(err))
 
-	userID, err = a.pg.Register(input)
+	userID, err = a.pg.CreateAccount(input)
 	a.Require().NotNil(userID)
 	a.Require().Nil(err, oops.Err(err))
 }

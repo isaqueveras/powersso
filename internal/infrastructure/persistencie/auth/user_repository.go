@@ -11,26 +11,26 @@ import (
 	pg "github.com/isaqueveras/powersso/pkg/database/postgres"
 )
 
-var _ domain.IUser = (*user)(nil)
+var _ domain.IUser = (*repoUser)(nil)
 
-type user struct{ pg *infra.PGUser }
+type repoUser struct{ pg *infra.PGUser }
 
 // NewUserRepository creates a new repository
 func NewUserRepository(tx *pg.Transaction) domain.IUser {
-	return &user{pg: &infra.PGUser{DB: tx}}
+	return &repoUser{pg: &infra.PGUser{DB: tx}}
 }
 
 // Get get user data
-func (r *user) Get(user *domain.User) error {
+func (r *repoUser) Get(user *domain.User) error {
 	return r.pg.Get(user)
 }
 
 // Exist check if user already exists
-func (r *user) Exist(email *string) error {
+func (r *repoUser) Exist(email *string) error {
 	return r.pg.Exist(email)
 }
 
 // Disable deactivate a user's account
-func (r *user) Disable(userUUID *uuid.UUID) error {
+func (r *repoUser) Disable(userUUID *uuid.UUID) error {
 	return r.pg.Disable(userUUID)
 }

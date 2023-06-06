@@ -26,9 +26,9 @@ func NewAuthRepository(tx *pg.Transaction, client *mailer.SmtpClient) auth.IAuth
 	return &repoAuth{pg: &infra.PGAuth{DB: tx}, mailer: &mail.MailerAuth{SmtpClient: client, Cfg: config.Get()}}
 }
 
-// Register contains the flow for the user register in database
-func (r *repoAuth) Register(input *auth.Register) (userID *uuid.UUID, err error) {
-	return r.pg.Register(input)
+// CreateAccount contains the flow for the user register in database
+func (r *repoAuth) CreateAccount(data *auth.CreateAccount) (userID *uuid.UUID, err error) {
+	return r.pg.CreateAccount(data)
 }
 
 // SendMailActivationAccount contains the flow for the send activation account email
@@ -37,8 +37,8 @@ func (r *repoAuth) SendMailActivationAccount(email *string, token *uuid.UUID) er
 }
 
 // GetActivateAccountToken contains the flow for the get activate account token
-func (r *repoAuth) GetActivateAccountToken(token *uuid.UUID) (*auth.ActivateAccountToken, error) {
-	return r.pg.GetActivateAccountToken(token)
+func (r *repoAuth) GetActivateAccountToken(data *auth.ActivateAccount) error {
+	return r.pg.GetActivateAccountToken(data)
 }
 
 // CreateAccessToken contains the flow for the create access token
