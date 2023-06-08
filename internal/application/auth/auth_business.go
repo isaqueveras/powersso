@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	domain "github.com/isaqueveras/powersso/internal/domain/auth"
 	infra "github.com/isaqueveras/powersso/internal/infrastructure/persistencie/auth"
+	"github.com/isaqueveras/powersso/internal/utils"
 	"github.com/isaqueveras/powersso/otp"
 	"github.com/isaqueveras/powersso/pkg/database/postgres"
 	"github.com/isaqueveras/powersso/pkg/mailer"
@@ -85,7 +86,7 @@ func Activation(ctx context.Context, token *uuid.UUID) (err error) {
 		return oops.Err(err)
 	}
 
-	if err = repoRole.Add(user.ID, domain.FlagEnabledAccount); err != nil {
+	if err = repoRole.Set(user.ID, utils.Pointer(domain.FlagEnabledAccount)); err != nil {
 		return oops.Err(err)
 	}
 
@@ -168,7 +169,6 @@ func Login(ctx context.Context, in *domain.Login) (*domain.Session, error) {
 		Email:     user.Email,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
-		About:     user.About,
 		CreatedAt: user.CreatedAt,
 		Token:     token,
 		RawData:   make(map[string]any),

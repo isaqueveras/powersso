@@ -36,13 +36,13 @@ func (cpr *CreateProjectReq) Validate() (err error) {
 		return errors.New("cannot create a project without a name")
 	}
 
-	cpr.Slug = utils.GetStringPointer(slug.Make(*cpr.Name))
+	cpr.Slug = utils.Pointer(slug.Make(*cpr.Name))
 	if len(cpr.Participants) == 0 {
 		return errors.New("cannot create a project without participants")
 	}
 
 	if cpr.Color == nil || *cpr.Color == "" {
-		cpr.Color = utils.GetStringPointer("#949494")
+		cpr.Color = utils.Pointer("#949494")
 	}
 
 	return

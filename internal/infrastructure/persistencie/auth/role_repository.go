@@ -14,20 +14,15 @@ import (
 var _ domain.IRole = (*repoRole)(nil)
 
 type repoRole struct {
-	pg *infra.PGSession
+	pg *infra.PGRole
 }
 
 // NewRoleRepository creates a new repository
 func NewRoleRepository(tx *pg.Transaction) domain.IRole {
-	return &repoRole{pg: &infra.PGSession{DB: tx}}
+	return &repoRole{pg: &infra.PGRole{DB: tx}}
 }
 
-// Add
-func (r *repoRole) Add(userID *uuid.UUID, flag ...domain.Flag) error {
-	return nil
-}
-
-// Remove
-func (r *repoRole) Remove(userID *uuid.UUID, flag ...domain.Flag) error {
-	return nil
+// Set put the flag value in the database
+func (r *repoRole) Set(userID *uuid.UUID, flag *domain.Flag) error {
+	return r.pg.Set(userID, flag)
 }

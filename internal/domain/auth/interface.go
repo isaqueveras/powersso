@@ -25,8 +25,7 @@ type ISession interface {
 
 // IRole define an interface for data layer access methods
 type IRole interface {
-	Add(userID *uuid.UUID, flag ...Flag) error
-	Remove(userID *uuid.UUID, flag ...Flag) error
+	Set(userID *uuid.UUID, flag *Flag) error
 }
 
 // IOTP define an interface for data layer access methods

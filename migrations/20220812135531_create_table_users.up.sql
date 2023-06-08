@@ -11,8 +11,6 @@ CREATE TABLE users (
 	last_name    						VARCHAR(32)                 NOT NULL CHECK ( last_name <> '' ),
 	email        						VARCHAR(64) UNIQUE          NOT NULL CHECK ( email <> '' ),
 	"password"     					VARCHAR(150)                NOT NULL CHECK ( octet_length(password) <> 8 ),
-	about        						VARCHAR(150),
-	avatar       						VARCHAR(200),
 	"level"    							"level" 										NOT NULL DEFAULT 'user',
 	flag 										INTEGER 										NOT NULL DEFAULT 0,
 	"key"		 								VARCHAR(50)               	NOT NULL,

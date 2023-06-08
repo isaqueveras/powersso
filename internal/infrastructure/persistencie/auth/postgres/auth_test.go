@@ -55,10 +55,10 @@ func (a *authSuite) TestShouldCreateUser() {
 		err    error
 		userID *uuid.UUID
 		input  = &auth.CreateAccount{
-			FirstName: utils.GetStringPointer("Ayrton"),
-			LastName:  utils.GetStringPointer("Senna"),
-			Email:     utils.GetStringPointer("ayrton.senna@powersso.io"),
-			Password:  utils.GetStringPointer("$2a$12$7scJnkljH5misH./.qM0YeZi7sFEU4nu4fHqOtMqHbi/p5MmzIxpG"),
+			FirstName: utils.Pointer("Ayrton"),
+			LastName:  utils.Pointer("Senna"),
+			Email:     utils.Pointer("ayrton.senna@powersso.io"),
+			Password:  utils.Pointer("$2a$12$7scJnkljH5misH./.qM0YeZi7sFEU4nu4fHqOtMqHbi/p5MmzIxpG"),
 		}
 	)
 

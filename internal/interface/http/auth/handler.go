@@ -55,7 +55,7 @@ func activation(ctx *gin.Context) {
 		return
 	}
 
-	if err := app.Activation(ctx, utils.GetUUIDPointer(token)); err != nil {
+	if err := app.Activation(ctx, utils.Pointer(token)); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -78,8 +78,8 @@ func login(ctx *gin.Context) {
 		return
 	}
 
-	input.ClientIP = utils.GetStringPointer(ctx.ClientIP())
-	input.UserAgent = utils.GetStringPointer(ctx.Request.UserAgent())
+	input.ClientIP = utils.Pointer(ctx.ClientIP())
+	input.UserAgent = utils.Pointer(ctx.Request.UserAgent())
 	input.Validate()
 
 	output, err := app.Login(ctx, &input)
@@ -106,7 +106,7 @@ func logout(ctx *gin.Context) {
 		return
 	}
 
-	if err := app.Logout(ctx, utils.GetUUIDPointer(sessionID)); err != nil {
+	if err := app.Logout(ctx, utils.Pointer(sessionID)); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -123,7 +123,7 @@ func logout(ctx *gin.Context) {
 // @Success 200 {object} auth.Steps
 // @Router /v1/auth/login/steps [get]
 func loginSteps(ctx *gin.Context) {
-	res, err := app.LoginSteps(ctx, utils.GetStringPointer(ctx.Query("email")))
+	res, err := app.LoginSteps(ctx, utils.Pointer(ctx.Query("email")))
 	if err != nil {
 		oops.Handling(ctx, err)
 		return

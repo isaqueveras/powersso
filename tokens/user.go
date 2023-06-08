@@ -26,5 +26,5 @@ func NewUserAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
 	}
 
 	token, err := security.NewToken(claims, (config.Get().UserAuthToken.SecretKey), config.Get().UserAuthToken.Duration)
-	return utils.GetStringPointer(token), err
+	return utils.Pointer(token), err
 }

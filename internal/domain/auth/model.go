@@ -16,15 +16,15 @@ import (
 )
 
 // Flag set the data type to flag the user
-type Flag int64
+type Flag int
 
 const (
+	// FlagEnabledAccount defines that the user has already activated his account
+	FlagEnabledAccount Flag = iota + 1
 	// FlagOTPEnable defines that the user has OTP enabled
-	FlagOTPEnable Flag = iota + 1
+	FlagOTPEnable
 	// FlagOTPSetup defines that the user has OTP configured
 	FlagOTPSetup
-	// FlagEnabledAccount defines that the user has already activated his account
-	FlagEnabledAccount
 )
 
 // Level set data type to user level
@@ -57,8 +57,8 @@ type CreateAccount struct {
 
 // Prepare prepare data for registration
 func (rr *CreateAccount) Prepare() (err error) {
-	rr.Email = utils.GetStringPointer(strings.ToLower(strings.TrimSpace(*rr.Email)))
-	rr.Password = utils.GetStringPointer(strings.TrimSpace(*rr.Password))
+	rr.Email = utils.Pointer(strings.ToLower(strings.TrimSpace(*rr.Email)))
+	rr.Password = utils.Pointer(strings.TrimSpace(*rr.Password))
 
 	if err = rr.GeneratePassword(); err != nil {
 		return err
@@ -71,7 +71,7 @@ func (rr *CreateAccount) Prepare() (err error) {
 // >> invalidate previously issued tokens
 func (rr *CreateAccount) RefreshTokenKey() {
 	rr.Key = new(string)
-	rr.Key = utils.GetStringPointer(security.RandomString(50))
+	rr.Key = utils.Pointer(security.RandomString(50))
 }
 
 // GeneratePassword hash user password with bcrypt
@@ -88,7 +88,7 @@ func (rr *CreateAccount) GeneratePassword() error {
 		return err
 	}
 
-	rr.Password = utils.GetStringPointer(string(hashedPassword))
+	rr.Password = utils.Pointer(string(hashedPassword))
 	return nil
 }
 
@@ -124,10 +124,8 @@ type User struct {
 	Password  *string `json:"-"`
 	FirstName *string
 	LastName  *string
-	About     *string
 	Flag      *Flag
 	Level     *Level
-	Avatar    *string
 	Blocked   *bool
 	Key       *string
 	Active    *bool
@@ -191,11 +189,11 @@ func (l *Login) SanitizePassword() {
 // Validate prepare data for login
 func (l *Login) Validate() {
 	if l.ClientIP != nil && *l.ClientIP == "" {
-		l.ClientIP = utils.GetStringPointer("0.0.0.0")
+		l.ClientIP = utils.Pointer("0.0.0.0")
 	}
 
 	if l.UserAgent != nil && *l.UserAgent == "" {
-		l.UserAgent = utils.GetStringPointer("Unknown")
+		l.UserAgent = utils.Pointer("Unknown")
 	}
 }
 
@@ -206,7 +204,6 @@ type Session struct {
 	Email     *string        `json:"email,omitempty"`
 	FirstName *string        `json:"first_name,omitempty"`
 	LastName  *string        `json:"last_name,omitempty"`
-	About     *string        `json:"about,omitempty"`
 	Level     *Level         `json:"level,omitempty"`
 	Token     *string        `json:"token,omitempty"`
 	CreatedAt *time.Time     `json:"created_at,omitempty"`

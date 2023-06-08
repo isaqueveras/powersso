@@ -13,6 +13,4 @@ message User {
   string LastName = 2;
   string Email = 3;      
   string Password = 4;   
-  string About = 5;      
-  string Avatar = 6;     
 }

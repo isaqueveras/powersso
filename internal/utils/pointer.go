@@ -4,28 +4,7 @@
 
 package utils
 
-import (
-	"time"
-
-	"github.com/google/uuid"
-)
-
-// GetStringPointer returns a pointer reference
-func GetStringPointer(value string) *string {
-	return &value
-}
-
-// GetIntPointer returns a pointer reference
-func GetIntPointer(value int) *int {
-	return &value
-}
-
-// GetTimePointer returns a pointer reference
-func GetTimePointer(value time.Time) *time.Time {
-	return &value
-}
-
-// GetUUIDPointer returns a pointer reference
-func GetUUIDPointer(value uuid.UUID) *uuid.UUID {
+// Pointer returns a pointer reference
+func Pointer[T any](value T) *T {
 	return &value
 }

@@ -32,7 +32,7 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 	base32.StdEncoding.Encode(dst, data)
 
 	repo := auth.NewOTPRepository(tx)
-	if err = repo.Configure(userID, utils.GetStringPointer(string(dst))); err != nil {
+	if err = repo.Configure(userID, utils.Pointer(string(dst))); err != nil {
 		return oops.Err(err)
 	}
 
@@ -80,6 +80,6 @@ func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *domain.QRCode, err 
 		*userName += " [DEV]"
 	}
 
-	res = &domain.QRCode{Url: utils.GetStringPointer(otp.GetUrlQrCode(*token, *userName))}
+	res = &domain.QRCode{Url: utils.Pointer(otp.GetUrlQrCode(*token, *userName))}
 	return
 }
