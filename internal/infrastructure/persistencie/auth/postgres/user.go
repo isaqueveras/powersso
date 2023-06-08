@@ -38,14 +38,19 @@ func (pg *PGUser) Exist(email *string) (err error) {
 
 // Get get the user from the database
 func (pg *PGUser) Get(data *domain.User) (err error) {
+	cond := squirrel.Eq{"id": data.ID}
+	if data.Email != nil {
+		cond = squirrel.Eq{"email": data.Email}
+	}
+
 	if err = pg.DB.Builder.
-		Select(`id, email, first_name, last_name, about, key, active, level, otp`).
+		Select(`id, email, password, first_name, last_name, flag, key, active, level, otp`).
 		Column("attempts >= 3 AND (last_failure + '5 minutes') >= NOW() AS blocked").
 		Column("(flag & ?) <> 0", domain.FlagOTPEnable).
 		Column("(flag & ?) <> 0", domain.FlagOTPSetup).
 		From("users").
-		Where(squirrel.Or{squirrel.Eq{"id": data.ID}, squirrel.Eq{"email": data.Email}}).
-		Scan(&data.ID, &data.Email, &data.FirstName, &data.LastName, &data.About, &data.Key,
+		Where(cond).
+		Scan(&data.ID, &data.Email, &data.Password, &data.FirstName, &data.LastName, &data.Flag, &data.Key,
 			&data.Active, &data.Level, &data.OTPToken, &data.Blocked, &data.OTPEnable, &data.OTPSetUp); err != nil {
 		if err == sql.ErrNoRows {
 			return domain.ErrUserNotExists()

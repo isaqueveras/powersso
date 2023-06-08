@@ -173,8 +173,8 @@ type Login struct {
 }
 
 // ComparePasswords compare user password and payload
-func (l *Login) ComparePasswords(passw, tokenKey *string) (err error) {
-	if err = bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*tokenKey+*l.Password)); err != nil {
+func (l *Login) ComparePasswords(passw, key *string) error {
+	if err := bcrypt.CompareHashAndPassword([]byte(*passw), []byte(*key+*l.Password)); err != nil {
 		return ErrEmailOrPasswordIsNotValid()
 	}
 	l.SanitizePassword()
