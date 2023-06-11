@@ -9,9 +9,9 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/internal/domain/auth"
-	"github.com/isaqueveras/powersso/internal/utils"
-	"github.com/isaqueveras/powersso/pkg/security"
+	"github.com/isaqueveras/powersso/domain/auth"
+	"github.com/isaqueveras/powersso/security"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 // NewUserAuthToken generates and returns a new user authentication token.

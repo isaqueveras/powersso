@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/pkg/oops"
+	"github.com/isaqueveras/powersso/oops"
 )
 
 const (

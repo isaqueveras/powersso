@@ -10,10 +10,10 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/database/postgres"
 	_ "github.com/isaqueveras/powersso/docs"
-	"github.com/isaqueveras/powersso/internal/server"
-	"github.com/isaqueveras/powersso/pkg/database/postgres"
-	"github.com/isaqueveras/powersso/pkg/logger"
+	"github.com/isaqueveras/powersso/logger"
+	"github.com/isaqueveras/powersso/server"
 )
 
 // @title Documentation PowerSSO

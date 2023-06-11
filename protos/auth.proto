@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/isaqueveras/powersso/internal/application/auth";
+option go_package = "github.com/isaqueveras/powersso/application/auth";
 
 service Authentication {
   rpc RegisterUser (User) returns (Empty);
