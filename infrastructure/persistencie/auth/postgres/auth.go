@@ -98,11 +98,13 @@ func (pg *PGAuth) AddAttempts(userID *uuid.UUID) (err error) {
 func (pg *PGAuth) LoginSteps(email *string) (steps *auth.Steps, err error) {
 	steps = new(auth.Steps)
 	if err = pg.DB.Builder.
-		Select("COALESCE(otp AND otp_setup, FALSE), first_name").
+		Select("first_name").
+		Column("(flag&?) <> 0 AND 	(flag&?) <> 0",
+			auth.FlagOTPEnable, auth.FlagOTPSetup).
 		From("users").
 		Where("email = ?", email).
 		Limit(1).
-		Scan(&steps.OTP, &steps.Name); err != nil && err != sql.ErrNoRows {
+		Scan(&steps.Name, &steps.OTP); err != nil && err != sql.ErrNoRows {
 		return nil, oops.Err(err)
 	}
 

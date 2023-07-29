@@ -11,18 +11,18 @@ import (
 	infra "github.com/isaqueveras/powersso/infrastructure/persistencie/auth/postgres"
 )
 
-var _ domain.IOTP = (*repoOTP)(nil)
+var _ domain.IFlag = (*repoFlag)(nil)
 
-type repoOTP struct{ pg *infra.PGOTP }
+type repoFlag struct{ pg *infra.PGFlag }
 
-func NewOTPRepo(tx *postgres.Transaction, userID *uuid.UUID) domain.IOTP {
-	return &repoOTP{pg: &infra.PGOTP{DB: tx, UserID: userID}}
+func NewFlagRepo(tx *postgres.Transaction) domain.IFlag {
+	return &repoFlag{pg: &infra.PGFlag{DB: tx}}
 }
 
-func (r *repoOTP) GetToken() (*string, *string, error) {
-	return r.pg.GetToken()
+func (r *repoFlag) Set(userID *uuid.UUID, flag *domain.Flag) error {
+	return r.pg.Set(userID, flag)
 }
 
-func (r *repoOTP) SetToken(secret *string) error {
-	return r.pg.SetToken(secret)
+func (r *repoFlag) Get(userID *uuid.UUID) (*int64, error) {
+	return r.pg.Get(userID)
 }

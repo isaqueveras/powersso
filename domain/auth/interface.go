@@ -23,16 +23,16 @@ type ISession interface {
 	Delete(sessionID *uuid.UUID) error
 }
 
-// IRole define an interface for data layer access methods
-type IRole interface {
+// IFlag define an interface for data layer access methods
+type IFlag interface {
+	Get(userID *uuid.UUID) (*int64, error)
 	Set(userID *uuid.UUID, flag *Flag) error
 }
 
 // IOTP define an interface for data layer access methods
 type IOTP interface {
-	GetToken(userID *uuid.UUID) (*string, *string, error)
-	Configure(userID *uuid.UUID, secret *string) error
-	Unconfigure(userID *uuid.UUID) error
+	GetToken() (*string, *string, error)
+	SetToken(secret *string) error
 }
 
 // IUser define an interface for data layer access methods

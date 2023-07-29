@@ -29,8 +29,17 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 	dst := make([]byte, base32.StdEncoding.EncodedLen(len(data)))
 	base32.StdEncoding.Encode(dst, data)
 
-	repo := auth.NewOTPRepository(tx)
-	if err = repo.Configure(userID, utils.Pointer(string(dst))); err != nil {
+	repo := auth.NewOTPRepo(tx, userID)
+	if err = repo.SetToken(utils.Pointer(string(dst))); err != nil {
+		return oops.Err(err)
+	}
+
+	repoFlag := auth.NewFlagRepo(tx)
+	if err = repoFlag.Set(userID, utils.Pointer(domain.FlagOTPEnable)); err != nil {
+		return oops.Err(err)
+	}
+
+	if err = repoFlag.Set(userID, utils.Pointer(domain.FlagOTPSetup)); err != nil {
 		return oops.Err(err)
 	}
 
@@ -49,8 +58,22 @@ func Unconfigure(ctx context.Context, userID *uuid.UUID) (err error) {
 	}
 	defer tx.Rollback()
 
-	repository := auth.NewOTPRepository(tx)
-	if err = repository.Unconfigure(userID); err != nil {
+	repoFlag := auth.NewFlagRepo(tx)
+	flag, err := repoFlag.Get(userID)
+	if err != nil {
+		return oops.Err(err)
+	}
+
+	if err = repoFlag.Set(userID, utils.Pointer((domain.Flag(*flag))&(^domain.FlagOTPEnable))); err != nil {
+		return oops.Err(err)
+	}
+
+	if err = repoFlag.Set(userID, utils.Pointer((domain.Flag(*flag))&(^domain.FlagOTPSetup))); err != nil {
+		return oops.Err(err)
+	}
+
+	repoOTP := auth.NewOTPRepo(tx, userID)
+	if err = repoOTP.SetToken(nil); err != nil {
 		return oops.Err(err)
 	}
 
@@ -70,7 +93,7 @@ func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *domain.QRCode, err 
 	defer tx.Rollback()
 
 	var userName, token *string
-	if userName, token, err = auth.NewOTPRepository(tx).GetToken(userID); err != nil {
+	if userName, token, err = auth.NewOTPRepo(tx, userID).GetToken(); err != nil {
 		return nil, oops.Err(err)
 	}
 

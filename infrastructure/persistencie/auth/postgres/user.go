@@ -5,17 +5,15 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
-	pg "github.com/isaqueveras/powersso/database/postgres"
+	"github.com/isaqueveras/powersso/database/postgres"
 	domain "github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/oops"
 )
 
-// PGUser is the implementation of transaction for the user repository
 type PGUser struct {
-	DB *pg.Transaction
+	DB *postgres.Transaction
 }
 
-// Exist check if the user exists by email in the database
 func (pg *PGUser) Exist(email *string) (err error) {
 	var exists *bool
 	if err = pg.DB.Builder.
@@ -36,7 +34,6 @@ func (pg *PGUser) Exist(email *string) (err error) {
 	return
 }
 
-// Get get the user from the database
 func (pg *PGUser) Get(data *domain.User) (err error) {
 	cond := squirrel.Eq{"id": data.ID}
 	if data.Email != nil {
@@ -61,7 +58,6 @@ func (pg *PGUser) Get(data *domain.User) (err error) {
 	return
 }
 
-// Disable disable user in database
 func (pg *PGUser) Disable(userUUID *uuid.UUID) (err error) {
 	if err = pg.DB.Builder.
 		Update("users").
