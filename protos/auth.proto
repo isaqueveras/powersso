@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/isaqueveras/power-sso/internal/application/auth";
+option go_package = "github.com/isaqueveras/powersso/application/auth";
 
 service Authentication {
   rpc RegisterUser (User) returns (Empty);
@@ -13,13 +13,4 @@ message User {
   string LastName = 2;
   string Email = 3;      
   string Password = 4;   
-  string About = 5;      
-  string Avatar = 6;     
-  string PhoneNumber = 7;
-  string Address = 8;    
-  string City = 9;       
-  string Country = 10;    
-  string Gender = 11;     
-  string PostCode = 12;   
-  string Birthday = 13;   
 }

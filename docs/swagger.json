@@ -5,11 +5,11 @@
         "title": "Documentation PowerSSO",
         "contact": {
             "name": "PowerSSO",
-            "url": "https://github.com/isaqueveras/power-sso/issues"
+            "url": "https://github.com/isaqueveras/powersso/issues"
         },
         "license": {
             "name": "MIT license",
-            "url": "https://github.com/isaqueveras/power-sso/blob/main/LICENSE"
+            "url": "https://github.com/isaqueveras/powersso/blob/main/LICENSE"
         },
         "version": "1.0.0"
     },
@@ -58,7 +58,7 @@
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/auth.SessionResponse"
+                            "$ref": "#/definitions/auth.Session"
                         }
                     }
                 }
@@ -82,7 +82,7 @@
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/auth.StepsResponse"
+                            "$ref": "#/definitions/auth.Steps"
                         }
                     }
                 }
@@ -211,7 +211,7 @@
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/otp.QRCodeResponse"
+                            "$ref": "#/definitions/auth.QRCode"
                         }
                     }
                 }
@@ -267,13 +267,18 @@
         }
     },
     "definitions": {
-        "auth.SessionResponse": {
+        "auth.QRCode": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.Session": {
             "type": "object",
             "properties": {
                 "about": {
-                    "type": "string"
-                },
-                "avatar_url": {
                     "type": "string"
                 },
                 "created_at": {
@@ -297,21 +302,6 @@
                 "level": {
                     "type": "string"
                 },
-                "otp_enabled": {
-                    "type": "boolean"
-                },
-                "otp_setup": {
-                    "type": "boolean"
-                },
-                "phone_number": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "session_id": {
                     "type": "string"
                 },
@@ -323,7 +313,7 @@
                 }
             }
         },
-        "auth.StepsResponse": {
+        "auth.Steps": {
             "type": "object",
             "properties": {
                 "name": {
@@ -331,14 +321,6 @@
                 },
                 "otp": {
                     "type": "boolean"
-                }
-            }
-        },
-        "otp.QRCodeResponse": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string"
                 }
             }
         },

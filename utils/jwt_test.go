@@ -1,0 +1,190 @@
+// Copyright (c) 2022 Isaque Veras
+// Use of this source code is governed by MIT
+// license that can be found in the LICENSE file.
+
+package utils_test
+
+import (
+	"testing"
+
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/isaqueveras/powersso/utils"
+)
+
+func TestNewToken(t *testing.T) {
+	var (
+		token  string
+		err    error
+		claims jwt.MapClaims
+
+		scenarios = []struct {
+			claims      jwt.MapClaims
+			key         string
+			duration    int64
+			expectError bool
+		}{
+			{jwt.MapClaims{}, "", 0, true},                     // empty, zero duration
+			{jwt.MapClaims{}, "", 10, false},                   // empty, 10 seconds duration
+			{jwt.MapClaims{"name": "test"}, "test", 10, false}, // non-empty, 10 seconds duration
+		}
+	)
+
+	for i, scenario := range scenarios {
+		if token, err = utils.NewToken(scenario.claims, scenario.key, scenario.duration); err != nil {
+			t.Errorf("(%d) Expected NewToken to succeed, got error %v", i, err)
+			continue
+		}
+
+		claims, err = utils.ParseJWT(token, scenario.key)
+		var hasParseErr = err != nil
+
+		if hasParseErr != scenario.expectError {
+			t.Errorf("(%d) Expected hasParseErr to be %v, got %v (%v)", i, scenario.expectError, hasParseErr, err)
+			continue
+		}
+
+		if scenario.expectError {
+			continue
+		}
+
+		if _, ok := claims["exp"]; !ok {
+			t.Errorf("(%d) Missing required claim exp, got %v", i, claims)
+		}
+
+		// clear exp claim to match with the scenario ones
+		delete(claims, "exp")
+
+		if len(claims) != len(scenario.claims) {
+			t.Errorf("(%d) Expected %v claims, got %v", i, scenario.claims, claims)
+		}
+
+		for j, k := range claims {
+			if claims[j] != scenario.claims[j] {
+				t.Errorf("(%d) Expected %v for %q claim, got %v", i, claims[j], k, scenario.claims[j])
+			}
+		}
+	}
+}
+
+func TestParseJWT(t *testing.T) {
+	var scenarios = []struct {
+		token        string
+		secret       string
+		expectError  bool
+		expectClaims jwt.MapClaims
+	}{
+		// invalid formatted JWT token
+		{
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9",
+			"test",
+			true,
+			nil,
+		},
+		// properly formatted JWT token with INVALID claims and INVALID secret
+		// {"name": "test", "exp": 1516239022}
+		{
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTUxNjIzOTAyMn0.xYHirwESfSEW3Cq2BL47CEASvD_p_ps3QCA54XtNktU",
+			"invalid",
+			true,
+			nil,
+		},
+		// properly formatted JWT token with INVALID claims and VALID secret
+		// {"name": "test", "exp": 1516239022}
+		{
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTUxNjIzOTAyMn0.xYHirwESfSEW3Cq2BL47CEASvD_p_ps3QCA54XtNktU",
+			"test",
+			true,
+			nil,
+		},
+		// properly formatted JWT token with VALID claims and INVALID secret
+		// {"name": "test", "exp": 1898636137}
+		{
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTg5ODYzNjEzN30.gqRkHjpK5s1PxxBn9qPaWEWxTbpc1PPSD-an83TsXRY",
+			"invalid",
+			true,
+			nil,
+		},
+		// properly formatted EXPIRED JWT token with VALID secret
+		// {"name": "test", "exp": 1652097610}
+		{
+			"eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6OTU3ODczMzc0fQ.0oUUKUnsQHs4nZO1pnxQHahKtcHspHu4_AplN2sGC4A",
+			"test",
+			true,
+			nil,
+		},
+		// properly formatted JWT token with VALID claims and VALID secret
+		// {"name": "test", "exp": 1898636137}
+		{
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTg5ODYzNjEzN30.gqRkHjpK5s1PxxBn9qPaWEWxTbpc1PPSD-an83TsXRY",
+			"test",
+			false,
+			jwt.MapClaims{"name": "test", "exp": 1898636137.0},
+		},
+		// properly formatted JWT token with VALID claims (without exp) and VALID secret
+		// {"name": "test"}
+		{
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.ml0QsTms3K9wMygTu41ZhKlTyjmW9zHQtoS8FUsCCjU",
+			"test",
+			false,
+			jwt.MapClaims{"name": "test"},
+		},
+	}
+
+	for i, scenario := range scenarios {
+		result, err := utils.ParseJWT(scenario.token, scenario.secret)
+		if scenario.expectError && err == nil {
+			t.Errorf("(%d) Expected error got nil", i)
+		}
+
+		if !scenario.expectError && err != nil {
+			t.Errorf("(%d) Expected nil got error %v", i, err)
+		}
+
+		if len(result) != len(scenario.expectClaims) {
+			t.Errorf("(%d) Expected %v got %v", i, scenario.expectClaims, result)
+		}
+
+		for k, v := range scenario.expectClaims {
+			v2, ok := result[k]
+			if !ok {
+				t.Errorf("(%d) Missing expected claim %q", i, k)
+			}
+
+			if v != v2 {
+				t.Errorf("(%d) Expected %v for %q claim, got %v", i, v, k, v2)
+			}
+		}
+	}
+}
+
+func TestParseUnverifiedJWT(t *testing.T) {
+	// invalid formatted JWT token
+	result1, err1 := utils.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9")
+	if err1 == nil {
+		t.Error("Expected error got nil")
+	}
+
+	if len(result1) > 0 {
+		t.Error("Expected no parsed claims, got", result1)
+	}
+
+	// properly formatted JWT token with INVALID claims >> {"name": "test", "exp": 1516239022}
+	result2, err2 := utils.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTUxNjIzOTAyMn0.xYHirwESfSEW3Cq2BL47CEASvD_p_ps3QCA54XtNktU")
+	if err2 == nil {
+		t.Error("Expected error got nil")
+	}
+
+	if len(result2) != 2 || result2["name"] != "test" {
+		t.Errorf("Expected to have 2 claims, got %v", result2)
+	}
+
+	// properly formatted JWT token with VALID claims >> {"name": "test"}
+	result3, err3 := utils.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.ml0QsTms3K9wMygTu41ZhKlTyjmW9zHQtoS8FUsCCjU")
+	if err3 != nil {
+		t.Error("Expected nil, got", err3)
+	}
+
+	if len(result3) != 1 || result3["name"] != "test" {
+		t.Errorf("Expected to have 2 claims, got %v", result3)
+	}
+}

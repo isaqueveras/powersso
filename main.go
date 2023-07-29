@@ -9,11 +9,11 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/isaqueveras/power-sso/config"
-	_ "github.com/isaqueveras/power-sso/docs"
-	"github.com/isaqueveras/power-sso/internal/server"
-	"github.com/isaqueveras/power-sso/pkg/database/postgres"
-	"github.com/isaqueveras/power-sso/pkg/logger"
+	"github.com/isaqueveras/powersso/config"
+	"github.com/isaqueveras/powersso/database/postgres"
+	_ "github.com/isaqueveras/powersso/docs"
+	"github.com/isaqueveras/powersso/server"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 // @title Documentation PowerSSO
@@ -21,10 +21,10 @@ import (
 // @description This is PowerSSO app server.
 
 // @contact.name PowerSSO
-// @contact.url https://github.com/isaqueveras/power-sso/issues
+// @contact.url https://github.com/isaqueveras/powersso/issues
 
 // @license.name MIT license
-// @license.url https://github.com/isaqueveras/power-sso/blob/main/LICENSE
+// @license.url https://github.com/isaqueveras/powersso/blob/main/LICENSE
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -38,7 +38,7 @@ func main() {
 	config.LoadConfig()
 	cfg := config.Get()
 
-	logg := logger.NewLogger(cfg)
+	logg := utils.NewLogger(cfg)
 	logg.InitLogger()
 
 	postgres.OpenConnections(cfg)
