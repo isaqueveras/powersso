@@ -68,7 +68,7 @@ func Activation(ctx context.Context, token *uuid.UUID) (err error) {
 	var (
 		repoAuth = infra.NewAuthRepository(tx, nil)
 		repoUser = infra.NewUserRepository(tx)
-		repoRole = infra.NewRoleRepository(tx)
+		repoRole = infra.NewFlagRepo(tx)
 	)
 
 	activeToken := &domain.ActivateAccount{ID: token}
