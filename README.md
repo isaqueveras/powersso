@@ -2,7 +2,7 @@
 PowerSSO is a authenticator and user manager for systems (under construction) 
 
 <p>
-  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
+  <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/powersso">
   <img alt="" src="https://github.com/isaqueveras/powersso/actions/workflows/go.yml/badge.svg">
   <img alt="Repository size" src="https://img.shields.io/github/languages/top/isaqueveras/powersso">
   <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/isaqueveras/powersso">
@@ -11,16 +11,8 @@ PowerSSO is a authenticator and user manager for systems (under construction)
   </a>
 </p>
 
-## 🛠 Technologies
-
-Some tools being used in this project: [Golang][golang], [React][reactjs], [TypeScript][typescript]
-
 ## 🚀 How to run the project
-
-### 📌 Prerequisites
-
-Before you begin, you will need to have the following tools installed on your machine:
-[Git](https://git-scm.com), [Node.js][nodejs] and [Golang][golang].
+📌 Before starting, you will need to have the [Golang][golang] language installed on your machine.
 
 ### 🧭 Running the application
 
@@ -45,19 +37,9 @@ $ make swag
 
 # Run the application in development mode
 $ go run main.go
-
-# Access the project folder in your terminal/cmd
-$ cd ui
-
-# Install the dependencies
-$ npm install
-
-# Run the application in development mode
-$ npm run start
 ```
 
 ```bash
-- The frontend will open on the port:3000       # access http://localhost:3000
 - The backend will open on the port:5000        # access http://localhost:5000
 - The mailcatcher will open on the port:1080    # access http://localhost:1080
 - The documentation will open on the port:5000: # access http://localhost:5000/swagger/index.html
@@ -76,8 +58,4 @@ If you have any questions, check this [GitHub Contributing Guide](https://github
   <img src="https://contributors-img.web.app/image?repo=isaqueveras/powersso&max=100" alt="List of contributors to the powerSSO project"/>
 </a>
 
-[reactjs]: https://reactjs.org
-[typescript]: https://www.typescriptlang.org/
-[nodejs]: https://nodejs.org/
-[vscode]: https://code.visualstudio.com/
 [golang]: https://go.dev/
