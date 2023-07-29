@@ -13,7 +13,6 @@ import (
 	infra "github.com/isaqueveras/powersso/infrastructure/persistencie/auth"
 	"github.com/isaqueveras/powersso/mailer"
 	"github.com/isaqueveras/powersso/oops"
-	"github.com/isaqueveras/powersso/otp"
 	"github.com/isaqueveras/powersso/tokens"
 	"github.com/isaqueveras/powersso/utils"
 )
@@ -143,7 +142,7 @@ func Login(ctx context.Context, in *domain.Login) (*domain.Session, error) {
 	}
 
 	if user.OTPConfigured() {
-		if err = otp.ValidateToken(user.OTPToken, in.OTP); err != nil {
+		if err = utils.ValidateToken(user.OTPToken, in.OTP); err != nil {
 			return nil, oops.Err(domain.ErrOTPTokenInvalid())
 		}
 	}

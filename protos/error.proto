@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package grpckit;
 
-option go_package = "github.com/isaqueveras/powersso/utils/grpckit";
+option go_package = "github.com/isaqueveras/powersso/utils";
 
 message ErrorGRPC {
   optional string Location = 1;

@@ -9,13 +9,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/isaqueveras/powersso/utils"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
-
-	"github.com/isaqueveras/powersso/utils/grpckit"
 )
 
 type ctxKey interface{}
@@ -58,7 +57,7 @@ func GRPCZap() grpc.UnaryServerInterceptor {
 			fields = append(fields, zap.Error(err), zap.String("cause", statusCode.Message()))
 
 			if len(statusCode.Details()) > 0 {
-				details := statusCode.Details()[0].(*grpckit.ErrorGRPC)
+				details := statusCode.Details()[0].(*utils.ErrorGRPC)
 
 				fields = append(fields,
 					zap.String("cause", statusCode.Message()),

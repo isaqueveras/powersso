@@ -16,9 +16,9 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/isaqueveras/powersso/interface/grpc/auth"
-	"github.com/isaqueveras/powersso/logger"
 	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 func (s *Server) ServerGRPC() (err error) {
@@ -34,7 +34,7 @@ func (s *Server) ServerGRPC() (err error) {
 				grpcMiddleware.ChainUnaryServer(
 					middleware.GRPCZap(),
 					grpcRecovery.UnaryServerInterceptor(
-						grpcRecovery.WithRecoveryHandler(logger.PanicRecovery),
+						grpcRecovery.WithRecoveryHandler(utils.PanicRecovery),
 					),
 				),
 			),

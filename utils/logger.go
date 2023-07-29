@@ -2,7 +2,7 @@
 // Use of this source code is governed by MIT
 // license that can be found in the LICENSE file.
 
-package logger
+package utils
 
 import (
 	"log"
@@ -11,7 +11,6 @@ import (
 	"go.uber.org/zap/zapcore"
 
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/middleware"
 )
 
 var logg *zap.SugaredLogger
@@ -50,7 +49,7 @@ func (l *Logger) InitLogger() {
 	cfg.EncoderConfig.StacktraceKey = "stack_trace"
 	cfg.InitialFields = map[string]interface{}{
 		"application": "power-sso",
-		"version":     middleware.Version,
+		// "version":     middleware.Version,
 	}
 
 	logs, err := cfg.Build()

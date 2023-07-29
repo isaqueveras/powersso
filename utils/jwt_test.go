@@ -2,13 +2,13 @@
 // Use of this source code is governed by MIT
 // license that can be found in the LICENSE file.
 
-package security_test
+package utils_test
 
 import (
 	"testing"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/isaqueveras/powersso/security"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 func TestNewToken(t *testing.T) {
@@ -30,12 +30,12 @@ func TestNewToken(t *testing.T) {
 	)
 
 	for i, scenario := range scenarios {
-		if token, err = security.NewToken(scenario.claims, scenario.key, scenario.duration); err != nil {
+		if token, err = utils.NewToken(scenario.claims, scenario.key, scenario.duration); err != nil {
 			t.Errorf("(%d) Expected NewToken to succeed, got error %v", i, err)
 			continue
 		}
 
-		claims, err = security.ParseJWT(token, scenario.key)
+		claims, err = utils.ParseJWT(token, scenario.key)
 		var hasParseErr = err != nil
 
 		if hasParseErr != scenario.expectError {
@@ -131,7 +131,7 @@ func TestParseJWT(t *testing.T) {
 	}
 
 	for i, scenario := range scenarios {
-		result, err := security.ParseJWT(scenario.token, scenario.secret)
+		result, err := utils.ParseJWT(scenario.token, scenario.secret)
 		if scenario.expectError && err == nil {
 			t.Errorf("(%d) Expected error got nil", i)
 		}
@@ -159,7 +159,7 @@ func TestParseJWT(t *testing.T) {
 
 func TestParseUnverifiedJWT(t *testing.T) {
 	// invalid formatted JWT token
-	result1, err1 := security.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9")
+	result1, err1 := utils.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9")
 	if err1 == nil {
 		t.Error("Expected error got nil")
 	}
@@ -169,7 +169,7 @@ func TestParseUnverifiedJWT(t *testing.T) {
 	}
 
 	// properly formatted JWT token with INVALID claims >> {"name": "test", "exp": 1516239022}
-	result2, err2 := security.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTUxNjIzOTAyMn0.xYHirwESfSEW3Cq2BL47CEASvD_p_ps3QCA54XtNktU")
+	result2, err2 := utils.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCIsImV4cCI6MTUxNjIzOTAyMn0.xYHirwESfSEW3Cq2BL47CEASvD_p_ps3QCA54XtNktU")
 	if err2 == nil {
 		t.Error("Expected error got nil")
 	}
@@ -179,7 +179,7 @@ func TestParseUnverifiedJWT(t *testing.T) {
 	}
 
 	// properly formatted JWT token with VALID claims >> {"name": "test"}
-	result3, err3 := security.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.ml0QsTms3K9wMygTu41ZhKlTyjmW9zHQtoS8FUsCCjU")
+	result3, err3 := utils.ParseUnverifiedJWT("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.ml0QsTms3K9wMygTu41ZhKlTyjmW9zHQtoS8FUsCCjU")
 	if err3 != nil {
 		t.Error("Expected nil, got", err3)
 	}

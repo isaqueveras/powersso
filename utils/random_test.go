@@ -2,13 +2,13 @@
 // Use of this source code is governed by MIT
 // license that can be found in the LICENSE file.
 
-package security_test
+package utils_test
 
 import (
 	"regexp"
 	"testing"
 
-	"github.com/isaqueveras/powersso/security"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 func TestRandomString(t *testing.T) {
@@ -17,7 +17,7 @@ func TestRandomString(t *testing.T) {
 
 	for i := 0; i < 30; i++ {
 		length := 5 + i
-		result := security.RandomString(length)
+		result := utils.RandomString(length)
 
 		if len(result) != length {
 			t.Errorf("(%d) Expected the length of the string to be %d, got %d", i, length, len(result))

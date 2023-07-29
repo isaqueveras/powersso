@@ -2,7 +2,7 @@
 // Use of this source code is governed by MIT
 // license that can be found in the LICENSE file.
 
-package otp
+package utils
 
 import (
 	"bytes"
@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/oops"
 )
 
 const (
@@ -29,7 +28,7 @@ const (
 // ValidateToken validates if the otp is valid
 func ValidateToken(token, otp *string) (err error) {
 	if otp == nil {
-		return oops.Err(errors.New("the OTP must be sent"))
+		return errors.New("the OTP must be sent")
 	}
 
 	for _, value := range []int64{
@@ -38,7 +37,7 @@ func ValidateToken(token, otp *string) (err error) {
 	} {
 		var generated string
 		if generated, err = GenerateToken(*token, value); err != nil {
-			return oops.Err(err)
+			return err
 		}
 
 		if generated == *otp {

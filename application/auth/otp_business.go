@@ -14,8 +14,6 @@ import (
 	domain "github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/infrastructure/persistencie/auth"
 	"github.com/isaqueveras/powersso/oops"
-	"github.com/isaqueveras/powersso/otp"
-	"github.com/isaqueveras/powersso/security"
 	"github.com/isaqueveras/powersso/utils"
 )
 
@@ -27,7 +25,7 @@ func Configure(ctx context.Context, userID *uuid.UUID) (err error) {
 	}
 	defer tx.Rollback()
 
-	data := []byte(security.RandomString(26))
+	data := []byte(utils.RandomString(26))
 	dst := make([]byte, base32.StdEncoding.EncodedLen(len(data)))
 	base32.StdEncoding.Encode(dst, data)
 
@@ -80,6 +78,6 @@ func GetQrCode(ctx context.Context, userID *uuid.UUID) (res *domain.QRCode, err 
 		*userName += " [DEV]"
 	}
 
-	res = &domain.QRCode{Url: utils.Pointer(otp.GetUrlQrCode(*token, *userName))}
+	res = &domain.QRCode{Url: utils.Pointer(utils.GetUrlQrCode(*token, *userName))}
 	return
 }

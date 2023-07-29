@@ -10,7 +10,6 @@ import (
 
 	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/domain/auth"
-	"github.com/isaqueveras/powersso/security"
 	"github.com/isaqueveras/powersso/utils"
 )
 
@@ -25,6 +24,6 @@ func NewUserAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
 		"email":      user.Email,
 	}
 
-	token, err := security.NewToken(claims, (config.Get().UserAuthToken.SecretKey), config.Get().UserAuthToken.Duration)
+	token, err := utils.NewToken(claims, (config.Get().UserAuthToken.SecretKey), config.Get().UserAuthToken.Duration)
 	return utils.Pointer(token), err
 }

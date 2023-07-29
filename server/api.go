@@ -8,7 +8,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/logger"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 const (
@@ -19,11 +19,11 @@ const (
 // Server struct
 type Server struct {
 	cfg   *config.Config
-	logg  *logger.Logger
+	logg  *utils.Logger
 	group *errgroup.Group
 }
 
 // NewServer new server constructor
-func NewServer(cfg *config.Config, logg *logger.Logger, group *errgroup.Group) *Server {
+func NewServer(cfg *config.Config, logg *utils.Logger, group *errgroup.Group) *Server {
 	return &Server{cfg: cfg, logg: logg, group: group}
 }

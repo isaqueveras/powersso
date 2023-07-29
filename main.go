@@ -12,8 +12,8 @@ import (
 	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/database/postgres"
 	_ "github.com/isaqueveras/powersso/docs"
-	"github.com/isaqueveras/powersso/logger"
 	"github.com/isaqueveras/powersso/server"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 // @title Documentation PowerSSO
@@ -38,7 +38,7 @@ func main() {
 	config.LoadConfig()
 	cfg := config.Get()
 
-	logg := logger.NewLogger(cfg)
+	logg := utils.NewLogger(cfg)
 	logg.InitLogger()
 
 	postgres.OpenConnections(cfg)

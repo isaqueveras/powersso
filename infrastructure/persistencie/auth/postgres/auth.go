@@ -14,7 +14,7 @@ import (
 	pg "github.com/isaqueveras/powersso/database/postgres"
 	"github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/oops"
-	"github.com/isaqueveras/powersso/query"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 // PGAuth is the implementation of transaction for the auth repository
@@ -24,7 +24,7 @@ type PGAuth struct {
 
 // CreateAccount register the user in the database
 func (pg *PGAuth) CreateAccount(input *auth.CreateAccount) (userID *uuid.UUID, err error) {
-	_cols, _vals, err := query.FormatValuesInUp(input)
+	_cols, _vals, err := utils.FormatValuesInUp(input)
 	if err != nil {
 		return nil, oops.Err(err)
 	}

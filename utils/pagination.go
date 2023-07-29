@@ -1,15 +1,14 @@
-package query
+package utils
 
 import (
 	"database/sql"
 	"reflect"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/isaqueveras/powersso/params"
 )
 
 // MakePagination constructs pagination data for a given database query
-func MakePagination[T any](query *squirrel.SelectBuilder, p *params.Params) (res []T, next *bool, err error) {
+func MakePagination[T any](query *squirrel.SelectBuilder, p *Params) (res []T, next *bool, err error) {
 	var (
 		model   T
 		rows    *sql.Rows

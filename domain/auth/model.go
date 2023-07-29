@@ -10,7 +10,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/security"
 	"github.com/isaqueveras/powersso/utils"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -71,7 +70,7 @@ func (rr *CreateAccount) Prepare() (err error) {
 // >> invalidate previously issued tokens
 func (rr *CreateAccount) RefreshTokenKey() {
 	rr.Key = new(string)
-	rr.Key = utils.Pointer(security.RandomString(50))
+	rr.Key = utils.Pointer(utils.RandomString(50))
 }
 
 // GeneratePassword hash user password with bcrypt

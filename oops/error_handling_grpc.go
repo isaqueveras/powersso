@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/utils/grpckit"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 // HandlingGRPC handle an error by defining HTTP response body and code
@@ -46,7 +46,7 @@ func buildGRPCStatus(e *Error) error {
 	}
 
 	rawError := e.Error()
-	st, _ := status.New(codes.Aborted, msg).WithDetails(&grpckit.ErrorGRPC{
+	st, _ := status.New(codes.Aborted, msg).WithDetails(&utils.ErrorGRPC{
 		Error:    &e.Message,
 		Location: &msg,
 		RawError: &rawError,

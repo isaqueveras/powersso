@@ -4,7 +4,7 @@
 // 	protoc        v3.21.12
 // source: protos/error.proto
 
-package grpckit
+package utils
 
 import (
 	reflect "reflect"
