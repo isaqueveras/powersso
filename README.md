@@ -1,6 +1,8 @@
 # PowerSSO
 PowerSSO is a fundamental piece that authenticates and manages users with the possibility of integration between systems using a Rest API and gRPC
 
+[If you want to use a web interface, run the project.](https://github.com/isaqueveras/powersso-ui)
+
 <p>
   <img alt="Go report" src="https://goreportcard.com/badge/isaqueveras/power-sso">
   <img alt="" src="https://github.com/isaqueveras/power-sso/actions/workflows/go.yml/badge.svg">
