@@ -18,10 +18,8 @@ const (
 // LoggerEncodingConsole represents the encoding form that the log represents
 const LoggerEncodingConsole string = "console"
 
-// type represents the application settings
-type
-// App config struct
-Config struct {
+// Config type represents the application settings
+type Config struct {
 	Meta          MetaConfig     `json:"meta"`
 	Server        ServerConfig   `json:"server"`
 	Logger        Logger         `json:"logger"`
@@ -38,23 +36,24 @@ type MetaConfig struct {
 
 // ServerConfig models a server's configuration data
 type ServerConfig struct {
-	Version            string        `json:"version"`
-	Port               string        `json:"port"`
-	PprofPort          string        `json:"pprof_port"`
-	Mode               string        `json:"mode"`
-	JwtSecretKey       string        `json:"jwt_secret_key"`
-	CookieName         string        `json:"cookie_name"`
-	AccessLogDirectory string        `json:"access_log_directory"`
-	ErrorLogDirectory  string        `json:"error_log_directory"`
-	PermissionBase     string        `json:"permission_base"`
-	SSL                bool          `json:"ssl"`
-	CSRF               bool          `json:"srf"`
-	Debug              bool          `json:"debug"`
-	StartHTTP          bool          `json:"start_http"`
-	StartGRPC          bool          `json:"start_grpc"`
-	CtxDefaultTimeout  time.Duration `json:"ctx_default_timeout"`
-	ReadTimeout        time.Duration `json:"read_timeout"`
-	WriteTimeout       time.Duration `json:"write_timeout"`
+	Version                  string        `json:"version"`
+	Port                     string        `json:"port"`
+	PprofPort                string        `json:"pprof_port"`
+	Mode                     string        `json:"mode"`
+	JwtSecretKey             string        `json:"jwt_secret_key"`
+	CookieName               string        `json:"cookie_name"`
+	AccessLogDirectory       string        `json:"access_log_directory"`
+	ErrorLogDirectory        string        `json:"error_log_directory"`
+	PermissionBase           string        `json:"permission_base"`
+	AccessControlAllowOrigin string        `json:"access_control_allow_origin"`
+	SSL                      bool          `json:"ssl"`
+	CSRF                     bool          `json:"srf"`
+	Debug                    bool          `json:"debug"`
+	StartHTTP                bool          `json:"start_http"`
+	StartGRPC                bool          `json:"start_grpc"`
+	CtxDefaultTimeout        time.Duration `json:"ctx_default_timeout"`
+	ReadTimeout              time.Duration `json:"read_timeout"`
+	WriteTimeout             time.Duration `json:"write_timeout"`
 }
 
 // DatabaseConfig models postgres database configuration data

@@ -30,8 +30,7 @@ func LoadConfig() {
 	}
 }
 
-// Get returns a pointer to a
-// Config struct which holds a valid config
+// Get returns a pointer to a config struct which holds a valid config
 func Get() *Config {
 	if config == nil {
 		log.Fatal("config was not successfully loaded")
