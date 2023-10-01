@@ -12,6 +12,7 @@ import (
 	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/database/postgres"
 	_ "github.com/isaqueveras/powersso/docs"
+	"github.com/isaqueveras/powersso/scripts"
 	"github.com/isaqueveras/powersso/server"
 	"github.com/isaqueveras/powersso/utils"
 )
@@ -43,6 +44,8 @@ func main() {
 
 	postgres.OpenConnections(cfg)
 	defer postgres.CloseConnections()
+
+	scripts.Init(logg)
 
 	group := &errgroup.Group{}
 	server := server.NewServer(cfg, logg, group)
