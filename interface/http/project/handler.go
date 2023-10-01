@@ -15,13 +15,6 @@ import (
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// create godoc
-// @Summary Register a projet
-// @Description Register a project including several users to the project
-// @Tags Http/Project
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/project/create [post]
 func create(ctx *gin.Context) {
 	var (

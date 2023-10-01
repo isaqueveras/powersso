@@ -1,7 +1,4 @@
 {
-	"welcome": {
-		"title": "Bienvenido a PowerSSO"
-	},
 	"errors": {
 		"default": "Error desconocido",
 		"handling": {

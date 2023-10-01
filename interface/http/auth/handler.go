@@ -17,13 +17,6 @@ import (
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// register godoc
-// @Summary Register a user
-// @Description Register a user
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/create_account [post]
 func createAccount(ctx *gin.Context) {
 	var input domain.CreateAccount
@@ -40,13 +33,6 @@ func createAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// activation godoc
-// @Summary Activate the user
-// @Description Route to activate the user
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} utils.NoContent{}
 // @Router /v1/auth/activation/{token} [post]
 func activation(ctx *gin.Context) {
 	token, err := uuid.Parse(ctx.Param("token"))
@@ -63,13 +49,6 @@ func activation(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, utils.NoContent{})
 }
 
-// login godoc
-// @Summary User login
-// @Description Route to login a user account into the system
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} auth.Session
 // @Router /v1/auth/login [post]
 func login(ctx *gin.Context) {
 	var input domain.Login
@@ -91,6 +70,7 @@ func login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, output)
 }
 
+// @Router /v1/auth/change_password [put]
 func changePassword(ctx *gin.Context) {
 	in := &domain.ChangePassword{}
 	if err := ctx.ShouldBindJSON(in); err != nil {
@@ -111,13 +91,6 @@ func changePassword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }
 
-// logout godoc
-// @Summary User logout
-// @Description Route to logout a user account into the system
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 204 {object} utils.NoContent{}
 // @Router /v1/auth/logout [delete]
 func logout(ctx *gin.Context) {
 	sessionID, err := uuid.Parse(gopowersso.GetSession(ctx).SessionID)
@@ -134,13 +107,6 @@ func logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, utils.NoContent{})
 }
 
-// loginSteps godoc
-// @Summary Steps to login
-// @Description Steps to login
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} auth.Steps
 // @Router /v1/auth/login/steps [get]
 func loginSteps(ctx *gin.Context) {
 	res, err := app.LoginSteps(ctx, utils.Pointer(ctx.Query("email")))
@@ -152,14 +118,6 @@ func loginSteps(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// disable godoc
-// @Summary Disable user
-// @Description Route to disable a user
-// @Tags Http/Auth/User
-// @Param user_uuid path string true "UUID of the user"
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/disable [put]
 func disable(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
@@ -176,13 +134,6 @@ func disable(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// configure godoc
-// @Summary Configure a user's OTP
-// @Description Configure a user's OTP
-// @Tags Http/Auth/OTP
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/otp/configure [post]
 func configure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
@@ -199,13 +150,6 @@ func configure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// unconfigure godoc
-// @Summary unconfigure a user's OTP
-// @Description unconfigure a user's OTP
-// @Tags Http/Auth/OTP
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/otp/unconfigure [put]
 func unconfigure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
@@ -222,13 +166,6 @@ func unconfigure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// qrcode godoc
-// @Summary Configure a user's OTP
-// @Description Configure a user's OTP
-// @Tags Http/Auth/OTP
-// @Accept json
-// @Produce json
-// @Success 200 {object} auth.QRCode
 // @Router /v1/auth/user/{user_uuid}/otp/qrcode [get]
 func qrcode(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
