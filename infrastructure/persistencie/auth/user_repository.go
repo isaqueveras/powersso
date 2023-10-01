@@ -34,3 +34,7 @@ func (r *repoUser) Exist(email *string) error {
 func (r *repoUser) Disable(userUUID *uuid.UUID) error {
 	return r.pg.Disable(userUUID)
 }
+
+func (r *repoUser) ChangePassword(in *domain.ChangePassword) error {
+	return r.pg.ChangePassword(in)
+}

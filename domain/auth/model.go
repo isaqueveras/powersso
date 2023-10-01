@@ -58,7 +58,6 @@ type CreateAccount struct {
 // Prepare prepare data for registration
 func (rr *CreateAccount) Prepare() (err error) {
 	rr.Email = utils.Pointer(strings.ToLower(strings.TrimSpace(*rr.Email)))
-	rr.Password = utils.Pointer(strings.TrimSpace(*rr.Password))
 
 	if err = rr.GeneratePassword(); err != nil {
 		return err
@@ -76,6 +75,7 @@ func (rr *CreateAccount) RefreshTokenKey() {
 
 // GeneratePassword hash user password with bcrypt
 func (rr *CreateAccount) GeneratePassword() error {
+	rr.Password = utils.Pointer(strings.TrimSpace(*rr.Password))
 	rr.RefreshTokenKey()
 
 	cost := CostHashPasswordDevelopment
@@ -170,6 +170,19 @@ type Login struct {
 	OTP       *string `json:"otp,omitempty"`
 	ClientIP  *string `json:"-"`
 	UserAgent *string `json:"-"`
+}
+
+type ChangePassword struct {
+	UserID          *uuid.UUID `json:"user_id"`
+	Password        *string    `json:"password"`
+	ConfirmPassword *string    `json:"confirm_password"`
+	CodeOTP         *string    `json:"code_otp"`
+	Key             *string    `json:"-"`
+}
+
+// ValidatePassword validate passwords for change password
+func (c *ChangePassword) ValidatePassword() bool {
+	return strings.TrimSpace(*c.Password) == strings.TrimSpace(*c.ConfirmPassword)
 }
 
 // ComparePasswords compare user password and payload
