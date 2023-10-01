@@ -12,10 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/endless"
 	gopowersso "github.com/isaqueveras/go-powersso"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/isaqueveras/powersso/i18n"
 	"github.com/isaqueveras/powersso/interface/http/auth"
 	"github.com/isaqueveras/powersso/interface/http/project"
 	"github.com/isaqueveras/powersso/middleware"
@@ -46,10 +43,6 @@ func (s *Server) ServerHTTP() (err error) {
 	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
 	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
 
-	router.GET("", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
-	})
-
 	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout * time.Second
 	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout * time.Second
 	endless.DefaultMaxHeaderBytes = http.DefaultMaxHeaderBytes
@@ -63,24 +56,24 @@ func (s *Server) ServerHTTP() (err error) {
 	})
 
 	s.routerDebugPProf(router)
-
-	// TODO: add permission in documentation route
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	return
 }
 
 func (s *Server) routerDebugPProf(router *gin.Engine) {
-	prefixRouter := router.Group("debug/pprof")
-	prefixRouter.GET("/",
-		gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey),
-		gopowersso.OnlyAdmin(),
-		func(c *gin.Context) {
-			pprof.Index(c.Writer, c.Request)
-		},
-	)
+	r := router.Group("debug/pprof")
+	r.Use(gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey), gopowersso.OnlyAdmin())
 
-	s.group.Go(func() error {
-		return endless.ListenAndServe("0.0.0.0"+s.cfg.Server.PprofPort, router)
-	})
+	r.GET("/", func(c *gin.Context) { pprof.Index(c.Writer, c.Request) })
+	r.GET("/cmdline", func(c *gin.Context) { pprof.Cmdline(c.Writer, c.Request) })
+	r.GET("/profile", func(c *gin.Context) { pprof.Profile(c.Writer, c.Request) })
+	r.POST("/symbol", func(c *gin.Context) { pprof.Symbol(c.Writer, c.Request) })
+	r.GET("/trace", func(c *gin.Context) { pprof.Trace(c.Writer, c.Request) })
+	r.GET("/allocs", func(c *gin.Context) { pprof.Handler("allocs").ServeHTTP(c.Writer, c.Request) })
+	r.GET("/block", func(c *gin.Context) { pprof.Handler("block").ServeHTTP(c.Writer, c.Request) })
+	r.GET("/goroutine", func(c *gin.Context) { pprof.Handler("goroutine").ServeHTTP(c.Writer, c.Request) })
+	r.GET("/heap", func(c *gin.Context) { pprof.Handler("heap").ServeHTTP(c.Writer, c.Request) })
+	r.GET("/mutex", func(c *gin.Context) { pprof.Handler("mutex").ServeHTTP(c.Writer, c.Request) })
+	r.GET("/threadcreate", func(c *gin.Context) { pprof.Handler("threadcreate").ServeHTTP(c.Writer, c.Request) })
+
+	s.group.Go(func() error { return endless.ListenAndServe("0.0.0.0"+s.cfg.Server.PprofPort, router) })
 }
