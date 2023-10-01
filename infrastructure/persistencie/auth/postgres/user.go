@@ -71,3 +71,19 @@ func (pg *PGUser) Disable(userUUID *uuid.UUID) (err error) {
 
 	return
 }
+
+func (pg *PGUser) ChangePassword(in *domain.ChangePassword) error {
+	if err := pg.DB.Builder.
+		Update("users").
+		Set("password", in.Password).
+		Set("attempts", 0).
+		Set("key", in.Key).
+		Set("last_failure", squirrel.Expr("NULL")).
+		Where(squirrel.Eq{"id": in.UserID, "active": true}).
+		Suffix("RETURNING id").
+		Scan(new(string)); err != nil {
+		return oops.Err(err)
+	}
+
+	return nil
+}

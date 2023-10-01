@@ -26,6 +26,10 @@ func (r *repoSession) Create(userID *uuid.UUID, clientIP, userAgent *string) (*u
 }
 
 // Delete delete a session for a user
-func (r *repoSession) Delete(sessionID *uuid.UUID) error {
-	return r.pg.Delete(sessionID)
+func (r *repoSession) Delete(ids ...*uuid.UUID) error {
+	return r.pg.Delete(ids...)
+}
+
+func (r *repoSession) Get(userID *uuid.UUID) ([]*uuid.UUID, error) {
+	return r.pg.Get(userID)
 }

@@ -91,6 +91,26 @@ func login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, output)
 }
 
+func changePassword(ctx *gin.Context) {
+	in := &domain.ChangePassword{}
+	if err := ctx.ShouldBindJSON(in); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	if ok := in.ValidatePassword(); !ok {
+		oops.Handling(ctx, oops.New("Invalid passwords"))
+		return
+	}
+
+	if err := app.ChangePassword(ctx, in); err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, nil)
+}
+
 // logout godoc
 // @Summary User logout
 // @Description Route to logout a user account into the system
