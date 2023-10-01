@@ -57,7 +57,7 @@ func ChangePassword(ctx context.Context, in *domain.ChangePassword) (err error) 
 
 	// Validate code otp
 	if err = utils.ValidateToken(user.OTPToken, in.CodeOTP); err != nil {
-		return oops.Err(err)
+		return oops.New("2-factor authentication code is invalid")
 	}
 
 	// Generate new password crypto
@@ -67,7 +67,7 @@ func ChangePassword(ctx context.Context, in *domain.ChangePassword) (err error) 
 	}
 
 	// Change user password
-	in.Password = gen.Password
+	in.Password, in.Key = gen.Password, gen.Key
 	if err = repoUser.ChangePassword(in); err != nil {
 		return oops.Err(err)
 	}

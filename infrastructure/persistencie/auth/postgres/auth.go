@@ -85,8 +85,8 @@ func (pg *PGAuth) MarkTokenAsUsed(token *uuid.UUID) (err error) {
 func (pg *PGAuth) AddAttempts(userID *uuid.UUID) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("users").
-		Set("number_failed_attempts", squirrel.Expr("number_failed_attempts + 1")).
-		Set("last_failure_date", squirrel.Expr("NOW()")).
+		Set("attempts", squirrel.Expr("attempts + 1")).
+		Set("last_failure", squirrel.Expr("NOW()")).
 		Where("id = ?", userID).
 		Exec(); err != nil && err != sql.ErrNoRows {
 		return oops.Err(err)

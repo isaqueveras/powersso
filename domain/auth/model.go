@@ -177,11 +177,12 @@ type ChangePassword struct {
 	Password        *string    `json:"password"`
 	ConfirmPassword *string    `json:"confirm_password"`
 	CodeOTP         *string    `json:"code_otp"`
+	Key             *string    `json:"-"`
 }
 
 // ValidatePassword validate passwords for change password
 func (c *ChangePassword) ValidatePassword() bool {
-	return strings.TrimSpace(*c.Password) != strings.TrimSpace(*c.ConfirmPassword)
+	return strings.TrimSpace(*c.Password) == strings.TrimSpace(*c.ConfirmPassword)
 }
 
 // ComparePasswords compare user password and payload

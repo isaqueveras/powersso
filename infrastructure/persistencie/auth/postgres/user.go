@@ -77,8 +77,8 @@ func (pg *PGUser) ChangePassword(in *domain.ChangePassword) error {
 		Update("users").
 		Set("password", in.Password).
 		Set("attempts", 0).
+		Set("key", in.Key).
 		Set("last_failure", squirrel.Expr("NULL")).
-		Set("updated_at", squirrel.Expr("NOW()")).
 		Where(squirrel.Eq{"id": in.UserID, "active": true}).
 		Suffix("RETURNING id").
 		Scan(new(string)); err != nil {

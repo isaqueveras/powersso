@@ -57,7 +57,7 @@ func (pg *PGSession) Delete(ids ...*uuid.UUID) (err error) {
 }
 
 func (pg *PGSession) Get(userID *uuid.UUID) (sessions []*uuid.UUID, err error) {
-	query := pg.DB.Builder.Select("id").From("session").Where("user_id = ? AND deleted_at IS NULL", userID)
+	query := pg.DB.Builder.Select("id").From("sessions").Where("user_id = ? AND deleted_at IS NULL", userID)
 
 	row, err := query.Query()
 	if err != nil {
