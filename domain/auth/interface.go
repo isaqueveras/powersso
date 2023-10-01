@@ -20,7 +20,8 @@ type IAuth interface {
 // ISession define an interface for data layer access methods
 type ISession interface {
 	Create(userID *uuid.UUID, clientIP, userAgent *string) (*uuid.UUID, error)
-	Delete(sessionID *uuid.UUID) error
+	Delete(ids ...*uuid.UUID) error
+	Get(userID *uuid.UUID) ([]*uuid.UUID, error)
 }
 
 // IFlag define an interface for data layer access methods
@@ -40,4 +41,5 @@ type IUser interface {
 	Get(user *User) error
 	Exist(email *string) error
 	Disable(userUUID *uuid.UUID) error
+	ChangePassword(*ChangePassword) error
 }

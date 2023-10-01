@@ -43,13 +43,33 @@ func (pg *PGSession) Create(userID *uuid.UUID, clientIP, userAgent *string) (ses
 }
 
 // Delete delete session of the user in database
-func (pg *PGSession) Delete(sessionID *uuid.UUID) (err error) {
+func (pg *PGSession) Delete(ids ...*uuid.UUID) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("sessions").
 		Set("deleted_at", squirrel.Expr("NOW()")).
-		Where("id = ? AND deleted_at IS NULL", sessionID).
+		Where("deleted_at IS NULL").
+		Where(squirrel.Eq{"id": ids}).
 		Exec(); err != nil && err != sql.ErrNoRows {
 		return oops.Err(err)
+	}
+
+	return
+}
+
+func (pg *PGSession) Get(userID *uuid.UUID) (sessions []*uuid.UUID, err error) {
+	query := pg.DB.Builder.Select("id").From("session").Where("user_id = ? AND deleted_at IS NULL", userID)
+
+	row, err := query.Query()
+	if err != nil {
+		return nil, oops.Err(err)
+	}
+
+	for row.Next() {
+		var sessionID *uuid.UUID
+		if err = row.Scan(&sessionID); err != nil {
+			return nil, oops.Err(err)
+		}
+		sessions = append(sessions, sessionID)
 	}
 
 	return
