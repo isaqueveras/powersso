@@ -91,7 +91,7 @@ func login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, output)
 }
 
-func resetPassword(ctx *gin.Context) {
+func changePassword(ctx *gin.Context) {
 	in := &domain.ChangePassword{}
 	if err := ctx.ShouldBindJSON(in); err != nil {
 		oops.Handling(ctx, err)

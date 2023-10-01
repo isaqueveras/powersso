@@ -15,7 +15,7 @@ func Router(r *gin.RouterGroup) {
 	r.POST("create_account", createAccount)
 	r.POST("login", login)
 	r.GET("login/steps", loginSteps)
-	r.PUT("change_password", resetPassword)
+	r.PUT("change_password", changePassword)
 }
 
 // RouterAuthorization is the router for the auth module.
