@@ -52,6 +52,7 @@ type CreateAccount struct {
 	Email     *string `sql:"email" json:"email"`
 	Password  *string `sql:"password" json:"password"`
 	Key       *string `sql:"key" json:"-"`
+	Level     *Level  `sql:"level" json:"-"`
 }
 
 // Prepare prepare data for registration
