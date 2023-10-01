@@ -9,6 +9,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
+	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/database/postgres"
 	"github.com/isaqueveras/powersso/oops"
 )
@@ -26,6 +27,20 @@ func (pg *PGSession) Create(userID *uuid.UUID, clientIP, userAgent *string) (ses
 		Values(userID, squirrel.Expr("NOW() + '15 minutes'"), clientIP, userAgent).
 		Suffix(`RETURNING "id"`).
 		Scan(&sessionID); err != nil {
+		return nil, oops.Err(err)
+	}
+
+	if _, err = pg.DB.Builder.
+		Update("sessions").
+		Set("deleted_at", squirrel.Expr("NOW()")).
+		Where(`id NOT IN (
+			SELECT id FROM sessions
+			WHERE user_id = ? AND deleted_at IS NULL
+			ORDER BY created_at DESC 
+			LIMIT ?
+		)`, userID, config.Get().Server.OpenSessionsPerUser).
+		Where("user_id = ?", userID).
+		Exec(); err != nil {
 		return nil, oops.Err(err)
 	}
 
