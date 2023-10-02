@@ -46,6 +46,8 @@ type ServerConfig struct {
 	ErrorLogDirectory        string        `json:"error_log_directory"`
 	PermissionBase           string        `json:"permission_base"`
 	AccessControlAllowOrigin string        `json:"access_control_allow_origin"`
+	GeoIPDatabase            string        `json:"geoip_database"`
+	GeoIPLocation            string        `json:"geoip_location"`
 	SSL                      bool          `json:"ssl"`
 	CSRF                     bool          `json:"srf"`
 	Debug                    bool          `json:"debug"`
