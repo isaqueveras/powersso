@@ -6,10 +6,12 @@ package postgres
 
 import (
 	"database/sql"
+	"net"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 	"github.com/isaqueveras/powersso/database/postgres"
+	"github.com/isaqueveras/powersso/geoip"
 	"github.com/isaqueveras/powersso/oops"
 )
 
@@ -22,8 +24,8 @@ type PGSession struct {
 func (pg *PGSession) Create(userID *uuid.UUID, clientIP, userAgent *string) (sessionID *uuid.UUID, err error) {
 	if err = pg.DB.Builder.
 		Insert("sessions").
-		Columns("user_id", "expires_at", "ip", "user_agent").
-		Values(userID, squirrel.Expr("NOW() + '15 minutes'"), clientIP, userAgent).
+		Columns("user_id", "expires_at", "ip", "location", "user_agent").
+		Values(userID, squirrel.Expr("NOW() + '15 minutes'"), clientIP, geoip.Get(net.IP(*clientIP)), userAgent).
 		Suffix(`RETURNING "id"`).
 		Scan(&sessionID); err != nil {
 		return nil, oops.Err(err)

@@ -21,7 +21,9 @@
     "access_log_directory": "/var/log/powersso/access.log",
     "error_log_directory": "/var/log/powersso/error.log",
     "permission_base": "github.com/isaqueveras/power-sso",
-    "access_control_allow_origin": "*"
+    "access_control_allow_origin": "*",
+    "geoip_database": "/etc/powersso/GeoLite2-City.mmdb",
+    "geoip_location": ["en"]
   },
   "database": {
     "host": "localhost",

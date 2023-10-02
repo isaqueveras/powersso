@@ -12,6 +12,7 @@ import (
 	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/database/postgres"
 	_ "github.com/isaqueveras/powersso/docs"
+	"github.com/isaqueveras/powersso/geoip"
 	"github.com/isaqueveras/powersso/scripts"
 	"github.com/isaqueveras/powersso/server"
 	"github.com/isaqueveras/powersso/utils"
@@ -57,6 +58,11 @@ func main() {
 	if err := server.ServerGRPC(); err != nil {
 		logg.Fatal("Error while serving the server GRPC: ", err)
 	}
+
+	if err := geoip.Load(); err != nil {
+		logg.Warn("Not possible to load GeoIP database: ", err)
+	}
+	defer geoip.Close()
 
 	if err := group.Wait(); err != nil {
 		logg.Fatal("Error while serving the servers: ", err)
