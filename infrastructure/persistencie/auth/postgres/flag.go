@@ -9,7 +9,7 @@ import (
 
 type PGFlag struct{ DB *postgres.Transaction }
 
-func (pg *PGFlag) Set(userID *uuid.UUID, flag *auth.Flag) error {
+func (pg *PGFlag) Set(userID *uuid.UUID, flag auth.Flag) error {
 	if _, err := pg.DB.Builder.
 		Update("users").
 		Set("flag", flag).

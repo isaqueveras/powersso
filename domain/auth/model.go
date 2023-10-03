@@ -158,11 +158,6 @@ func (u *User) OTPConfigured() bool {
 	return enabled && setup
 }
 
-// QRCode wraps the data to return the qr code url
-type QRCode struct {
-	Url *string `json:"url,omitempty"`
-}
-
 // Login models the data for the user to log in with their account
 type Login struct {
 	Email     *string `json:"email" binding:"required,lte=60,email"`
@@ -212,14 +207,13 @@ func (l *Login) Validate() {
 
 // Session models the data of a user session
 type Session struct {
-	SessionID *uuid.UUID     `json:"session_id,omitempty"`
-	UserID    *uuid.UUID     `json:"user_id,omitempty"`
-	Email     *string        `json:"email,omitempty"`
-	FirstName *string        `json:"first_name,omitempty"`
-	LastName  *string        `json:"last_name,omitempty"`
-	Level     *Level         `json:"level,omitempty"`
-	Token     *string        `json:"token,omitempty"`
-	CreatedAt *time.Time     `json:"created_at,omitempty"`
-	ExpiresAt *time.Time     `json:"expires_at,omitempty"`
-	RawData   map[string]any `json:"data,omitempty"`
+	SessionID *uuid.UUID `json:"session_id,omitempty"`
+	UserID    *uuid.UUID `json:"user_id,omitempty"`
+	Email     *string    `json:"email,omitempty"`
+	FirstName *string    `json:"first_name,omitempty"`
+	LastName  *string    `json:"last_name,omitempty"`
+	Level     *Level     `json:"level,omitempty"`
+	Token     *string    `json:"token,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 }

@@ -6,7 +6,6 @@ package postgres
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
@@ -18,9 +17,7 @@ import (
 )
 
 // PGAuth is the implementation of transaction for the auth repository
-type PGAuth struct {
-	DB *pg.Transaction
-}
+type PGAuth struct{ DB *pg.Transaction }
 
 // CreateAccount register the user in the database
 func (pg *PGAuth) CreateAccount(input *auth.CreateAccount) (userID *uuid.UUID, err error) {
@@ -36,47 +33,6 @@ func (pg *PGAuth) CreateAccount(input *auth.CreateAccount) (userID *uuid.UUID, e
 		Suffix(`RETURNING "id"`).
 		Scan(&userID); err != nil {
 		return nil, oops.Err(err)
-	}
-
-	return
-}
-
-// CreateAccessToken create the access token for the user
-func (pg *PGAuth) CreateAccessToken(userID *uuid.UUID) (token *uuid.UUID, err error) {
-	if err = pg.DB.Builder.
-		Insert("activate_account_tokens").
-		Columns("user_id", "expires_at").
-		Values(userID, time.Now().Add(30*time.Minute)).
-		Suffix(`RETURNING "id"`).
-		Scan(&token); err != nil {
-		return token, oops.Err(err)
-	}
-
-	return
-}
-
-// GetActivateAccountToken get the activate account token from the database
-func (pg *PGAuth) GetActivateAccountToken(data *auth.ActivateAccount) (err error) {
-	if err = pg.DB.Builder.
-		Select("user_id, used, expires_at >= now(), expires_at, created_at").
-		From("activate_account_tokens").
-		Where("id = ?", data.ID).
-		Limit(1).
-		Scan(&data.UserID, &data.Used, &data.Valid, &data.ExpiresAt, &data.CreatedAt); err != nil && err != sql.ErrNoRows {
-		return oops.Err(err)
-	}
-
-	return
-}
-
-// MarkTokenAsUsed mark the token as used in the database
-func (pg *PGAuth) MarkTokenAsUsed(token *uuid.UUID) (err error) {
-	if _, err = pg.DB.Builder.
-		Update("activate_account_tokens").
-		Set("used", true).
-		Where("id = ?", token).
-		Exec(); err != nil {
-		return oops.Err(err)
 	}
 
 	return

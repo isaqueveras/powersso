@@ -6,13 +6,15 @@ package auth
 
 import "github.com/google/uuid"
 
+// IAuthService defines an interface for service methods to access the data layer
+type IAuthService interface {
+	Configure2FA(userID *uuid.UUID) error
+	GenerateQrCode2FA()
+}
+
 // IAuth define an interface for data layer access methods
 type IAuth interface {
 	CreateAccount(*CreateAccount) (userID *uuid.UUID, err error)
-	SendMailActivationAccount(email *string, token *uuid.UUID) error
-	GetActivateAccountToken(data *ActivateAccount) error
-	CreateAccessToken(userID *uuid.UUID) (*uuid.UUID, error)
-	MarkTokenAsUsed(token *uuid.UUID) error
 	AddAttempts(userID *uuid.UUID) error
 	LoginSteps(email *string) (*Steps, error)
 }
@@ -27,7 +29,7 @@ type ISession interface {
 // IFlag define an interface for data layer access methods
 type IFlag interface {
 	Get(userID *uuid.UUID) (*int64, error)
-	Set(userID *uuid.UUID, flag *Flag) error
+	Set(userID *uuid.UUID, flag Flag) error
 }
 
 // IOTP define an interface for data layer access methods

@@ -19,7 +19,7 @@ func NewFlagRepo(tx *postgres.Transaction) domain.IFlag {
 	return &repoFlag{pg: &infra.PGFlag{DB: tx}}
 }
 
-func (r *repoFlag) Set(userID *uuid.UUID, flag *domain.Flag) error {
+func (r *repoFlag) Set(userID *uuid.UUID, flag domain.Flag) error {
 	return r.pg.Set(userID, flag)
 }
 

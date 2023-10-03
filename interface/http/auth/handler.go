@@ -32,35 +32,13 @@ func createAccount(ctx *gin.Context) {
 		return
 	}
 
-	if err := app.CreateAccount(ctx, &input); err != nil {
-		oops.Handling(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, utils.NoContent{})
-}
-
-// activation godoc
-// @Summary Activate the user
-// @Description Route to activate the user
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} utils.NoContent{}
-// @Router /v1/auth/activation/{token} [post]
-func activation(ctx *gin.Context) {
-	token, err := uuid.Parse(ctx.Param("token"))
+	url, err := app.CreateAccount(ctx, &input)
 	if err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
 
-	if err := app.Activation(ctx, utils.Pointer(token)); err != nil {
-		oops.Handling(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, utils.NoContent{})
+	ctx.JSON(http.StatusCreated, map[string]*string{"url": url})
 }
 
 // login godoc
@@ -191,7 +169,7 @@ func configure(ctx *gin.Context) {
 		return
 	}
 
-	if err = app.Configure(ctx, &userID); err != nil {
+	if err = app.Configure2FA(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -214,7 +192,7 @@ func unconfigure(ctx *gin.Context) {
 		return
 	}
 
-	if err = app.Unconfigure(ctx, &userID); err != nil {
+	if err = app.Unconfigure2FA(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -237,11 +215,11 @@ func qrcode(ctx *gin.Context) {
 		return
 	}
 
-	var res *domain.QRCode
-	if res, err = app.GetQrCode(ctx, &userID); err != nil {
+	var url *string
+	if url, err = app.GetQRCode2FA(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusOK, map[string]*string{"url": url})
 }
