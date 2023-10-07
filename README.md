@@ -14,7 +14,7 @@ PowerSSO is a authenticator and user manager for systems (under construction)
 </p>
 
 ---
-![Sem título-2023-07-14-0950(1)](https://github.com/isaqueveras/powersso/assets/46972789/5aff3f9d-6516-451d-973f-b2cef93c2ce1)
+![permission architecture](https://github.com/isaqueveras/powersso/assets/46972789/5aff3f9d-6516-451d-973f-b2cef93c2ce1)
 
 ## 🚀 How to run the project
 📌 Before starting, you will need to have the [Golang][golang] language installed on your machine.
