@@ -46,6 +46,7 @@ type ServerConfig struct {
 	ErrorLogDirectory        string        `json:"error_log_directory"`
 	PermissionBase           string        `json:"permission_base"`
 	AccessControlAllowOrigin string        `json:"access_control_allow_origin"`
+	OpenSessionsPerUser      int64         `json:"open_sessions_per_user"`
 	SSL                      bool          `json:"ssl"`
 	CSRF                     bool          `json:"srf"`
 	Debug                    bool          `json:"debug"`
