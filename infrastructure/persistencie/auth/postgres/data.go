@@ -6,7 +6,6 @@ import (
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 	database "github.com/isaqueveras/powersso/database/postgres"
-	"github.com/isaqueveras/powersso/domain/auth"
 	domain "github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
@@ -19,8 +18,8 @@ type (
 	// PGOTP is the implementation of transaction for the user repository
 	User struct{ DB *database.Transaction }
 
-	// A2F is the implementation of transaction for the otp repository
-	A2F struct{ DB *database.Transaction }
+	// OTP is the implementation of transaction for the otp repository
+	OTP struct{ DB *database.Transaction }
 
 	// Session is the implementation of transaction for the session repository
 	Session struct{ DB *database.Transaction }
@@ -30,7 +29,7 @@ type (
 )
 
 // CreateAccount register the user in the database
-func (pg *PGAuth) CreateAccount(input *auth.CreateAccount) (userID *uuid.UUID, err error) {
+func (pg *PGAuth) CreateAccount(input *domain.CreateAccount) (userID *uuid.UUID, err error) {
 	_cols, _vals, err := utils.FormatValuesInUp(input)
 	if err != nil {
 		return nil, oops.Err(err)
@@ -61,12 +60,12 @@ func (pg *PGAuth) AddAttempts(userID *uuid.UUID) (err error) {
 	return
 }
 
-func (pg *PGAuth) LoginSteps(email *string) (steps *auth.Steps, err error) {
-	steps = new(auth.Steps)
+func (pg *PGAuth) LoginSteps(email *string) (steps *domain.Steps, err error) {
+	steps = new(domain.Steps)
 	if err = pg.DB.Builder.
 		Select("first_name").
 		Column("(flag&?) <> 0 AND 	(flag&?) <> 0",
-			auth.FlagOTPEnable, auth.FlagOTPSetup).
+			domain.FlagOTPEnable, domain.FlagOTPSetup).
 		From("users").
 		Where("email = ?", email).
 		Limit(1).
@@ -151,7 +150,7 @@ func (pg *User) ChangePassword(in *domain.ChangePassword) error {
 	return nil
 }
 
-func (pg *A2F) GetToken(userID *uuid.UUID) (userName, token *string, err error) {
+func (pg *OTP) GetToken(userID *uuid.UUID) (userName, token *string, err error) {
 	if err = pg.DB.Builder.
 		Select("CONCAT('(',first_name,' ',last_name,')'), otp").
 		From("public.users").
@@ -164,7 +163,7 @@ func (pg *A2F) GetToken(userID *uuid.UUID) (userName, token *string, err error) 
 	return
 }
 
-func (pg *A2F) SetToken(userID *uuid.UUID, secret *string) (err error) {
+func (pg *OTP) SetToken(userID *uuid.UUID, secret *string) (err error) {
 	if _, err = pg.DB.Builder.
 		Update("users").
 		Set("otp", secret).
@@ -232,7 +231,7 @@ func (pg *Session) Get(userID *uuid.UUID) (sessions []*uuid.UUID, err error) {
 	return
 }
 
-func (pg *Flag) Set(userID *uuid.UUID, flag auth.Flag) error {
+func (pg *Flag) Set(userID *uuid.UUID, flag domain.Flag) error {
 	if _, err := pg.DB.Builder.
 		Update("users").
 		Set("flag", flag).
