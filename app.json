@@ -8,7 +8,6 @@
     "port": ":5000",
     "pprof_port": ":5555",
     "mode": "dev",
-    "jwt_secret_key": "power-sso-secret",
     "cookie_name": "jwt-power-sso",
     "ssl": false,
     "ctx_default_timeout": 12,
@@ -30,27 +29,11 @@
     "password": "postgres",
     "dbname": "power-sso",
     "sslmode": false,
-    "driver": "pgx",
     "max_open_conns": 60,
     "max_idle_conns": 30,
     "conn_max_life_time": 120,
     "conn_max_idle_time": 20,
     "timeout": 2
-  },
-  "logger": {
-    "development": true,
-    "disable_caller": false,
-    "disable_stacktrace": false,
-    "encoding": "json",
-    "level": "info"
-  },
-  "mailer": {
-    "host": "localhost",
-    "port": 1025,
-    "email": "contact@powersso.io",
-    "username": "PowerSSO",
-    "password": "password",
-    "tls": false
   },
   "user_auth_token": {
     "secret_key": "kjnfdjksdbfsdhfbdskjfnamkndkn", 

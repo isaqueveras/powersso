@@ -146,7 +146,7 @@ func disable(ctx *gin.Context) {
 		return
 	}
 
-	if err = app.Disable(ctx, &userID); err != nil {
+	if err = app.DisableUser(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}

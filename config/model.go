@@ -22,8 +22,6 @@ const LoggerEncodingConsole string = "console"
 type Config struct {
 	Meta          MetaConfig     `json:"meta"`
 	Server        ServerConfig   `json:"server"`
-	Logger        Logger         `json:"logger"`
-	Mailer        MailerConfig   `json:"mailer"`
 	Database      DatabaseConfig `json:"database"`
 	UserAuthToken TokenConfig    `json:"user_auth_token"`
 }
@@ -40,7 +38,6 @@ type ServerConfig struct {
 	Port                     string        `json:"port"`
 	PprofPort                string        `json:"pprof_port"`
 	Mode                     string        `json:"mode"`
-	JwtSecretKey             string        `json:"jwt_secret_key"`
 	CookieName               string        `json:"cookie_name"`
 	AccessLogDirectory       string        `json:"access_log_directory"`
 	ErrorLogDirectory        string        `json:"error_log_directory"`
@@ -62,33 +59,13 @@ type DatabaseConfig struct {
 	Port            int           `json:"port"`
 	User            string        `json:"user"`
 	Password        string        `json:"password"`
-	Dbname          string        `json:"dbname"`
-	Driver          string        `json:"driver"`
+	Name            string        `json:"dbname"`
 	SSLMode         bool          `json:"sslmode"`
 	MaxOpenConns    int           `json:"max_open_conns"`
 	MaxIdleConns    int           `json:"max_idle_conns"`
 	Timeout         int64         `json:"timeout"`
 	ConnMaxLifetime time.Duration `json:"conn_max_life_time"`
 	ConnMaxIdleTime time.Duration `json:"conn_max_idle_time"`
-}
-
-// Logger models the data for the logs configuration
-type Logger struct {
-	Development       bool   `json:"development"`
-	DisableCaller     bool   `json:"disable_caller"`
-	DisableStacktrace bool   `json:"disable_stacktrace"`
-	Encoding          string `json:"encoding"`
-	Level             string `json:"level"`
-}
-
-// MailerConfig models the data for the mailer configuration
-type MailerConfig struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	TLS      bool   `json:"tls"`
 }
 
 // TokenConfig models the data for the token configuration

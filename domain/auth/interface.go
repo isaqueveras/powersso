@@ -9,7 +9,7 @@ import "github.com/google/uuid"
 // IAuthService defines an interface for service methods to access the data layer
 type IAuthService interface {
 	Configure2FA(userID *uuid.UUID) error
-	GenerateQrCode2FA()
+	GenerateQrCode2FA(userID *uuid.UUID) (*string, error)
 }
 
 // IAuth define an interface for data layer access methods
@@ -34,8 +34,8 @@ type IFlag interface {
 
 // IOTP define an interface for data layer access methods
 type IOTP interface {
-	GetToken() (*string, *string, error)
-	SetToken(secret *string) error
+	GetToken(userID *uuid.UUID) (*string, *string, error)
+	SetToken(userID *uuid.UUID, secret *string) error
 }
 
 // IUser define an interface for data layer access methods
