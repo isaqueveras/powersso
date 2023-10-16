@@ -5,7 +5,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 	"net/http/pprof"
 	"time"
@@ -44,7 +43,6 @@ func (s *Server) ServerHTTP() (err error) {
 
 	// FIXME: fix "gopowersso.Authorization" to accept list of tokens
 	secret := &s.cfg.GetSecrets()[0]
-	log.Println(secret)
 
 	v1 := router.Group("v1")
 	auth.Router(v1.Group("auth"))

@@ -5,8 +5,6 @@
 package tokens
 
 import (
-	"log"
-
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/isaqueveras/powersso/config"
@@ -24,8 +22,6 @@ func NewAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
 		"last_name":  user.LastName,
 		"email":      user.Email,
 	}
-
-	log.Println(user.GetUserLevel(&config.Get().SecretsTokens), config.Get().SecretsDuration)
 
 	token, err := utils.NewToken(claims, user.GetUserLevel(&config.Get().SecretsTokens), config.Get().SecretsDuration)
 	return utils.Pointer(token), err
