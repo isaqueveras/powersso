@@ -22,6 +22,7 @@ import (
 	domain "github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 const sucessUserID = "9ec1b2a7-665c-47a7-b180-54f11f8a6122"
@@ -49,8 +50,8 @@ func (a *testSuite) SetupSuite() {
 }
 
 func (a *testSuite) TestShouldCreateUser() {
-	monkey.Patch(auth.CreateAccount, func(_ context.Context, _ *domain.CreateAccount) error {
-		return nil
+	monkey.Patch(auth.CreateAccount, func(_ context.Context, _ *domain.CreateAccount) (*string, error) {
+		return utils.Pointer(""), nil
 	})
 	defer monkey.Unpatch(auth.CreateAccount)
 
