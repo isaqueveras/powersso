@@ -21,11 +21,6 @@ func ErrTokenIsNotValid() *oops.Error {
 	return oops.NewError(i18n.Value("errors.handling.err_token_is_not_valid"), http.StatusBadRequest)
 }
 
-// ErrNotHavePermissionLogin creates and returns an error when the user does not have permission to login
-func ErrNotHavePermissionLogin() *oops.Error {
-	return oops.NewError(i18n.Value("errors.handling.err_not_have_permission_login"), http.StatusBadRequest)
-}
-
 // ErrUserNotExists creates and returns an error when the user does not exists
 func ErrUserNotExists() *oops.Error {
 	return oops.NewError(i18n.Value("errors.handling.err_user_not_exists"), http.StatusNotFound)
@@ -43,5 +38,10 @@ func ErrUserBlockedTemporarily() *oops.Error {
 
 // ErrOTPTokenInvalid creates and returns an error when validate token OTP
 func ErrOTPTokenInvalid() *oops.Error {
-	return oops.NewError(i18n.Value("errors.handling.err_otp_token_invalid"), http.StatusForbidden)
+	return oops.NewError(i18n.Value("errors.handling.err_a2f_invalid"), http.StatusForbidden)
+}
+
+// ErrAuthentication2factorNotConfigured user with 2-factor authentication token not configured
+func ErrAuthentication2factorNotConfigured() *oops.Error {
+	return oops.NewError(i18n.Value("errors.handling.err_otp_token_2_factor_authentication_not_configured"), http.StatusForbidden)
 }

@@ -28,23 +28,18 @@ func CreateAccount(ctx context.Context, in *domain.CreateAccount) (url *string, 
 		return nil, oops.Err(err)
 	}
 
-	var (
-		repoAuth = infra.NewAuthRepository(tx)
-		repoUser = infra.NewUserRepository(tx)
-		repoFlag = infra.NewFlagRepo(tx)
-		repoOTP  = infra.NewOTPRepo(tx)
-	)
-
-	if err = repoUser.Exist(in.Email); err != nil {
+	userRepository := infra.NewUserRepository(tx)
+	if err = userRepository.AccountExists(in.Email); err != nil {
 		return nil, oops.Err(err)
 	}
 
+	authRepository := infra.NewAuthRepository(tx)
 	var userID *uuid.UUID
-	if userID, err = repoAuth.CreateAccount(in); err != nil {
+	if userID, err = authRepository.CreateAccount(in); err != nil {
 		return nil, oops.Err(err)
 	}
 
-	service := domain.NewAuthService(repoFlag, repoOTP)
+	service := domain.NewAuthService(infra.NewFlagRepo(tx), infra.NewOTPRepo(tx))
 	if err = service.Configure2FA(userID); err != nil {
 		return nil, oops.Err(err)
 	}
@@ -75,20 +70,20 @@ func Login(ctx context.Context, in *domain.Login) (*domain.Session, error) {
 	)
 
 	user := &domain.User{Email: in.Email}
-	if err = repoUser.Get(user); err != nil {
+	if err = repoUser.GetUser(user); err != nil {
 		return nil, oops.Err(err)
 	}
 
-	if !user.HasFlag(domain.FlagEnabledAccount) {
-		return nil, oops.Err(domain.ErrNotHavePermissionLogin())
+	if !user.IsActive() {
+		return nil, domain.ErrUserNotExists()
 	}
 
-	if !user.IsActive() {
-		return nil, oops.Err(domain.ErrUserNotExists())
+	if !user.OTPConfigured() {
+		return nil, domain.ErrAuthentication2factorNotConfigured()
 	}
 
 	if user.IsBlocked() {
-		return nil, oops.Err(domain.ErrUserBlockedTemporarily())
+		return nil, domain.ErrUserBlockedTemporarily()
 	}
 
 	if err = in.ComparePasswords(user.Password, user.Key); err != nil {
@@ -101,10 +96,8 @@ func Login(ctx context.Context, in *domain.Login) (*domain.Session, error) {
 		return nil, oops.Err(err)
 	}
 
-	if user.OTPConfigured() {
-		if err = utils.ValidateToken(user.OTPToken, in.OTP); err != nil {
-			return nil, oops.Err(domain.ErrOTPTokenInvalid())
-		}
+	if err = utils.ValidateToken(user.OTPToken, in.OTP); err != nil {
+		return nil, domain.ErrOTPTokenInvalid()
 	}
 
 	var sessionID *uuid.UUID
@@ -248,7 +241,7 @@ func DisableUser(ctx context.Context, userUUID *uuid.UUID) error {
 	defer tx.Rollback()
 
 	repo := infra.NewUserRepository(tx)
-	if err = repo.Disable(userUUID); err != nil {
+	if err = repo.DisableUser(userUUID); err != nil {
 		return oops.Err(err)
 	}
 
@@ -271,7 +264,7 @@ func ChangePassword(ctx context.Context, in *domain.ChangePassword) (err error) 
 	repoSession := infra.NewSessionRepository(tx)
 
 	user := domain.User{ID: in.UserID}
-	if err = repoUser.Get(&user); err != nil {
+	if err = repoUser.GetUser(&user); err != nil {
 		return oops.Err(err)
 	}
 

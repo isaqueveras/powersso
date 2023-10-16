@@ -13,18 +13,19 @@ import (
 
 	app "github.com/isaqueveras/powersso/application/auth"
 	domain "github.com/isaqueveras/powersso/domain/auth"
+	"github.com/isaqueveras/powersso/i18n"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// register godoc
-// @Summary Register a user
-// @Description Register a user
+// createAccount godoc
+// @Summary Register a new user
+// @Description Register a new user
 // @Tags Http/Auth
 // @Accept json
 // @Produce json
 // @Success 201 {object} utils.NoContent{}
-// @Router /v1/auth/create_account [post]
+// @Router /v1/auth/create_account [POST]
 func createAccount(ctx *gin.Context) {
 	var input domain.CreateAccount
 	if err := ctx.ShouldBindJSON(&input); err != nil {
@@ -38,7 +39,11 @@ func createAccount(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, map[string]*string{"url": url})
+	ctx.JSON(http.StatusCreated, map[string]string{
+		"url":          *url,
+		"message":      i18n.Value("create_account.message"),
+		"instructions": i18n.Value("create_account.instructions"),
+	})
 }
 
 // login godoc
@@ -48,7 +53,7 @@ func createAccount(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} auth.Session
-// @Router /v1/auth/login [post]
+// @Router /v1/auth/login [POST]
 func login(ctx *gin.Context) {
 	var input domain.Login
 	if err := ctx.ShouldBindJSON(&input); err != nil {
@@ -96,7 +101,7 @@ func changePassword(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 204 {object} utils.NoContent{}
-// @Router /v1/auth/logout [delete]
+// @Router /v1/auth/logout [DELETE]
 func logout(ctx *gin.Context) {
 	sessionID, err := uuid.Parse(gopowersso.GetSession(ctx).SessionID)
 	if err != nil {
@@ -119,7 +124,7 @@ func logout(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} auth.Steps
-// @Router /v1/auth/login/steps [get]
+// @Router /v1/auth/login/steps [GET]
 func loginSteps(ctx *gin.Context) {
 	res, err := app.LoginSteps(ctx, utils.Pointer(ctx.Query("email")))
 	if err != nil {
@@ -138,7 +143,7 @@ func loginSteps(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 201 {object} utils.NoContent{}
-// @Router /v1/auth/user/{user_uuid}/disable [put]
+// @Router /v1/auth/user/{user_uuid}/disable [PUT]
 func disable(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -161,7 +166,7 @@ func disable(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 201 {object} utils.NoContent{}
-// @Router /v1/auth/user/{user_uuid}/otp/configure [post]
+// @Router /v1/auth/user/{user_uuid}/otp/configure [POST]
 func configure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -184,7 +189,7 @@ func configure(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 201 {object} utils.NoContent{}
-// @Router /v1/auth/user/{user_uuid}/otp/unconfigure [put]
+// @Router /v1/auth/user/{user_uuid}/otp/unconfigure [PUT]
 func unconfigure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -207,7 +212,7 @@ func unconfigure(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} auth.QRCode
-// @Router /v1/auth/user/{user_uuid}/otp/qrcode [get]
+// @Router /v1/auth/user/{user_uuid}/otp/qrcode [GET]
 func qrcode(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
