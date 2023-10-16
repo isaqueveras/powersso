@@ -4,9 +4,7 @@
 
 package config
 
-import (
-	"time"
-)
+import "time"
 
 const (
 	// modeDevelopment represents the development environment mode
@@ -15,21 +13,19 @@ const (
 	modeProduction string = "prod"
 )
 
-// LoggerEncodingConsole represents the encoding form that the log represents
-const LoggerEncodingConsole string = "console"
-
 // Config type represents the application settings
 type Config struct {
-	Meta          MetaConfig     `json:"meta"`
-	Server        ServerConfig   `json:"server"`
-	Database      DatabaseConfig `json:"database"`
-	UserAuthToken TokenConfig    `json:"user_auth_token"`
+	ProjectName string         `json:"project_name"`
+	Server      ServerConfig   `json:"server"`
+	Database    DatabaseConfig `json:"database"`
+
+	SecretsDuration int64   `json:"secrets_duration"`
+	SecretsTokens   Secrets `json:"secrets_tokens"`
 }
 
-// MetaConfig models the meta configuration
-type MetaConfig struct {
-	ProjectName string `json:"project_name"`
-	ProjectURL  string `json:"project_url"`
+// GetSecrets returns a list of tokens
+func (c *Config) GetSecrets() (keys []string) {
+	return []string{c.SecretsTokens.User, c.SecretsTokens.Admin, c.SecretsTokens.Integration}
 }
 
 // ServerConfig models a server's configuration data
@@ -68,10 +64,11 @@ type DatabaseConfig struct {
 	ConnMaxIdleTime time.Duration `json:"conn_max_idle_time"`
 }
 
-// TokenConfig models the data for the token configuration
-type TokenConfig struct {
-	SecretKey string `json:"secret_key"`
-	Duration  int64  `json:"duration"`
+// Secrets models the data for the token configuration
+type Secrets struct {
+	User        string `json:"user"`
+	Admin       string `json:"admin"`
+	Integration string `json:"integration"`
 }
 
 // IsModeDevelopment returns if in development mode

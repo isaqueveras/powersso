@@ -106,7 +106,7 @@ func Login(ctx context.Context, in *domain.Login) (*domain.Session, error) {
 	}
 
 	var token *string
-	if token, err = tokens.NewUserAuthToken(user, sessionID); err != nil {
+	if token, err = tokens.NewAuthToken(user, sessionID); err != nil {
 		return nil, oops.Err(err)
 	}
 

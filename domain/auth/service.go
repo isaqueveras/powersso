@@ -46,7 +46,7 @@ func (s *Service) GenerateQrCode2FA(userID *uuid.UUID) (url *string, err error) 
 		*userName += " [DEV]"
 	}
 
-	projectName := utils.Pointer(config.Get().Meta.ProjectName)
+	projectName := utils.Pointer(config.Get().ProjectName)
 	link := utils.GetUrlQrCode(projectName, token, userName)
 
 	return utils.Pointer(link), nil

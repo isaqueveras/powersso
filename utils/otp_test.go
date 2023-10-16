@@ -47,8 +47,8 @@ func TestOTP(t *testing.T) {
 
 		for i := range tokens {
 			userUUID := uuid.New()
-			url := utils.GetUrlQrCode(&config.Get().Meta.ProjectName, utils.Pointer(tokens[i]), utils.Pointer(userUUID.String()))
-			urlCorrect := baseUrl + "otpauth://totp/" + config.Get().Meta.ProjectName + " " + userUUID.String() + "%3Fsecret%3D" + tokens[i]
+			url := utils.GetUrlQrCode(&config.Get().ProjectName, utils.Pointer(tokens[i]), utils.Pointer(userUUID.String()))
+			urlCorrect := baseUrl + "otpauth://totp/" + config.Get().ProjectName + " " + userUUID.String() + "%3Fsecret%3D" + tokens[i]
 
 			if urlCorrect != url {
 				t.Error("url not equal")
@@ -78,8 +78,8 @@ func BenchmarkOTP(b *testing.B) {
 
 		for i := range tokens {
 			userUUID := uuid.New()
-			url := utils.GetUrlQrCode(&config.Get().Meta.ProjectName, utils.Pointer(tokens[i]), utils.Pointer(userUUID.String()))
-			urlCorrect := baseUrl + "otpauth://totp/" + config.Get().Meta.ProjectName + " " + userUUID.String() + "%3Fsecret%3D" + tokens[i]
+			url := utils.GetUrlQrCode(&config.Get().ProjectName, utils.Pointer(tokens[i]), utils.Pointer(userUUID.String()))
+			urlCorrect := baseUrl + "otpauth://totp/" + config.Get().ProjectName + " " + userUUID.String() + "%3Fsecret%3D" + tokens[i]
 
 			if urlCorrect != url {
 				b.Error("url not equal")

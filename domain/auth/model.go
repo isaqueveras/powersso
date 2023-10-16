@@ -159,6 +159,16 @@ func (u *User) OTPConfigured() bool {
 	return enabled && setup
 }
 
+// GetUserLevel returns the authentication token and duration by user level
+func (u *User) GetUserLevel(s *config.Secrets) string {
+	keys := map[Level]string{
+		UserLevel:        s.User,
+		AdminLevel:       s.Admin,
+		IntegrationLevel: s.Integration,
+	}
+	return keys[*u.Level]
+}
+
 // Login models the data for the user to log in with their account
 type Login struct {
 	Email     *string `json:"email" binding:"required,lte=60,email"`

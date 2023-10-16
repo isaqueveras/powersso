@@ -1,8 +1,5 @@
 {
-  "meta": {
-    "project_name": "PowerSSO",
-    "project_url": "http://localhost:3000"
-  },
+  "project_name": "PowerSSO",
   "server": {
     "version": "1.0.0",
     "port": ":5000",
@@ -19,7 +16,7 @@
     "start_grpc": false,
     "access_log_directory": "/var/log/powersso/access.log",
     "error_log_directory": "/var/log/powersso/error.log",
-    "permission_base": "github.com/isaqueveras/power-sso",
+    "permission_base": "github.com/isaqueveras/powersso",
     "access_control_allow_origin": "*"
   },
   "database": {
@@ -35,8 +32,10 @@
     "conn_max_idle_time": 20,
     "timeout": 2
   },
-  "user_auth_token": {
-    "secret_key": "kjnfdjksdbfsdhfbdskjfnamkndkn", 
-    "duration": 2592000
+  "secrets_duration": 2592000,
+  "secrets_tokens": {
+    "user": "kjnfdjksdbfsdhfbdskjfnamkndkn",
+    "admin": "oCb9A8T7zHyx8MXBFb1aEouAXnBg2", 
+    "integration": "krIhDsgYFY3ByJLony15bDSzBAsl5"
   }
 }

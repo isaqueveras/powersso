@@ -5,6 +5,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"net/http/pprof"
 	"time"
@@ -41,10 +42,14 @@ func (s *Server) ServerHTTP() (err error) {
 		middleware.GinZap(s.logg.ZapLogger(), *s.cfg),
 	)
 
+	// FIXME: fix "gopowersso.Authorization" to accept list of tokens
+	secret := &s.cfg.GetSecrets()[0]
+	log.Println(secret)
+
 	v1 := router.Group("v1")
 	auth.Router(v1.Group("auth"))
-	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
-	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
+	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(secret)))
+	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(secret)))
 
 	router.GET("", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": i18n.Value("welcome.title"), "date": time.Now()})
@@ -73,7 +78,7 @@ func (s *Server) ServerHTTP() (err error) {
 func (s *Server) routerDebugPProf(router *gin.Engine) {
 	prefixRouter := router.Group("debug/pprof")
 	prefixRouter.GET("/",
-		gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey),
+		gopowersso.Authorization(&s.cfg.GetSecrets()[1]),
 		gopowersso.OnlyAdmin(),
 		func(c *gin.Context) {
 			pprof.Index(c.Writer, c.Request)
