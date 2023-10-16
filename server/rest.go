@@ -15,9 +15,9 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	"github.com/isaqueveras/powersso/delivery/http/auth"
+	"github.com/isaqueveras/powersso/delivery/http/project"
 	"github.com/isaqueveras/powersso/i18n"
-	"github.com/isaqueveras/powersso/interface/http/auth"
-	"github.com/isaqueveras/powersso/interface/http/project"
 	"github.com/isaqueveras/powersso/middleware"
 )
 

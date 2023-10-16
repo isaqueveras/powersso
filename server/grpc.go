@@ -15,7 +15,7 @@ import (
 	gogrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/isaqueveras/powersso/interface/grpc/auth"
+	"github.com/isaqueveras/powersso/delivery/grpc/auth"
 	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
