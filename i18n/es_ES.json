@@ -2,6 +2,10 @@
 	"welcome": {
 		"title": "Bienvenido a PowerSSO"
 	},
+	"create_account": {
+		"instructions": "Escanee el código QR para configurar la autenticación de 2 factores",
+		"message": "Cuenta creada con éxito"
+	},
 	"errors": {
 		"default": "Error desconocido",
 		"handling": {
@@ -29,11 +33,11 @@
 			},
 			"err_user_exists": "Ya hay un usuario con este correo electrónico",
 			"err_token_is_not_valid": "El token no es válido o ha caducado",
-			"err_not_have_permission_login": "No tienes permiso para iniciar sesión",
 			"err_user_not_exists": "El usuario no existe",
 			"err_email_or_password_is_not_valid": "El correo electrónico o la contraseña no son válidos",
 			"err_user_blocked_temporarily": "El usuario está bloqueado temporalmente",
-			"err_otp_token_invalid": "Token OTP inválido"
+			"err_a2f_invalid": "El código de autenticación de dos factores no es válido",
+			"err_otp_token_2_factor_authentication_not_configured": "No tienes configurado el token de autenticación de 2 factores"
 		}
 	}
 }
