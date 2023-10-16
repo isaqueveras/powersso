@@ -11,7 +11,6 @@ import (
 
 // Router is the router for the auth module.
 func Router(r *gin.RouterGroup) {
-	r.POST("activation/:token", activation)
 	r.POST("create_account", createAccount)
 	r.POST("login", login)
 	r.GET("login/steps", loginSteps)

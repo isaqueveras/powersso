@@ -20,7 +20,7 @@ type Server struct {
 
 // RegisterUser register user
 func (s *Server) RegisterUser(ctx context.Context, in *User) (_ *Empty, err error) {
-	if err = app.CreateAccount(ctx, &domain.CreateAccount{
+	if _, err = app.CreateAccount(ctx, &domain.CreateAccount{
 		FirstName: utils.Pointer(in.FirstName),
 		LastName:  utils.Pointer(in.LastName),
 		Email:     utils.Pointer(in.Email),

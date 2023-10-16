@@ -22,6 +22,7 @@ import (
 	domain "github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
+	"github.com/isaqueveras/powersso/utils"
 )
 
 const sucessUserID = "9ec1b2a7-665c-47a7-b180-54f11f8a6122"
@@ -49,8 +50,8 @@ func (a *testSuite) SetupSuite() {
 }
 
 func (a *testSuite) TestShouldCreateUser() {
-	monkey.Patch(auth.CreateAccount, func(_ context.Context, _ *domain.CreateAccount) error {
-		return nil
+	monkey.Patch(auth.CreateAccount, func(_ context.Context, _ *domain.CreateAccount) (*string, error) {
+		return utils.Pointer(""), nil
 	})
 	defer monkey.Unpatch(auth.CreateAccount)
 
@@ -103,10 +104,10 @@ func (t *testSuite) TestLoginSteps() {
 
 func (t *testSuite) TestShouldGetUrlQrCode() {
 	t.Run("Success", func() {
-		monkey.Patch(auth.GetQrCode, func(_ context.Context, _ *uuid.UUID) (*domain.QRCode, error) {
-			return &domain.QRCode{}, nil
+		monkey.Patch(auth.GetQRCode2FA, func(_ context.Context, _ *uuid.UUID) (*string, error) {
+			return nil, nil
 		})
-		defer monkey.Unpatch(auth.GetQrCode)
+		defer monkey.Unpatch(auth.GetQRCode2FA)
 
 		req := httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+sucessUserID+"/otp/qrcode", nil)
 		w := httptest.NewRecorder()
@@ -116,10 +117,10 @@ func (t *testSuite) TestShouldGetUrlQrCode() {
 	})
 
 	t.Run("Error::FetchAnotherUserURL", func() {
-		monkey.Patch(auth.GetQrCode, func(_ context.Context, _ *uuid.UUID) (*domain.QRCode, error) {
-			return &domain.QRCode{}, nil
+		monkey.Patch(auth.GetQRCode2FA, func(_ context.Context, _ *uuid.UUID) (*string, error) {
+			return nil, nil
 		})
-		defer monkey.Unpatch(auth.GetQrCode)
+		defer monkey.Unpatch(auth.GetQRCode2FA)
 
 		req := httptest.NewRequest(http.MethodGet, "/v1/auth/user/"+uuid.New().String()+"/otp/qrcode", nil)
 		w := httptest.NewRecorder()
@@ -131,10 +132,10 @@ func (t *testSuite) TestShouldGetUrlQrCode() {
 
 func (t *testSuite) TestShouldConfigure() {
 	t.Run("Success", func() {
-		monkey.Patch(auth.Configure, func(_ context.Context, _ *uuid.UUID) error {
+		monkey.Patch(auth.Configure2FA, func(_ context.Context, _ *uuid.UUID) error {
 			return nil
 		})
-		defer monkey.Unpatch(auth.Configure)
+		defer monkey.Unpatch(auth.Configure2FA)
 
 		req := httptest.NewRequest(http.MethodPost, "/v1/auth/user/"+sucessUserID+"/otp/configure", nil)
 		w := httptest.NewRecorder()
@@ -144,10 +145,10 @@ func (t *testSuite) TestShouldConfigure() {
 	})
 
 	t.Run("Error::FetchAnotherUserURL", func() {
-		monkey.Patch(auth.Configure, func(_ context.Context, _ *uuid.UUID) error {
+		monkey.Patch(auth.Configure2FA, func(_ context.Context, _ *uuid.UUID) error {
 			return nil
 		})
-		defer monkey.Unpatch(auth.Configure)
+		defer monkey.Unpatch(auth.Configure2FA)
 
 		req := httptest.NewRequest(http.MethodPost, "/v1/auth/user/"+uuid.New().String()+"/otp/configure", nil)
 		w := httptest.NewRecorder()
@@ -159,10 +160,10 @@ func (t *testSuite) TestShouldConfigure() {
 
 func (t *testSuite) TestShouldUnconfigure() {
 	t.Run("Success", func() {
-		monkey.Patch(auth.Unconfigure, func(_ context.Context, _ *uuid.UUID) error {
+		monkey.Patch(auth.Unconfigure2FA, func(_ context.Context, _ *uuid.UUID) error {
 			return nil
 		})
-		defer monkey.Unpatch(auth.Unconfigure)
+		defer monkey.Unpatch(auth.Unconfigure2FA)
 
 		var (
 			req = httptest.NewRequest(http.MethodPut, "/v1/auth/user/"+sucessUserID+"/otp/unconfigure", nil)
@@ -174,10 +175,10 @@ func (t *testSuite) TestShouldUnconfigure() {
 	})
 
 	t.Run("Error::FetchAnotherUserURL", func() {
-		monkey.Patch(auth.Unconfigure, func(_ context.Context, _ *uuid.UUID) error {
+		monkey.Patch(auth.Unconfigure2FA, func(_ context.Context, _ *uuid.UUID) error {
 			return nil
 		})
-		defer monkey.Unpatch(auth.Unconfigure)
+		defer monkey.Unpatch(auth.Unconfigure2FA)
 
 		var (
 			req = httptest.NewRequest(http.MethodPut, "/v1/auth/user/"+uuid.New().String()+"/otp/unconfigure", nil)

@@ -14,16 +14,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/isaqueveras/powersso/config"
 )
 
-const (
-	windowSize = 5
-	stepSize   = 30
-
-	QrCodeURL = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl="
-)
+const windowSize, stepSize = 5, 30
 
 // ValidateToken validates if the otp is valid
 func ValidateToken(token, otp *string) (err error) {
@@ -96,6 +89,7 @@ func GenerateToken(secret string, ts int64) (otp string, err error) {
 }
 
 // GetUrlQrCode returns the url of qr code to configure the otp
-func GetUrlQrCode(otpToken string, userName string) (url string) {
-	return QrCodeURL + "otpauth://totp/" + config.Get().Meta.ProjectName + " " + userName + "%3Fsecret%3D" + otpToken
+func GetUrlQrCode(projectName, otpToken, userName *string) (url string) {
+	baseUrl := "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl="
+	return baseUrl + "otpauth://totp/" + *projectName + " " + *userName + "%3Fsecret%3D" + *otpToken
 }

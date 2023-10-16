@@ -29,7 +29,7 @@ func CreateUserAdmin(logg *utils.Logger) {
 	}
 	defer tx.Rollback()
 
-	if err = auth.CreateAccount(ctx, &domain.CreateAccount{
+	if _, err = auth.CreateAccount(ctx, &domain.CreateAccount{
 		FirstName: utils.Pointer("User Power"),
 		LastName:  utils.Pointer("Admin"),
 		Email:     utils.Pointer("admin@powersso.io"),

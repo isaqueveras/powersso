@@ -152,15 +152,21 @@ func (u *User) IsBlocked() bool {
 	return u.Blocked != nil && *u.Blocked
 }
 
+// OTPConfigured checks if the user has the OTP token configured
 func (u *User) OTPConfigured() bool {
 	enabled := u.Flag != nil && *u.Flag&FlagOTPEnable != 0
 	setup := u.Flag != nil && *u.Flag&FlagOTPSetup != 0
 	return enabled && setup
 }
 
-// QRCode wraps the data to return the qr code url
-type QRCode struct {
-	Url *string `json:"url,omitempty"`
+// GetUserLevel returns the authentication token and duration by user level
+func (u *User) GetUserLevel(s *config.Secrets) string {
+	keys := map[Level]string{
+		UserLevel:        s.User,
+		AdminLevel:       s.Admin,
+		IntegrationLevel: s.Integration,
+	}
+	return keys[*u.Level]
 }
 
 // Login models the data for the user to log in with their account
@@ -212,14 +218,13 @@ func (l *Login) Validate() {
 
 // Session models the data of a user session
 type Session struct {
-	SessionID *uuid.UUID     `json:"session_id,omitempty"`
-	UserID    *uuid.UUID     `json:"user_id,omitempty"`
-	Email     *string        `json:"email,omitempty"`
-	FirstName *string        `json:"first_name,omitempty"`
-	LastName  *string        `json:"last_name,omitempty"`
-	Level     *Level         `json:"level,omitempty"`
-	Token     *string        `json:"token,omitempty"`
-	CreatedAt *time.Time     `json:"created_at,omitempty"`
-	ExpiresAt *time.Time     `json:"expires_at,omitempty"`
-	RawData   map[string]any `json:"data,omitempty"`
+	SessionID *uuid.UUID `json:"session_id,omitempty"`
+	UserID    *uuid.UUID `json:"user_id,omitempty"`
+	Email     *string    `json:"email,omitempty"`
+	FirstName *string    `json:"first_name,omitempty"`
+	LastName  *string    `json:"last_name,omitempty"`
+	Level     *Level     `json:"level,omitempty"`
+	Token     *string    `json:"token,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 }
