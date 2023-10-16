@@ -39,21 +39,6 @@ func createAccount(ctx *gin.Context) {
 	})
 }
 
-// @Router /v1/auth/activation/{token} [POST]
-func activation(ctx *gin.Context) {
-	token, err := uuid.Parse(ctx.Param("token"))
-	if err != nil {
-		oops.Handling(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, map[string]string{
-		"url":          *url,
-		"message":      i18n.Value("create_account.message"),
-		"instructions": i18n.Value("create_account.instructions"),
-	})
-}
-
 // @Router /v1/auth/login [POST]
 func login(ctx *gin.Context) {
 	var input domain.Login
