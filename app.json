@@ -1,14 +1,10 @@
 {
-  "meta": {
-    "project_name": "PowerSSO",
-    "project_url": "http://localhost:3000"
-  },
+  "project_name": "PowerSSO",
   "server": {
     "version": "1.0.0",
     "port": ":5000",
     "pprof_port": ":5555",
     "mode": "dev",
-    "jwt_secret_key": "power-sso-secret",
     "cookie_name": "jwt-power-sso",
     "ssl": false,
     "ctx_default_timeout": 12,
@@ -20,7 +16,7 @@
     "start_grpc": false,
     "access_log_directory": "/var/log/powersso/access.log",
     "error_log_directory": "/var/log/powersso/error.log",
-    "permission_base": "github.com/isaqueveras/power-sso",
+    "permission_base": "github.com/isaqueveras/powersso",
     "access_control_allow_origin": "*",
     "open_sessions_per_user": 5
   },
@@ -31,30 +27,16 @@
     "password": "postgres",
     "dbname": "power-sso",
     "sslmode": false,
-    "driver": "pgx",
     "max_open_conns": 60,
     "max_idle_conns": 30,
     "conn_max_life_time": 120,
     "conn_max_idle_time": 20,
     "timeout": 2
   },
-  "logger": {
-    "development": true,
-    "disable_caller": false,
-    "disable_stacktrace": false,
-    "encoding": "json",
-    "level": "info"
-  },
-  "mailer": {
-    "host": "localhost",
-    "port": 1025,
-    "email": "contact@powersso.io",
-    "username": "PowerSSO",
-    "password": "password",
-    "tls": false
-  },
-  "user_auth_token": {
-    "secret_key": "kjnfdjksdbfsdhfbdskjfnamkndkn", 
-    "duration": 2592000
+  "secrets_duration": 2592000,
+  "secrets_tokens": {
+    "user": "kjnfdjksdbfsdhfbdskjfnamkndkn",
+    "admin": "oCb9A8T7zHyx8MXBFb1aEouAXnBg2", 
+    "integration": "krIhDsgYFY3ByJLony15bDSzBAsl5"
   }
 }

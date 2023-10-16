@@ -16,16 +16,6 @@ services:
     networks:
       - powersso
     
-  mailcatcher:
-    container_name: mailcatcher
-    image: sj26/mailcatcher
-    expose:
-      - 1025
-      - 1080
-    ports:
-      - 1025:1025
-      - 1080:1080
-
   backend:
     build:
       context: .
@@ -43,32 +33,6 @@ services:
       - /etc/powersso:/etc/powersso
       - logs:/var/log/powersso
       - ${CONFIG_POWER_SSO:-/etc/powersso/app.json}:/etc/powersso/app.json
-    networks:
-      - powersso
-
-  nginx:
-    build: ./nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    volumes:
-      - ./ui/build:/app/frontend/build
-    networks:
-      - powersso
-
-  frontend:
-    build:
-      context: ./ui
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    environment:
-      - API_URL=http://localhost/api/v1/
-    env_file:
-      - ./ui/.env 
     networks:
       - powersso
 

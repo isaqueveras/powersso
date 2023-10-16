@@ -4,9 +4,7 @@
 
 package config
 
-import (
-	"time"
-)
+import "time"
 
 const (
 	// modeDevelopment represents the development environment mode
@@ -15,23 +13,19 @@ const (
 	modeProduction string = "prod"
 )
 
-// LoggerEncodingConsole represents the encoding form that the log represents
-const LoggerEncodingConsole string = "console"
-
 // Config type represents the application settings
 type Config struct {
-	Meta          MetaConfig     `json:"meta"`
-	Server        ServerConfig   `json:"server"`
-	Logger        Logger         `json:"logger"`
-	Mailer        MailerConfig   `json:"mailer"`
-	Database      DatabaseConfig `json:"database"`
-	UserAuthToken TokenConfig    `json:"user_auth_token"`
+	ProjectName string         `json:"project_name"`
+	Server      ServerConfig   `json:"server"`
+	Database    DatabaseConfig `json:"database"`
+
+	SecretsDuration int64   `json:"secrets_duration"`
+	SecretsTokens   Secrets `json:"secrets_tokens"`
 }
 
-// MetaConfig models the meta configuration
-type MetaConfig struct {
-	ProjectName string `json:"project_name"`
-	ProjectURL  string `json:"project_url"`
+// GetSecrets returns a list of tokens
+func (c *Config) GetSecrets() (keys []string) {
+	return []string{c.SecretsTokens.User, c.SecretsTokens.Admin, c.SecretsTokens.Integration}
 }
 
 // ServerConfig models a server's configuration data
@@ -40,7 +34,6 @@ type ServerConfig struct {
 	Port                     string        `json:"port"`
 	PprofPort                string        `json:"pprof_port"`
 	Mode                     string        `json:"mode"`
-	JwtSecretKey             string        `json:"jwt_secret_key"`
 	CookieName               string        `json:"cookie_name"`
 	AccessLogDirectory       string        `json:"access_log_directory"`
 	ErrorLogDirectory        string        `json:"error_log_directory"`
@@ -63,8 +56,7 @@ type DatabaseConfig struct {
 	Port            int           `json:"port"`
 	User            string        `json:"user"`
 	Password        string        `json:"password"`
-	Dbname          string        `json:"dbname"`
-	Driver          string        `json:"driver"`
+	Name            string        `json:"dbname"`
 	SSLMode         bool          `json:"sslmode"`
 	MaxOpenConns    int           `json:"max_open_conns"`
 	MaxIdleConns    int           `json:"max_idle_conns"`
@@ -73,29 +65,11 @@ type DatabaseConfig struct {
 	ConnMaxIdleTime time.Duration `json:"conn_max_idle_time"`
 }
 
-// Logger models the data for the logs configuration
-type Logger struct {
-	Development       bool   `json:"development"`
-	DisableCaller     bool   `json:"disable_caller"`
-	DisableStacktrace bool   `json:"disable_stacktrace"`
-	Encoding          string `json:"encoding"`
-	Level             string `json:"level"`
-}
-
-// MailerConfig models the data for the mailer configuration
-type MailerConfig struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	TLS      bool   `json:"tls"`
-}
-
-// TokenConfig models the data for the token configuration
-type TokenConfig struct {
-	SecretKey string `json:"secret_key"`
-	Duration  int64  `json:"duration"`
+// Secrets models the data for the token configuration
+type Secrets struct {
+	User        string `json:"user"`
+	Admin       string `json:"admin"`
+	Integration string `json:"integration"`
 }
 
 // IsModeDevelopment returns if in development mode

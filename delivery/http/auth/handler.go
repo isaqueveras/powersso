@@ -13,11 +13,12 @@ import (
 
 	app "github.com/isaqueveras/powersso/application/auth"
 	domain "github.com/isaqueveras/powersso/domain/auth"
+	"github.com/isaqueveras/powersso/i18n"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// @Router /v1/auth/create_account [post]
+// @Router /v1/auth/create_account [POST]
 func createAccount(ctx *gin.Context) {
 	var input domain.CreateAccount
 	if err := ctx.ShouldBindJSON(&input); err != nil {
@@ -25,15 +26,20 @@ func createAccount(ctx *gin.Context) {
 		return
 	}
 
-	if err := app.CreateAccount(ctx, &input); err != nil {
+	url, err := app.CreateAccount(ctx, &input)
+	if err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, utils.NoContent{})
+	ctx.JSON(http.StatusCreated, map[string]string{
+		"url":          *url,
+		"message":      i18n.Value("create_account.message"),
+		"instructions": i18n.Value("create_account.instructions"),
+	})
 }
 
-// @Router /v1/auth/activation/{token} [post]
+// @Router /v1/auth/activation/{token} [POST]
 func activation(ctx *gin.Context) {
 	token, err := uuid.Parse(ctx.Param("token"))
 	if err != nil {
@@ -41,15 +47,14 @@ func activation(ctx *gin.Context) {
 		return
 	}
 
-	if err := app.Activation(ctx, utils.Pointer(token)); err != nil {
-		oops.Handling(ctx, err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, utils.NoContent{})
+	ctx.JSON(http.StatusCreated, map[string]string{
+		"url":          *url,
+		"message":      i18n.Value("create_account.message"),
+		"instructions": i18n.Value("create_account.instructions"),
+	})
 }
 
-// @Router /v1/auth/login [post]
+// @Router /v1/auth/login [POST]
 func login(ctx *gin.Context) {
 	var input domain.Login
 	if err := ctx.ShouldBindJSON(&input); err != nil {
@@ -91,7 +96,7 @@ func changePassword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }
 
-// @Router /v1/auth/logout [delete]
+// @Router /v1/auth/logout [DELETE]
 func logout(ctx *gin.Context) {
 	sessionID, err := uuid.Parse(gopowersso.GetSession(ctx).SessionID)
 	if err != nil {
@@ -107,7 +112,7 @@ func logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, utils.NoContent{})
 }
 
-// @Router /v1/auth/login/steps [get]
+// @Router /v1/auth/login/steps [GET]
 func loginSteps(ctx *gin.Context) {
 	res, err := app.LoginSteps(ctx, utils.Pointer(ctx.Query("email")))
 	if err != nil {
@@ -118,7 +123,7 @@ func loginSteps(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// @Router /v1/auth/user/{user_uuid}/disable [put]
+// @Router /v1/auth/user/{user_uuid}/disable [PUT]
 func disable(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -126,7 +131,7 @@ func disable(ctx *gin.Context) {
 		return
 	}
 
-	if err = app.Disable(ctx, &userID); err != nil {
+	if err = app.DisableUser(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -134,7 +139,7 @@ func disable(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// @Router /v1/auth/user/{user_uuid}/otp/configure [post]
+// @Router /v1/auth/user/{user_uuid}/otp/configure [POST]
 func configure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -142,7 +147,7 @@ func configure(ctx *gin.Context) {
 		return
 	}
 
-	if err = app.Configure(ctx, &userID); err != nil {
+	if err = app.Configure2FA(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -150,7 +155,7 @@ func configure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// @Router /v1/auth/user/{user_uuid}/otp/unconfigure [put]
+// @Router /v1/auth/user/{user_uuid}/otp/unconfigure [PUT]
 func unconfigure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -158,7 +163,7 @@ func unconfigure(ctx *gin.Context) {
 		return
 	}
 
-	if err = app.Unconfigure(ctx, &userID); err != nil {
+	if err = app.Unconfigure2FA(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
@@ -166,7 +171,7 @@ func unconfigure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// @Router /v1/auth/user/{user_uuid}/otp/qrcode [get]
+// @Router /v1/auth/user/{user_uuid}/otp/qrcode [GET]
 func qrcode(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
 	if err != nil {
@@ -174,11 +179,11 @@ func qrcode(ctx *gin.Context) {
 		return
 	}
 
-	var res *domain.QRCode
-	if res, err = app.GetQrCode(ctx, &userID); err != nil {
+	var url *string
+	if url, err = app.GetQRCode2FA(ctx, &userID); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusOK, map[string]*string{"url": url})
 }

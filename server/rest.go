@@ -13,8 +13,8 @@ import (
 	"github.com/isaqueveras/endless"
 	gopowersso "github.com/isaqueveras/go-powersso"
 
-	"github.com/isaqueveras/powersso/interface/http/auth"
-	"github.com/isaqueveras/powersso/interface/http/project"
+	"github.com/isaqueveras/powersso/delivery/http/auth"
+	"github.com/isaqueveras/powersso/delivery/http/project"
 	"github.com/isaqueveras/powersso/middleware"
 )
 
@@ -38,10 +38,13 @@ func (s *Server) ServerHTTP() (err error) {
 		middleware.GinZap(s.logg.ZapLogger(), *s.cfg),
 	)
 
+	// FIXME: fix "gopowersso.Authorization" to accept list of tokens
+	secret := &s.cfg.GetSecrets()[0]
+
 	v1 := router.Group("v1")
 	auth.Router(v1.Group("auth"))
-	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
-	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey)))
+	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(secret)))
+	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(secret)))
 
 	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout * time.Second
 	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout * time.Second
@@ -61,8 +64,7 @@ func (s *Server) ServerHTTP() (err error) {
 
 func (s *Server) routerDebugPProf(router *gin.Engine) {
 	r := router.Group("debug/pprof")
-	r.Use(gopowersso.Authorization(&s.cfg.UserAuthToken.SecretKey), gopowersso.OnlyAdmin())
-
+	r.Use(gopowersso.Authorization(&s.cfg.GetSecrets()[1]), gopowersso.OnlyAdmin())
 	r.GET("/", func(c *gin.Context) { pprof.Index(c.Writer, c.Request) })
 	r.GET("/cmdline", func(c *gin.Context) { pprof.Cmdline(c.Writer, c.Request) })
 	r.GET("/profile", func(c *gin.Context) { pprof.Profile(c.Writer, c.Request) })
@@ -74,6 +76,5 @@ func (s *Server) routerDebugPProf(router *gin.Engine) {
 	r.GET("/heap", func(c *gin.Context) { pprof.Handler("heap").ServeHTTP(c.Writer, c.Request) })
 	r.GET("/mutex", func(c *gin.Context) { pprof.Handler("mutex").ServeHTTP(c.Writer, c.Request) })
 	r.GET("/threadcreate", func(c *gin.Context) { pprof.Handler("threadcreate").ServeHTTP(c.Writer, c.Request) })
-
 	s.group.Go(func() error { return endless.ListenAndServe("0.0.0.0"+s.cfg.Server.PprofPort, router) })
 }

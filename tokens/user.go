@@ -7,14 +7,13 @@ package tokens
 import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
-
 	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// NewUserAuthToken generates and returns a new user authentication token.
-func NewUserAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
+// NewAuthToken generates and returns a new authentication token
+func NewAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
 	claims := jwt.MapClaims{
 		"session_id": sessionID,
 		"user_id":    user.ID,
@@ -24,6 +23,6 @@ func NewUserAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
 		"email":      user.Email,
 	}
 
-	token, err := utils.NewToken(claims, (config.Get().UserAuthToken.SecretKey), config.Get().UserAuthToken.Duration)
+	token, err := utils.NewToken(claims, user.GetUserLevel(&config.Get().SecretsTokens), config.Get().SecretsDuration)
 	return utils.Pointer(token), err
 }

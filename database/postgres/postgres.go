@@ -28,7 +28,7 @@ func (p *postgres) open(c *config.Config) (err error) {
 		c.Database.Host,
 		c.Database.Port,
 		c.Database.User,
-		c.Database.Dbname,
+		c.Database.Name,
 		c.Database.Password,
 	)
 
@@ -44,7 +44,7 @@ func (p *postgres) open(c *config.Config) (err error) {
 	}
 
 	stdlib.RegisterDriverConfig(&driverConfig)
-	db, err := sql.Open(c.Database.Driver, driverConfig.ConnectionString(dataSourceName))
+	db, err := sql.Open("pgx", driverConfig.ConnectionString(dataSourceName))
 	if err != nil {
 		return err
 	}
