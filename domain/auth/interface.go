@@ -40,8 +40,8 @@ type IOTP interface {
 
 // IUser define an interface for data layer access methods
 type IUser interface {
-	Get(user *User) error
-	Exist(email *string) error
-	Disable(userUUID *uuid.UUID) error
+	GetUser(*User) error
 	ChangePassword(*ChangePassword) error
+	AccountExists(email *string) error
+	DisableUser(userUUID *uuid.UUID) error
 }

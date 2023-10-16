@@ -76,16 +76,14 @@ func (pg *PGAuth) LoginSteps(email *string) (steps *domain.Steps, err error) {
 	return
 }
 
-func (pg *User) Exist(email *string) (err error) {
+// AccountExists validate whether an account with the same identifier already exists
+func (pg *User) AccountExists(email *string) (err error) {
 	var exists *bool
 	if err = pg.DB.Builder.
 		Select("COUNT(id) > 0").
 		From("users").
 		Where(squirrel.Eq{"email": email}).
-		Scan(&exists); err != nil {
-		if err == sql.ErrNoRows {
-			return domain.ErrUserNotExists()
-		}
+		Scan(&exists); err != nil && err != sql.ErrNoRows {
 		return oops.Err(err)
 	}
 
@@ -96,7 +94,8 @@ func (pg *User) Exist(email *string) (err error) {
 	return
 }
 
-func (pg *User) Get(data *domain.User) (err error) {
+// GetUser fetches a user's data from the database
+func (pg *User) GetUser(data *domain.User) (err error) {
 	cond := squirrel.Eq{"id": data.ID}
 	if data.Email != nil {
 		cond = squirrel.Eq{"email": data.Email}

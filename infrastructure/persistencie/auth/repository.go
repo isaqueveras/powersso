@@ -97,18 +97,18 @@ func NewUserRepository(tx *database.Transaction) domain.IUser {
 	return &repoUser{pg: &infra.User{DB: tx}}
 }
 
-// Get get user data
-func (r *repoUser) Get(user *domain.User) error {
-	return r.pg.Get(user)
+// GetUser manages the flow for a user's data
+func (r *repoUser) GetUser(user *domain.User) error {
+	return r.pg.GetUser(user)
 }
 
-// Exist check if user already exists
-func (r *repoUser) Exist(email *string) error {
-	return r.pg.Exist(email)
+// AccountExists manages the flow to check if a user with the same identifier already exists
+func (r *repoUser) AccountExists(email *string) error {
+	return r.pg.AccountExists(email)
 }
 
-// Disable deactivate a user's account
-func (r *repoUser) Disable(userUUID *uuid.UUID) error {
+// DisableUser manages the flow to deactivate a user's account
+func (r *repoUser) DisableUser(userUUID *uuid.UUID) error {
 	return r.pg.Disable(userUUID)
 }
 

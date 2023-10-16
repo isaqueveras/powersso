@@ -152,6 +152,7 @@ func (u *User) IsBlocked() bool {
 	return u.Blocked != nil && *u.Blocked
 }
 
+// OTPConfigured checks if the user has the OTP token configured
 func (u *User) OTPConfigured() bool {
 	enabled := u.Flag != nil && *u.Flag&FlagOTPEnable != 0
 	setup := u.Flag != nil && *u.Flag&FlagOTPSetup != 0
