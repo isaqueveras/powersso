@@ -18,13 +18,6 @@ import (
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// createAccount godoc
-// @Summary Register a new user
-// @Description Register a new user
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/create_account [POST]
 func createAccount(ctx *gin.Context) {
 	var input domain.CreateAccount
@@ -46,13 +39,21 @@ func createAccount(ctx *gin.Context) {
 	})
 }
 
-// login godoc
-// @Summary User login
-// @Description Route to login a user account into the system
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} auth.Session
+// @Router /v1/auth/activation/{token} [POST]
+func activation(ctx *gin.Context) {
+	token, err := uuid.Parse(ctx.Param("token"))
+	if err != nil {
+		oops.Handling(ctx, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, map[string]string{
+		"url":          *url,
+		"message":      i18n.Value("create_account.message"),
+		"instructions": i18n.Value("create_account.instructions"),
+	})
+}
+
 // @Router /v1/auth/login [POST]
 func login(ctx *gin.Context) {
 	var input domain.Login
@@ -74,6 +75,7 @@ func login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, output)
 }
 
+// @Router /v1/auth/change_password [put]
 func changePassword(ctx *gin.Context) {
 	in := &domain.ChangePassword{}
 	if err := ctx.ShouldBindJSON(in); err != nil {
@@ -94,13 +96,6 @@ func changePassword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }
 
-// logout godoc
-// @Summary User logout
-// @Description Route to logout a user account into the system
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 204 {object} utils.NoContent{}
 // @Router /v1/auth/logout [DELETE]
 func logout(ctx *gin.Context) {
 	sessionID, err := uuid.Parse(gopowersso.GetSession(ctx).SessionID)
@@ -117,13 +112,6 @@ func logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusNoContent, utils.NoContent{})
 }
 
-// loginSteps godoc
-// @Summary Steps to login
-// @Description Steps to login
-// @Tags Http/Auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} auth.Steps
 // @Router /v1/auth/login/steps [GET]
 func loginSteps(ctx *gin.Context) {
 	res, err := app.LoginSteps(ctx, utils.Pointer(ctx.Query("email")))
@@ -135,14 +123,6 @@ func loginSteps(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// disable godoc
-// @Summary Disable user
-// @Description Route to disable a user
-// @Tags Http/Auth/User
-// @Param user_uuid path string true "UUID of the user"
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/disable [PUT]
 func disable(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
@@ -159,13 +139,6 @@ func disable(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// configure godoc
-// @Summary Configure a user's OTP
-// @Description Configure a user's OTP
-// @Tags Http/Auth/OTP
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/otp/configure [POST]
 func configure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
@@ -182,13 +155,6 @@ func configure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// unconfigure godoc
-// @Summary unconfigure a user's OTP
-// @Description unconfigure a user's OTP
-// @Tags Http/Auth/OTP
-// @Accept json
-// @Produce json
-// @Success 201 {object} utils.NoContent{}
 // @Router /v1/auth/user/{user_uuid}/otp/unconfigure [PUT]
 func unconfigure(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))
@@ -205,13 +171,6 @@ func unconfigure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// qrcode godoc
-// @Summary Configure a user's OTP
-// @Description Configure a user's OTP
-// @Tags Http/Auth/OTP
-// @Accept json
-// @Produce json
-// @Success 200 {object} auth.QRCode
 // @Router /v1/auth/user/{user_uuid}/otp/qrcode [GET]
 func qrcode(ctx *gin.Context) {
 	userID, err := uuid.Parse(ctx.Param("user_uuid"))

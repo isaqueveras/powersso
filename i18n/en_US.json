@@ -1,7 +1,4 @@
 {
-	"welcome": {
-		"title": "Welcome to PowerSSO"
-	},
 	"create_account": {
 		"instructions": "Scan the QR Code to set up 2-factor authentication",
 		"message": "Account created successfully"

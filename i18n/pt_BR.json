@@ -1,7 +1,4 @@
 {
-	"welcome": {
-		"title": "Bem-vindo ao PowerSSO"
-	},
 	"create_account": {
 		"instructions": "Escaneia o QR Code para configurar a autenticação de 2 fatores",
 		"message": "Conta criada com sucesso"

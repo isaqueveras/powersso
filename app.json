@@ -17,7 +17,8 @@
     "access_log_directory": "/var/log/powersso/access.log",
     "error_log_directory": "/var/log/powersso/error.log",
     "permission_base": "github.com/isaqueveras/powersso",
-    "access_control_allow_origin": "*"
+    "access_control_allow_origin": "*",
+    "open_sessions_per_user": 5
   },
   "database": {
     "host": "localhost",

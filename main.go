@@ -11,28 +11,11 @@ import (
 
 	"github.com/isaqueveras/powersso/config"
 	"github.com/isaqueveras/powersso/database/postgres"
-	_ "github.com/isaqueveras/powersso/docs"
 	"github.com/isaqueveras/powersso/scripts"
 	"github.com/isaqueveras/powersso/server"
 	"github.com/isaqueveras/powersso/utils"
 )
 
-// @title Documentation PowerSSO
-// @version 1.0.0
-// @description This is PowerSSO app server.
-
-// @contact.name PowerSSO
-// @contact.url https://github.com/isaqueveras/powersso/issues
-
-// @license.name MIT license
-// @license.url https://github.com/isaqueveras/powersso/blob/main/LICENSE
-
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-
-// @host localhost:5000
-// @BasePath /
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
