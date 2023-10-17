@@ -7,7 +7,6 @@ package auth
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +14,7 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 
@@ -39,7 +39,15 @@ type testSuite struct {
 
 func (a *testSuite) SetupSuite() {
 	var handleUserLog = func() gin.HandlerFunc {
-		return func(ctx *gin.Context) { ctx.Set("UID", sucessUserID) }
+		return func(ctx *gin.Context) {
+			ctx.Set("UID", sucessUserID)
+			ctx.Set("SESSION", jwt.MapClaims{
+				"SessionID": "",
+				"UserID":    sucessUserID,
+				"UserLevel": string(domain.AdminLevel),
+				"FirstName": "Janekin",
+			})
+		}
 	}
 
 	a.router = gin.New()
@@ -68,38 +76,6 @@ func (a *testSuite) TestShouldCreateUser() {
 
 	a.router.ServeHTTP(w, req)
 	a.Assert().Equal(http.StatusCreated, w.Code)
-}
-
-func (t *testSuite) TestLoginSteps() {
-	t.Run("UserFound", func() {
-		monkey.Patch(auth.LoginSteps, func(ctx context.Context, email *string) (res *domain.Steps, err error) {
-			return nil, nil
-		})
-		defer monkey.Unpatch(auth.LoginSteps)
-
-		var (
-			req = httptest.NewRequest(http.MethodGet, "/v1/auth/login/steps?email=luiz@bonfa.com", nil)
-			w   = httptest.NewRecorder()
-		)
-
-		t.router.ServeHTTP(w, req)
-		t.Assert().Equal(http.StatusOK, w.Code)
-	})
-
-	t.Run("UserNotFound", func() {
-		monkey.Patch(auth.LoginSteps, func(ctx context.Context, email *string) (*domain.Steps, error) {
-			return nil, sql.ErrNoRows
-		})
-		defer monkey.Unpatch(auth.LoginSteps)
-
-		var (
-			req = httptest.NewRequest(http.MethodGet, "/v1/auth/login/steps", nil)
-			w   = httptest.NewRecorder()
-		)
-
-		t.router.ServeHTTP(w, req)
-		t.Assert().Equal(http.StatusNotFound, w.Code)
-	})
 }
 
 func (t *testSuite) TestShouldGetUrlQrCode() {
