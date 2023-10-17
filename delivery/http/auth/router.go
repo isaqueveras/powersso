@@ -6,7 +6,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	gopowersso "github.com/isaqueveras/go-powersso"
+	"github.com/isaqueveras/powersso/middleware"
 )
 
 // Router is the router for the auth module.
@@ -25,7 +25,7 @@ func RouterAuthorization(r *gin.RouterGroup) {
 	user.PUT("disable", disable)
 
 	otp := user.Group("otp")
-	otp.Use(gopowersso.SameUser())
+	otp.Use(middleware.Yourself())
 
 	otp.GET("qrcode", qrcode)
 	otp.POST("configure", configure)

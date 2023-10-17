@@ -11,7 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/endless"
-	gopowersso "github.com/isaqueveras/go-powersso"
 
 	"github.com/isaqueveras/powersso/delivery/http/auth"
 	"github.com/isaqueveras/powersso/delivery/http/project"
@@ -32,19 +31,16 @@ func (s *Server) ServerHTTP() (err error) {
 	router.Use(
 		middleware.CORS(),
 		middleware.VersionInfo(),
-		middleware.SetupI18n(),
 		middleware.RequestIdentifier(),
 		middleware.RecoveryWithZap(s.logg.ZapLogger(), true),
 		middleware.GinZap(s.logg.ZapLogger(), *s.cfg),
+		middleware.SetupI18n(),
 	)
-
-	// FIXME: fix "gopowersso.Authorization" to accept list of tokens
-	secret := &s.cfg.GetSecrets()[0]
 
 	v1 := router.Group("v1")
 	auth.Router(v1.Group("auth"))
-	auth.RouterAuthorization(v1.Group("auth", gopowersso.Authorization(secret)))
-	project.RouterAuthorization(v1.Group("project", gopowersso.Authorization(secret)))
+	auth.RouterAuthorization(v1.Group("auth", middleware.Auth()))
+	project.RouterAuthorization(v1.Group("project", middleware.Auth()))
 
 	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout * time.Second
 	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout * time.Second
@@ -64,7 +60,7 @@ func (s *Server) ServerHTTP() (err error) {
 
 func (s *Server) routerDebugPProf(router *gin.Engine) {
 	r := router.Group("debug/pprof")
-	r.Use(gopowersso.Authorization(&s.cfg.GetSecrets()[1]), gopowersso.OnlyAdmin())
+	r.Use(middleware.Auth(), middleware.OnlyAdmin())
 	r.GET("/", func(c *gin.Context) { pprof.Index(c.Writer, c.Request) })
 	r.GET("/cmdline", func(c *gin.Context) { pprof.Cmdline(c.Writer, c.Request) })
 	r.GET("/profile", func(c *gin.Context) { pprof.Profile(c.Writer, c.Request) })

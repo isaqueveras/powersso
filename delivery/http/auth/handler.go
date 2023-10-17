@@ -9,11 +9,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	gopowersso "github.com/isaqueveras/go-powersso"
-
 	app "github.com/isaqueveras/powersso/application/auth"
 	domain "github.com/isaqueveras/powersso/domain/auth"
 	"github.com/isaqueveras/powersso/i18n"
+	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
 )
@@ -83,7 +82,7 @@ func changePassword(ctx *gin.Context) {
 
 // @Router /v1/auth/logout [DELETE]
 func logout(ctx *gin.Context) {
-	sessionID, err := uuid.Parse(gopowersso.GetSession(ctx).SessionID)
+	sessionID, err := uuid.Parse(middleware.GetSession(ctx).SessionID)
 	if err != nil {
 		oops.Handling(ctx, err)
 		return

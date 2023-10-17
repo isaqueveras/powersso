@@ -8,9 +8,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	gopowersso "github.com/isaqueveras/go-powersso"
-
 	"github.com/isaqueveras/powersso/application/project"
+	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
 )
@@ -19,7 +18,7 @@ import (
 func create(ctx *gin.Context) {
 	var (
 		input   = new(project.CreateProjectReq)
-		session = gopowersso.GetSession(ctx)
+		session = middleware.GetSession(ctx)
 		err     error
 	)
 

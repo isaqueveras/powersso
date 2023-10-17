@@ -6,10 +6,10 @@ package project
 
 import (
 	"github.com/gin-gonic/gin"
-	gopowersso "github.com/isaqueveras/go-powersso"
+	"github.com/isaqueveras/powersso/middleware"
 )
 
 // RouterAuthorization is the router for the project module.
 func RouterAuthorization(r *gin.RouterGroup) {
-	r.POST("create", gopowersso.OnlyAdmin(), create)
+	r.POST("create", middleware.OnlyAdmin(), create)
 }

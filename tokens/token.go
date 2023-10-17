@@ -15,14 +15,12 @@ import (
 // NewAuthToken generates and returns a new authentication token
 func NewAuthToken(user *auth.User, sessionID *uuid.UUID) (*string, error) {
 	claims := jwt.MapClaims{
-		"session_id": sessionID,
-		"user_id":    user.ID,
-		"user_level": user.Level,
-		"first_name": user.FirstName,
-		"last_name":  user.LastName,
-		"email":      user.Email,
+		"SessionID": sessionID,
+		"UserID":    user.ID,
+		"UserLevel": user.Level,
+		"FirstName": user.FirstName,
 	}
 
-	token, err := utils.NewToken(claims, user.GetUserLevel(&config.Get().SecretsTokens), config.Get().SecretsDuration)
+	token, err := NewToken(claims, user.GetUserLevel(&config.Get().SecretsTokens), config.Get().SecretsDuration)
 	return utils.Pointer(token), err
 }

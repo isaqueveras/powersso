@@ -29,7 +29,6 @@ func HandlingGRPC(err error) error {
 	}
 
 	e = handling(e.Err).(*Error)
-
 	return buildGRPCStatus(e)
 }
 
