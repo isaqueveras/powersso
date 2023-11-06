@@ -54,7 +54,7 @@ func (a *testSuite) SetupSuite() {
 	a.router.Use(middleware.RequestIdentifier(), handleUserLog())
 	Router(a.router.Group("v1/auth"))
 	RouterAuthorization(a.router.Group("v1/auth"))
-	RouterAuthorization(a.router.Group("v1/auth/user/:user_uuid/otp"))
+	RouterAuthorization(a.router.Group("v1/auth/user/:user_id/otp"))
 }
 
 func (a *testSuite) TestShouldCreateUser() {

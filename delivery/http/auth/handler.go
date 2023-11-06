@@ -107,9 +107,9 @@ func loginSteps(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-// @Router /v1/auth/user/{user_uuid}/disable [PUT]
+// @Router /v1/auth/user/{user_id}/disable [PUT]
 func disable(ctx *gin.Context) {
-	userID, err := uuid.Parse(ctx.Param("user_uuid"))
+	userID, err := uuid.Parse(ctx.Param("user_id"))
 	if err != nil {
 		oops.Handling(ctx, err)
 		return
@@ -123,9 +123,9 @@ func disable(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// @Router /v1/auth/user/{user_uuid}/otp/configure [POST]
+// @Router /v1/auth/user/{user_id}/otp/configure [POST]
 func configure(ctx *gin.Context) {
-	userID, err := uuid.Parse(ctx.Param("user_uuid"))
+	userID, err := uuid.Parse(ctx.Param("user_id"))
 	if err != nil {
 		oops.Handling(ctx, err)
 		return
@@ -139,9 +139,9 @@ func configure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// @Router /v1/auth/user/{user_uuid}/otp/unconfigure [PUT]
+// @Router /v1/auth/user/{user_id}/otp/unconfigure [PUT]
 func unconfigure(ctx *gin.Context) {
-	userID, err := uuid.Parse(ctx.Param("user_uuid"))
+	userID, err := uuid.Parse(ctx.Param("user_id"))
 	if err != nil {
 		oops.Handling(ctx, err)
 		return
@@ -155,9 +155,9 @@ func unconfigure(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.NoContent{})
 }
 
-// @Router /v1/auth/user/{user_uuid}/otp/qrcode [GET]
+// @Router /v1/auth/user/{user_id}/otp/qrcode [GET]
 func qrcode(ctx *gin.Context) {
-	userID, err := uuid.Parse(ctx.Param("user_uuid"))
+	userID, err := uuid.Parse(ctx.Param("user_id"))
 	if err != nil {
 		oops.Handling(ctx, err)
 		return

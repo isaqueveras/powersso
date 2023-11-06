@@ -72,7 +72,7 @@ func OnlyAdmin() gin.HandlerFunc {
 func Yourself() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		session := GetSession(ctx)
-		userIn := ctx.Param("user_uuid")
+		userIn := ctx.Param("user_id")
 
 		if session.UserID != userIn {
 			log.Printf("WARNING: user (%v - %v) tried to access information for user (%v)", session.UserID, session.FirstName, userIn)

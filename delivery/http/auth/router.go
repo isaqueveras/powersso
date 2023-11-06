@@ -21,7 +21,7 @@ func Router(r *gin.RouterGroup) {
 func RouterAuthorization(r *gin.RouterGroup) {
 	r.DELETE("logout", logout)
 
-	user := r.Group("user/:user_uuid")
+	user := r.Group("user/:user_id")
 	user.PUT("disable", disable)
 
 	otp := user.Group("otp")
