@@ -4,21 +4,11 @@
 
 package project
 
-import "time"
-
 // CreateProject models the data to create a project
 type CreateProject struct {
-	Name         *string       `json:"name"`
-	Description  *string       `json:"description,omitempty"`
-	Color        *string       `json:"hex_color,omitempty"`
-	Participants []Participant `json:"participants"`
-	CreatedByID  *string       `json:"created_by_id,omitempty"`
-	Slug         *string       `json:"slug,omitempty"`
-}
-
-// Participant models the data the a participant
-type Participant struct {
-	UserID        *string    `json:"user_id"`
-	StartDate     *time.Time `json:"start_date"`
-	DepartureDate *time.Time `json:"departure_date,omitempty"`
+	Name        *string
+	Description *string
+	Slug        *string
+	Url         *string
+	CreatedByID *string
 }
