@@ -20,8 +20,8 @@ type database struct {
 func (db *database) createNewProject(ctx context.Context, in *project.CreateProject) error {
 	_, err := db.DB.Builder.
 		Insert("projects").
-		Columns("name", "description", "slug", "created_by", "url").
-		Values(in.Name, in.Description, in.Slug, in.CreatedByID, in.Url).
+		Columns("name", "desc", "slug", "created_by", "url").
+		Values(in.Name, in.Desc, in.Slug, in.CreatedByID, in.Url).
 		ExecContext(ctx)
 	return err
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/isaqueveras/endless"
 
 	"github.com/isaqueveras/powersso/delivery/http/auth"
+	"github.com/isaqueveras/powersso/delivery/http/box"
 	"github.com/isaqueveras/powersso/delivery/http/permissions"
 	"github.com/isaqueveras/powersso/delivery/http/project"
 	"github.com/isaqueveras/powersso/middleware"
@@ -42,6 +43,7 @@ func (s *Server) ServerHTTP() (err error) {
 	auth.Router(v1.Group("auth"))
 	auth.RouterAuthorization(v1.Group("auth", middleware.Auth()))
 	project.Router(v1.Group("project", middleware.Auth()))
+	box.Router(v1.Group("box", middleware.Auth()))
 	permissions.Router(v1.Group("permission", middleware.Auth()))
 
 	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout * time.Second

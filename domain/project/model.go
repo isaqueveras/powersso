@@ -7,7 +7,7 @@ package project
 // CreateProject models the data to create a project
 type CreateProject struct {
 	Name        *string
-	Description *string
+	Desc        *string
 	Slug        *string
 	Url         *string
 	CreatedByID *string

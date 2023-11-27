@@ -23,7 +23,7 @@ func CreateNewProject(ctx context.Context, in *NewProject) (err error) {
 
 	data := &domain.CreateProject{
 		Name:        in.Name,
-		Description: in.Description,
+		Desc:        in.Description,
 		Slug:        in.Slug,
 		Url:         in.Url,
 		CreatedByID: in.CreatedByID,
