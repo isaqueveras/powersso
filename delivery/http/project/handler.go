@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gosimple/slug"
 	"github.com/isaqueveras/powersso/application/project"
 	"github.com/isaqueveras/powersso/middleware"
 	"github.com/isaqueveras/powersso/oops"
@@ -15,25 +16,21 @@ import (
 )
 
 // @Router /v1/project/create [post]
-func create(ctx *gin.Context) {
+func newProject(ctx *gin.Context) {
 	var (
-		input   = new(project.CreateProjectReq)
+		input   = new(project.NewProject)
 		session = middleware.GetSession(ctx)
-		err     error
 	)
 
-	if err = ctx.ShouldBindJSON(&input); err != nil {
+	if err := ctx.ShouldBindJSON(&input); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}
 
-	if err = input.Validate(); err != nil {
-		oops.Handling(ctx, err)
-		return
-	}
-
+	input.Slug = utils.Pointer(slug.Make(*input.Name))
 	input.CreatedByID = &session.UserID
-	if err = project.Create(ctx, input); err != nil {
+
+	if err := project.CreateNewProject(ctx, input); err != nil {
 		oops.Handling(ctx, err)
 		return
 	}

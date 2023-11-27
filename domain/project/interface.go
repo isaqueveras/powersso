@@ -6,5 +6,5 @@ package project
 
 // IProject define an interface for data layer access methods
 type IProject interface {
-	Create(*CreateProject) error
+	CreateNewProject(*CreateProject) error
 }

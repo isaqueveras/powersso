@@ -17,9 +17,6 @@ import (
 
 // CreateUserAdmin register the first admin user
 func CreateUserAdmin(logg *utils.Logger) {
-	logg.Info("Initializing script create user admin")
-	defer logg.Info("Finalizing script create user admin")
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -42,6 +39,7 @@ func CreateUserAdmin(logg *utils.Logger) {
 		log.Fatal(err)
 	}
 
+	logg.Info("User admin created")
 	if err = tx.Commit(); err != nil {
 		log.Fatal(err)
 	}
