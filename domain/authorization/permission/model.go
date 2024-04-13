@@ -4,9 +4,11 @@
 
 package permission
 
+import "github.com/google/uuid"
+
 // Permission ...
 type Permission struct {
 	Name        *string
 	Credential  *string
-	CreatedByID *string
+	CreatedByID *uuid.UUID
 }
