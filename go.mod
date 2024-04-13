@@ -10,8 +10,6 @@ require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/google/uuid v1.3.0
-	github.com/gosimple/slug v1.13.1
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/isaqueveras/endless v0.0.0-20170109170031-447134032cb6
 	github.com/isaqueveras/lingo v0.0.0-20181220065520-bfdb55fa4143
 	github.com/jackc/pgx v3.6.2+incompatible
@@ -34,7 +32,6 @@ require (
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
