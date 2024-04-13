@@ -2,10 +2,9 @@
 # Use of this source code is governed by MIT style
 # license that can be found in the LICENSE file.
 
-.PHONY: build run local down-local docker-clean logs-local migrate-version migrate-up migrate-down migrate-force
+.PHONY: build run local down-local docker-clean logs-local
 
 FILES := $(shell docker ps -aq)
-DB_LOCAL := "postgres://postgres:postgres@localhost:5432/power-sso?sslmode=disable"
 
 # - trimpath 	- will remove the filepathes from the reports, good to same money on network trafic,
 #             	focus on bug reports, and find issues fast.
@@ -51,18 +50,6 @@ docker-clean:
 
 logs-local:
 	@ docker logs -f $(FILES)
-
-migrate-force:
-	@ migrate -source file://migrations -database $(DB_LOCAL) force 1
-
-migrate-version:
-	migrate -source file://migrations -database $(DB_LOCAL) version
-
-migrate-up:
-	migrate -source file://migrations -database $(DB_LOCAL) up
-
-migrate-down:
-	migrate -source file://migrations -database $(DB_LOCAL) down
 
 lint:
 	golangci-lint run ./...
