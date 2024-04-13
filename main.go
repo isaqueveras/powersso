@@ -37,9 +37,9 @@ func main() {
 		logg.Fatal("Error while serving the server HTTP: ", err)
 	}
 
-	if err := server.ServerGRPC(); err != nil {
-		logg.Fatal("Error while serving the server GRPC: ", err)
-	}
+	// if err := server.ServerGRPC(); err != nil {
+	// 	logg.Fatal("Error while serving the server GRPC: ", err)
+	// }
 
 	if err := group.Wait(); err != nil {
 		logg.Fatal("Error while serving the servers: ", err)

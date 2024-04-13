@@ -6,15 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 	"github.com/isaqueveras/powersso/config"
-	"github.com/isaqueveras/powersso/domain/auth"
+	"github.com/isaqueveras/powersso/domain/authentication"
 	"github.com/isaqueveras/powersso/tokens"
 )
 
 // Session models the session data
 type Session struct {
-	SessionID string
-	UserID    string
+	SessionID uuid.UUID
+	UserID    uuid.UUID
 	UserLevel string
 	FirstName string
 }
@@ -29,8 +30,8 @@ func GetSession(ctx *gin.Context) *Session {
 
 	value := session.(jwt.MapClaims)
 	return &Session{
-		SessionID: value["SessionID"].(string),
-		UserID:    value["UserID"].(string),
+		SessionID: uuid.MustParse(value["SessionID"].(string)),
+		UserID:    uuid.MustParse(value["UserID"].(string)),
 		UserLevel: value["UserLevel"].(string),
 		FirstName: value["FirstName"].(string),
 	}
@@ -58,7 +59,7 @@ func Auth() gin.HandlerFunc {
 // OnlyAdmin check if the user is an administrator
 func OnlyAdmin() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if GetSession(ctx).UserLevel != string(auth.AdminLevel) {
+		if GetSession(ctx).UserLevel != string(authentication.AdminLevel) {
 			session := GetSession(ctx)
 			log.Printf("WARNING: user (%v - %v) tried to access user tried to access route for administrators only", session.UserID, session.FirstName)
 			ctx.AbortWithStatus(http.StatusForbidden)
@@ -74,7 +75,7 @@ func Yourself() gin.HandlerFunc {
 		session := GetSession(ctx)
 		userIn := ctx.Param("user_id")
 
-		if session.UserID != userIn {
+		if session.UserID.String() != userIn {
 			log.Printf("WARNING: user (%v - %v) tried to access information for user (%v)", session.UserID, session.FirstName, userIn)
 			ctx.AbortWithStatus(http.StatusForbidden)
 			return

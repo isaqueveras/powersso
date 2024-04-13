@@ -9,17 +9,14 @@ import (
 	"log"
 	"time"
 
-	"github.com/isaqueveras/powersso/application/auth"
+	app "github.com/isaqueveras/powersso/application/authentication"
 	"github.com/isaqueveras/powersso/database/postgres"
-	domain "github.com/isaqueveras/powersso/domain/auth"
+	domain "github.com/isaqueveras/powersso/domain/authentication"
 	"github.com/isaqueveras/powersso/utils"
 )
 
 // CreateUserAdmin register the first admin user
 func CreateUserAdmin(logg *utils.Logger) {
-	logg.Info("Initializing script create user admin")
-	defer logg.Info("Finalizing script create user admin")
-
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -29,7 +26,7 @@ func CreateUserAdmin(logg *utils.Logger) {
 	}
 	defer tx.Rollback()
 
-	if _, err = auth.CreateAccount(ctx, &domain.CreateAccount{
+	if _, err = app.CreateAccount(ctx, &domain.CreateAccount{
 		FirstName: utils.Pointer("User Power"),
 		LastName:  utils.Pointer("Admin"),
 		Email:     utils.Pointer("admin@powersso.io"),
@@ -42,6 +39,7 @@ func CreateUserAdmin(logg *utils.Logger) {
 		log.Fatal(err)
 	}
 
+	logg.Info("User admin created")
 	if err = tx.Commit(); err != nil {
 		log.Fatal(err)
 	}

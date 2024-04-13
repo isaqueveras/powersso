@@ -12,8 +12,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaqueveras/endless"
 
-	"github.com/isaqueveras/powersso/delivery/http/auth"
-	"github.com/isaqueveras/powersso/delivery/http/project"
+	"github.com/isaqueveras/powersso/delivery/http/authentication"
+	"github.com/isaqueveras/powersso/delivery/http/authorization/box"
+	"github.com/isaqueveras/powersso/delivery/http/authorization/organization"
+	"github.com/isaqueveras/powersso/delivery/http/authorization/permission"
 	"github.com/isaqueveras/powersso/middleware"
 )
 
@@ -38,9 +40,11 @@ func (s *Server) ServerHTTP() (err error) {
 	)
 
 	v1 := router.Group("v1")
-	auth.Router(v1.Group("auth"))
-	auth.RouterAuthorization(v1.Group("auth", middleware.Auth()))
-	project.RouterAuthorization(v1.Group("project", middleware.Auth()))
+	authentication.Router(v1.Group("auth"))
+	authentication.RouterAuthorization(v1.Group("auth", middleware.Auth()))
+	organization.Router(v1.Group("organization", middleware.Auth()))
+	box.Router(v1.Group("box", middleware.Auth()))
+	permission.Router(v1.Group("permission", middleware.Auth()))
 
 	endless.DefaultReadTimeOut = s.cfg.Server.ReadTimeout * time.Second
 	endless.DefaultWriteTimeOut = s.cfg.Server.WriteTimeout * time.Second
@@ -54,7 +58,10 @@ func (s *Server) ServerHTTP() (err error) {
 		}
 	})
 
-	s.routerDebugPProf(router)
+	if !s.cfg.Server.IsModeDevelopment() {
+		s.routerDebugPProf(router)
+	}
+
 	return
 }
 
