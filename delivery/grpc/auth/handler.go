@@ -7,8 +7,8 @@ package auth
 import (
 	"context"
 
-	app "github.com/isaqueveras/powersso/application/auth"
-	domain "github.com/isaqueveras/powersso/domain/auth"
+	app "github.com/isaqueveras/powersso/application/authentication"
+	domain "github.com/isaqueveras/powersso/domain/authentication"
 	"github.com/isaqueveras/powersso/oops"
 	"github.com/isaqueveras/powersso/utils"
 )

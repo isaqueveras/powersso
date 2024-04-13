@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.21.12
-// source: protos/auth.proto
+// source: protos/authentication.proto
 
 package auth
 

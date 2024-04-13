@@ -9,9 +9,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/isaqueveras/powersso/application/auth"
+	app "github.com/isaqueveras/powersso/application/authentication"
 	"github.com/isaqueveras/powersso/database/postgres"
-	domain "github.com/isaqueveras/powersso/domain/auth"
+	domain "github.com/isaqueveras/powersso/domain/authentication"
 	"github.com/isaqueveras/powersso/utils"
 )
 
@@ -26,7 +26,7 @@ func CreateUserAdmin(logg *utils.Logger) {
 	}
 	defer tx.Rollback()
 
-	if _, err = auth.CreateAccount(ctx, &domain.CreateAccount{
+	if _, err = app.CreateAccount(ctx, &domain.CreateAccount{
 		FirstName: utils.Pointer("User Power"),
 		LastName:  utils.Pointer("Admin"),
 		Email:     utils.Pointer("admin@powersso.io"),
