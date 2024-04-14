@@ -60,3 +60,7 @@ If you have any questions, check this [GitHub Contributing Guide](https://github
 </a>
 
 [golang]: https://go.dev/
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=isaqueveras/powersso&type=Date)](https://star-history.com/#isaqueveras/powersso&Date)
