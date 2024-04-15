@@ -1,0 +1,15 @@
+pkg authentication
+
+node User {}
+
+node Session {}
+
+impl login(User) Session {
+  method: POST
+  uri: /v1/auth/login
+}
+
+impl create_account(User) User {
+  method: POST
+  uri: /v1/auth/create_account
+}
